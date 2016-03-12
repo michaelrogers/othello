@@ -1,0 +1,30 @@
+/* Grid declarations */
+body {
+    /*background: #eff7ec;*/
+    background: linear-gradient(#eff7ec, #f8fbf7);
+
+    /*stop bg gradiant repeat*/
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+	}
+
+canvas {
+    /*background: #8fcb7c;*/
+    
+    margin: 20px;
+    position:absolute;
+    left:0px;
+    top:0px;
+		}
+#canvas2 {
+    background: initial;
+}
+#canvas1 {
+    /*Canvas board with grid lines*/
+    background: radial-gradient(circle, #9fd38e, #56a33d,
+    #396d28);
+    
+}
+

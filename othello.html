@@ -1,0 +1,31 @@
+<head>
+  <title>othello</title>
+
+
+
+</head>
+
+<body>
+  <h1>Welcome to Othello!</h1>
+{{> loginButtons}} <br><br>
+  {{> hello}}
+
+
+<span class="text"><strong>{{username}}</strong> - {{text}}</span>
+  
+  <!-- <canvas id="canvas" width="420px" height="420px"></canvas> -->
+   
+
+
+</body>
+
+<template name="hello">
+  <!-- <button>Don't Click Me</button> -->
+  <!-- <p>You've pressed the button {{counter}} times.</p> -->
+  <div id="canvasesdiv" style="position:relative; width:420px; height:420px">
+  <canvas id="canvas1" width="420px" height="420px"></canvas>
+  <canvas id="canvas2" width="420px" height="420px"></canvas>
+  </div>
+
+
+</template>
