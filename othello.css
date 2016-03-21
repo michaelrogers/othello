@@ -12,24 +12,30 @@ body {
 
 canvas {
     /*background: #8fcb7c;*/
-    
     margin: 20px;
-    position:absolute;
+    position: absolute;
     left:0px;
     top:0px;
 		}
 #canvas2 {
+    /*Board with pieces*/
     background: initial;
-}
+    /*position: relative;*/
+    }
 #canvas1 {
     /*Canvas board with grid lines*/
     background: radial-gradient(circle, #9fd38e, #56a33d,
     #396d28);
-    
-}
-    h1 {
-        font-family: Helvetica;
+    /*position: relative;*/
     }
-    p {
-        font-family: Helvetica;
+#canvasesdiv {
+    position: relative;
+
+}
+
+h1 {
+    font-family: Helvetica;
+    }
+p {
+    font-family: Helvetica;
     }
