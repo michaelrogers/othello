@@ -23,7 +23,7 @@ canvas {
     /*position: relative;*/
     }
 #canvas1 {
-    /*Canvas board with grid lines*/
+    /*Board with grid lines*/
     background: radial-gradient(circle, #9fd38e, #56a33d,
     #396d28);
     /*position: relative;*/
@@ -31,11 +31,20 @@ canvas {
 #canvasesdiv {
     position: relative;
 
+
 }
+/* FOR USE WITH CHART
+#barChart {
+     background: radial-gradient(circle, #9fd38e, #56a33d,
+    #396d28);}*/
 
 h1 {
     font-family: Helvetica;
     }
+h3 {
+    font-family: Helvetica;
+    font-weight: lighter;
+    }    
 p {
     font-family: Helvetica;
     }

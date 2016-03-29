@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"cell",
+				"cell_y        (num)  [E]"
+			],
+			[
+				"offset",
+				"offset_y       (num) [C]"
+			],
+			[
+				"ce",
+				"cell_y        (num)  [E]"
+			],
+			[
+				"canva",
+				"canvas_y      (?)    [E]"
+			],
+			[
 				"board",
 				"boardPosition"
 			],
@@ -47,7 +63,7 @@
 			"file": "othello.html",
 			"settings":
 			{
-				"buffer_size": 690,
+				"buffer_size": 716,
 				"line_ending": "Unix"
 			}
 		},
@@ -55,7 +71,7 @@
 			"file": "othello.css",
 			"settings":
 			{
-				"buffer_size": 621,
+				"buffer_size": 889,
 				"line_ending": "Unix"
 			}
 		},
@@ -63,7 +79,7 @@
 			"file": "othello.js",
 			"settings":
 			{
-				"buffer_size": 4898,
+				"buffer_size": 9027,
 				"line_ending": "Unix"
 			}
 		}
@@ -127,6 +143,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"switch",
+			"invalid",
+			"for"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -153,15 +172,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 690,
+						"buffer_size": 716,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								176,
-								176
+								511,
+								511
 							]
 						],
 						"settings":
@@ -183,15 +202,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 621,
+						"buffer_size": 889,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								615,
-								615
+								785,
+								785
 							]
 						],
 						"settings":
@@ -201,7 +220,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 750.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -213,15 +232,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4898,
+						"buffer_size": 9027,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								962,
-								962
+								4184,
+								4184
 							]
 						],
 						"settings":
@@ -231,7 +250,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2850.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,

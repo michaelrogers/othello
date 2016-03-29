@@ -7,7 +7,7 @@
 
 <body>
   <h1>Welcome to Othello!</h1>
-  <em><p>Get back to work, Michael.</p></em>
+  <em><p id="messages">Get back to work, Michael.</p></em>
 {{> loginButtons}} <br><br>
   {{> hello}}
 
@@ -23,10 +23,11 @@
 <template name="hello">
   <!-- <button>Don't Click Me</button> -->
   <!-- <p>You've pressed the button {{counter}} times.</p> -->
+  <h3 id="turn">White's turn</h3>
   <div id="canvasesdiv" width="420px" height="420px">
   <canvas id="canvas1" width="420px" height="420px"></canvas>
   <canvas id="canvas2" width="420px" height="420px"></canvas>
+  
   </div>
-
 
 </template>
