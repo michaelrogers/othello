@@ -13,14 +13,12 @@ Accounts.ui.config({
 //       return Session.get('counter');
 //     }
 //   });
-
 //   Template.hello.events({
 //     'click button': function () {
 //       // increment the counter when button is clicked
 //       Session.set('counter', Session.get('counter') + 1);
 //     }
 //   });
-
 
 //defining layers for canvas
 var layer1;
@@ -37,8 +35,15 @@ var cell_x;
 var cell_y;
 
 var playerTurn;
-
-
+//Wait for window load before calling initial functions
+window.onload = function drawAll(){
+  init();
+  setInitialPosition();
+  drawGrid();
+  readArray();
+  
+  // createCanvasChart();
+}
 
 function init() {
 //layer 1 = board with lines
@@ -49,12 +54,24 @@ layer2 = document.getElementById("canvas2");
 contextPieces = layer2.getContext("2d");
 layer2.addEventListener("mousedown",listenMouseDown, false);
 playerTurn = 0; //white
-
-
+document.getElementById("resetButton").addEventListener("click", function(){
+  clearArray();
+  setInitialPosition();
+  readArray();
+  if (playerTurn == 1){
+    switchTurn();
+  }
+  });
+}
 //setInterval(drawAll, 20);
-
-//0 for white, 1 for black
 //Initialize beginning board position
+//0 for white, 1 for black
+
+
+
+
+function setInitialPosition(){
+
 var row0 = [null,null,null,null,null,null,null,null],
     row1 = [null,null,null,null,null,null,null,null],
     row2 = [null,null,null,null,null,null,null,null],
@@ -63,7 +80,7 @@ var row0 = [null,null,null,null,null,null,null,null],
     row5 = [null,null,null,null,null,null,null,null],
     row6 = [null,null,null,null,null,null,null,null],
     row7 = [null,null,null,null,null,null,null,null];
-
+//Define 2d array
 boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
 }
 
@@ -74,40 +91,43 @@ var bw = 400;
 var bh = 400;
 //padding around grid
 var p = 10;
-
 //draw vertical lines of grid
 for (var x = 0; x <= bw; x += 50) {
     context.moveTo(0.4 + x + p, p);
     context.lineTo(0.4 + x + p, bh + p);
   }
-
 //draw horizontal lines of grid
   for (var x = 0; x <= bh; x += 50) {
     context.moveTo(p, 0.4 + x + p);
     context.lineTo(bw + p, 0.4 + x + p);
   }
-
   context.strokeStyle = "#323232";
   context.lineWidth = 1;
   context.stroke();
   }
-
-
-
 
 function readArray(){
 //Reads the initialized array and draws the start position
 var x, y;
 for (y=0; y < boardPosition.length; y++) {
   for (x=0; x < boardPosition[y].length; x++){
-    
-    xPosition = x;
-    yPosition = y;
     if (boardPosition[y][x] !== null) {
-    drawPieces();
+      xPosition = x;
+      yPosition = y;
+      drawPieces();
     }}}
-  
-
+  }
+function clearArray(){
+  var x, y;
+  for (y=0; y < boardPosition.length; y++) {
+    for (x=0; x < boardPosition[y].length; x++){
+      
+      if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
+        boardPosition[y][x] = null;
+        xPosition = x;
+        yPosition = y;
+        drawPieces();
+        }}}
 }
 
 
@@ -117,7 +137,7 @@ function listenMouseDown () {
   var offset_x = canvasOffset.left;
   var offset_y = canvasOffset.top;
 
-
+  //Remove ofset from pageX and pageY to get an accurate position
   canvas_x = Math.round(event.pageX - offset_x);
   canvas_y = Math.round(event.pageY - offset_y);
   //console.log ("Mouse Click" + "\n" + "X: "+canvas_x+" Y: "+canvas_y);
@@ -125,12 +145,10 @@ function listenMouseDown () {
 }
 
 function translateCoordinate (){
-  
-//Determines which cell the coordinate from mouse listener belongs to
+  //Determines which cell the coordinate from mouse listener belongs to
   cell_x = Math.floor((canvas_x-p)/cellWidth);
   cell_y = Math.floor((canvas_y-p)/cellWidth);
   console.log ("Mouse x: " + canvas_x  + " y: " + canvas_y + "\n" + " Map x: "+cell_x+" y: "+cell_y);
-
   //console.log ("Mouse Click" + "\n" + "X: "+canvas_x+" Y: "+canvas_y);
   //Remove erroneous coordinates like outside the grid in the padding
   if (0 <= cell_x && cell_x < 8 && 0 <= cell_y && cell_y < 8){
@@ -147,9 +165,11 @@ function switchTurn (){
   //switches the player turn and then updates h3 with id="turn"
   var playerText = "";
   if (playerTurn == 0) {
+    //Takes white's turn and switches to black's
     playerTurn = 1;
     playerText = "Black's turn";
   } 
+  //Takes black's turn and switches to white's
   else if (playerTurn == 1) {
     playerTurn = 0;
     playerText = "White's turn";
@@ -158,7 +178,6 @@ function switchTurn (){
   document.getElementById("turn").innerHTML = playerText;
   document.getElementById("messages").innerHTML = "Please proceed!";
 }
-
 
 function validMove(){
   var noOppositeMatch = true;
@@ -183,13 +202,12 @@ function validMove(){
         }                  
       }
     if (noOppositeMatch) {
-     document.getElementById("messages").innerHTML = "Invalid Move: Can't let you do that star fox!";
-              console.log("Invalid move"); 
+      document.getElementById("messages").innerHTML = "Invalid Move: Can't let you do that star fox!";
+      console.log("Invalid move"); 
     }
-    }
+  }
 
 function addPiece () {
-
 //Testing add piece by alternating between white, black, and null on click
   var thisCell = boardPosition[cell_y][cell_x];
   //var flipAfterDraw = false;
@@ -200,35 +218,21 @@ function addPiece () {
     //TODO: remove flipAfterDraw and call switchTurn() after setting the new value
     //flipAfterDraw = true;
      switchTurn();  
-                      }
+    }
   //Leaving manual flipping functionality in place
   else if (thisCell == 0){
     boardPosition[cell_y][cell_x] = 1;
-                          }
+    }
   else if (thisCell == 1){ //This will be commented out eventually, used for testing
     boardPosition[cell_y][cell_x] = 0;
-                          }
+    }
   xPosition = cell_x;
   yPosition = cell_y;
   drawPieces();
-  //Need to drawPieces before flipping the player color
-  //if (flipAfterDraw){switchTurn();}
-
 }
-
-
-
-
 
 //define and draw canvas grid after page load
-window.onload = function drawAll(){
-  init();
-  //createCanvas();
-  drawGrid();
-  //drawPieces();
-  readArray();
-  // createCanvasChart();
-}
+
 //FOR USE LATER FOR CANVAS CHART
 //Code to createCanvasChart for eventual graphing of playerPieceCount
 // function createCanvasChart () {
@@ -248,9 +252,6 @@ window.onload = function drawAll(){
 // }).appendTo("#boardChart");
 // }
 
-
-
-
 function drawPieces() {
   var radius = 20;
   p = 10;
@@ -266,22 +267,18 @@ function drawPieces() {
   var my_gradient = contextPieces.createRadialGradient(centerX, centerY, radius/1.5, centerX, centerY, radius);
   
   if (boardPosition[yPosition][xPosition] == 0) {
-
   //White piece gradient
   my_gradient.addColorStop(0, "white");
   my_gradient.addColorStop(1, "#cfcfcf");
   contextPieces.strokeStyle = '#404040';  //Old value #585858
-   
     }
     
-
   else if (boardPosition[yPosition][xPosition] == 1){
-     //Black piece gradient
+  //Black piece gradient
   my_gradient.addColorStop(0, "#202020");
   my_gradient.addColorStop(1, "black");
   contextPieces.strokeStyle = '#b3b3b3'; //'#E0E0E0'
- 
-    }
+     }
 
   else if (boardPosition[yPosition][xPosition] == null){
     //Clear existing piece and exit function
