@@ -187,15 +187,15 @@ function validMove(){
   else if (boardPosition[cell_y][cell_x] == null){
     for (dx = -1; dx <= 1; dx++){
         for (dy = -1; dy <=1; dy++){
-          if (typeof boardPosition[cell_y+dy]!= undefined && typeof boardPosition[cell_x+dx]!=undefined){
+          if (typeof boardPosition[cell_y+dy] != 'undefined' && typeof boardPosition[cell_y+dy][cell_x+dx] != 'undefined'){
             var adjacentCellValue = boardPosition[cell_y+dy][cell_x+dx];
-          
-          //Looking for the opposite of playerTurn value
-            if (adjacentCellValue != playerTurn && typeof adjacentCellValue != undefined && adjacentCellValue != null){
-              // break
+            //Evaluating for the opposite of playerTurn value
+            if (adjacentCellValue != playerTurn && typeof adjacentCellValue != 'undefined' && adjacentCellValue != null){
               addPiece();
               //Only need one opposite color to make a valid move
               noOppositeMatch = false;
+              //Prevent occassional piece color unpredictability
+              return false;
               }
             }
           }      
