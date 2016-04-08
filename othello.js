@@ -1,3 +1,7 @@
+PieceCollection = new Mongo.Collection("piece-collection");
+
+
+
 if (Meteor.isClient) {
   //Require username for players
 Accounts.ui.config({
@@ -35,6 +39,12 @@ var cell_x;
 var cell_y;
 
 var playerTurn;
+var blackScore;
+var whiteScore;
+var flipCoordinate_x = [];
+var flipCoordinate_y = [];
+
+
 //Wait for window load before calling initial functions
 window.onload = function drawAll(){
   init();
@@ -84,6 +94,8 @@ var row0 = [null,null,null,null,null,null,null,null],
 boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
 }
 
+
+
 function drawGrid() {
 //var context = canvas1.get(0).getContext("2d");
 //grid width and height
@@ -128,8 +140,46 @@ function clearArray(){
         yPosition = y;
         drawPieces();
         }}}
+        document.getElementById("score").innerHTML = "";
 }
 
+function clearflipCoordinate(){
+  while (flipCoordinate_x.length > 0){
+    flipCoordinate_x.pop();
+    flipCoordinate_y.pop();
+  }
+}
+
+function calculateScore(){
+//Reads the initialized array and draws the start position
+var x, y;
+//clear global variable count
+whiteScore = 0;
+blackScore = 0;
+for (y=0; y < boardPosition.length; y++) {
+  for (x=0; x < boardPosition[y].length; x++){
+    if (boardPosition[y][x] == 0){
+        whiteScore +=1;
+    }
+    else if (boardPosition[y][x] == 1){
+      blackScore +=1;
+    }
+    }}
+  //console.log("White: "+ whiteScore  + " Black: " + blackScore);
+  if (whiteScore + blackScore <= 64){
+  document.getElementById("score").innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
+  }
+  
+  if (whiteScore + blackScore == 64 && whiteScore > blackScore){
+    document.getElementById("turn").innerHTML = "White player wins with " + whiteScore + " pieces!";
+  }
+  else if (whiteScore + blackScore == 64 && blackScore > whiteScore){
+    document.getElementById("turn").innerHTML = "Black player wins with " + blackScore + " pieces!";
+  }
+  else if (whiteScore + blackScore == 64 && blackScore == whiteScore){
+    document.getElementById("turn").innerHTML = "Draw! How unusual!";
+  }
+}
 
 function listenMouseDown () {
   //Get canvas offset using jQuery to get a relative mouse position
@@ -181,6 +231,7 @@ function switchTurn (){
 
 function validMove(){
   var noOppositeMatch = true;
+  var flipIndex = 0;
   //Bypass move validation when there is already a piece in the square
   if (boardPosition[cell_y][cell_x] == 1 | boardPosition[cell_y][cell_x] == 0){addPiece();return false;}
 
@@ -188,22 +239,61 @@ function validMove(){
     for (dx = -1; dx <= 1; dx++){
         for (dy = -1; dy <=1; dy++){
           if (typeof boardPosition[cell_y+dy] != 'undefined' && typeof boardPosition[cell_y+dy][cell_x+dx] != 'undefined'){
+           if (dx == 0 && dy == 0) {continue;} //added to prevent boardPosition[cell_y][cell_x] from being processed
             var adjacentCellValue = boardPosition[cell_y+dy][cell_x+dx];
             //Evaluating for the opposite of playerTurn value
             if (adjacentCellValue != playerTurn && typeof adjacentCellValue != 'undefined' && adjacentCellValue != null){
-              addPiece();
+             console.log("Adj x: " + (cell_x+dx) + " y: " + (cell_y+dy));
+
+             //Evaluating the piece beyond the adjacent tile to ensure that a flip is possible
+            //var multFactor = 2;
+             
+            //TODO: Rewrite for as while loop
+             for (multFactor = 2; (cell_y+(dy*multFactor)) >= 0, (cell_x+(dx*multFactor)) >= 0, (cell_y+(dy*multFactor)) <= 7, (cell_x+(dx*multFactor)) <= 7; multFactor++){
+              
+              console.log("Mult: " + multFactor + " x: "+ (cell_x+(dx*multFactor)) +" y: "+ (cell_y+(dy*multFactor)));
+
+               if (boardPosition[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] == playerTurn){ //
+                multFactor -= 1; //To account for not flipping the end piece because the end piece has the max multFactor
+                while (multFactor >= 1){
+                flipCoordinate_y[flipIndex] = cell_y+(dy*multFactor);
+                flipCoordinate_x[flipIndex] = cell_x+(dx*multFactor);
+                flipIndex += 1;
+                multFactor -= 1;
+                }
+                
               //Only need one opposite color to make a valid move
-              noOppositeMatch = false;
+                noOppositeMatch = false;
+                break;
+                //return false;
               //Prevent occassional piece color unpredictability
-              return false;
+
+              } //If the piece beyond the adjacent is the same as the playerTurn, increase the multFactor
+              else if (boardPosition[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] == null){break;}
+
+              else if (boardPosition[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] != playerTurn){continue;} //
               }
+             }
             }
           }      
         }                  
+      
       }
     if (noOppositeMatch) {
       document.getElementById("messages").innerHTML = "Invalid Move: Can't let you do that star fox!";
       console.log("Invalid move"); 
+    }
+    else if (noOppositeMatch == false){
+      addPiece();
+      for (var i=0; i<flipCoordinate_x.length; i++){
+        console.log("Index: "+ i + " x: "+ flipCoordinate_x[i] + " y: " + flipCoordinate_y[i]);
+        //Test flipping
+        cell_x = flipCoordinate_x[i];
+        cell_y = flipCoordinate_y[i];
+        addPiece();
+
+      }
+    clearflipCoordinate();
     }
   }
 
@@ -216,7 +306,6 @@ function addPiece () {
     //Move flip function to after draw 
     //Believe I can return this to default behavior, changed due to troubleshooting. 
     //TODO: remove flipAfterDraw and call switchTurn() after setting the new value
-    //flipAfterDraw = true;
      switchTurn();  
     }
   //Leaving manual flipping functionality in place
@@ -229,6 +318,7 @@ function addPiece () {
   xPosition = cell_x;
   yPosition = cell_y;
   drawPieces();
+  calculateScore();
 }
 
 //define and draw canvas grid after page load
@@ -291,12 +381,14 @@ function drawPieces() {
   contextPieces.beginPath();
   contextPieces.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
   contextPieces.fillStyle = my_gradient;
-  contextPieces.lineWidth = 1;
+  contextPieces.lineWidth = 0.5;
   contextPieces.fill();
   contextPieces.stroke();
   //document.getElementById("messages").innerHTML = "Please proceed!";
-}
-}
+  }
+
+
+} //End isClient
 
 
 

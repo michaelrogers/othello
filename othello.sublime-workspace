@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"add",
+				"addPiece         (fn) [E]"
+			],
+			[
 				"cell",
 				"cell_y        (num)  [E]"
 			],
@@ -63,7 +67,7 @@
 			"file": "othello.html",
 			"settings":
 			{
-				"buffer_size": 704,
+				"buffer_size": 767,
 				"line_ending": "Unix"
 			}
 		},
@@ -79,7 +83,7 @@
 			"file": "othello.js",
 			"settings":
 			{
-				"buffer_size": 8597,
+				"buffer_size": 9897,
 				"line_ending": "Unix"
 			}
 		}
@@ -167,7 +171,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -176,15 +180,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 704,
+						"buffer_size": 767,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								91,
-								91
+								227,
+								227
 							]
 						],
 						"settings":
@@ -197,7 +201,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -223,11 +227,11 @@
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": -0.0,
-						"translation.y": 450.0,
+						"translation.x": 0.0,
+						"translation.y": 246.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -236,15 +240,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8597,
+						"buffer_size": 9897,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3955,
-								3955
+								9341,
+								9341
 							]
 						],
 						"settings":
@@ -254,10 +258,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 150.0,
+						"translation.y": 7625.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
