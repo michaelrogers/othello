@@ -1,9 +1,0 @@
-{
-   "galaxy.meteor.com": {
-        "env": {
-        		"ROOT_URL": "http://othello.meteorapp.com" ,
-                "MONGO_URL": "mongodb://othelloAdmin:dbOthello!12@ds019480.mlab.com:19480/othello"
-                
-        }
-    }
-}
