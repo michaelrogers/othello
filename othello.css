@@ -1,8 +1,8 @@
 /* Grid declarations */
 body {
     /*background: #eff7ec;*/
-    background: linear-gradient(#eff7ec, #f8fbf7);
-
+    background: linear-gradient(#d7ded4, #f8fbf7); /*eff7ec*/
+    font-family: sans-serif;
     /*stop bg gradiant repeat*/
     height: 100%;
     margin: 0;
@@ -38,12 +38,21 @@ canvas {
     #396d28);}*/
 
 h1 {
-    font-family: Helvetica;
+    font-weight: lighter;
     }
 h3 {
-    font-family: Helvetica;
     font-weight: lighter;
     }    
 p {
-    font-family: Helvetica;
     }
+
+header {
+  background: #d2edf4;
+  background-image: linear-gradient(to bottom, #d0edf5, #e1e5f0 100%);
+  padding: 20px 15px 15px 15px;
+  position: relative;
+}
+
+#login-buttons {
+  display: block;
+}

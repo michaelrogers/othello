@@ -4,24 +4,29 @@
 
 <body>
   <h1>Welcome to Othello!</h1>
-  <em><p id="messages">Get back to work, Michael.</p></em>
-{{> loginButtons}} <br><br>
-  <button type="button" id="resetButton">Reset match</button>
+  
+  {{> loginButtons}} 
+  <button type="button" id="resetButton">Reset match</button> <br>
+  <h3 id="turn">Player Turn: White</h3>
+  <em><p id="messages">Get back to work, Michael.</p></em> 
+
   {{> hello}}
+  
 
 <!-- <span class="text"><strong>{{username}}</strong> - {{text}}</span> -->
 <!-- <canvas id="canvas" width="420px" height="420px"></canvas> -->
-   
+  
 </body>
 
 <template name="hello">
   <!-- <button>Don't Click Me</button> -->
   <!-- <p>You've pressed the button {{counter}} times.</p> -->
-  <h3 id="turn">White's turn</h3>
+ 
   <div id="canvasesdiv" width="420px" height="420px">
+ <em><p id="score"></p></em>
   <canvas id="canvas1" width="420px" height="420px"></canvas>
   <canvas id="canvas2" width="420px" height="420px"></canvas>
-  <em><p id="score"></p></em>
+  
   
   </div>
 
