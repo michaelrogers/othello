@@ -1,21 +1,92 @@
 /* Grid declarations */
 body {
     /*background: #eff7ec;*/
-    background: linear-gradient(#d7ded4, #f8fbf7); /*eff7ec*/
+    /*background: linear-gradient(#d7ded4, #f8fbf7); /*eff7ec*/
+    background-image: linear-gradient(to bottom, rgba(161, 157, 162, 0.68), #918e82 100%);
     font-family: sans-serif;
     /*stop bg gradiant repeat*/
     height: 100%;
     margin: 0;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    font-size: 14px;
 	}
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    min-height: 650px;
+    background: white;
+    min-width: 500px;
+}
+
+.chatbox {
+    max-width: 420px; 
+    margin: 0 auto;
+    min-height: 420px;
+    background-image: linear-gradient(to bottom, rgba(173, 204, 165, 0.75), #e1e5f0 100%);
+    float: right;
+    width: 100%;
+    margin: 0px 20px 0px 20px;
+    border-radius: 0 8px 8px 0;
+}
+
+header {
+    background: #d2edf4;
+    background-image: linear-gradient(to bottom, rgba(173, 204, 165, 0.75), #e1e5f0 100%);
+    padding: 20px 15px 15px 15px;
+    position: relative;
+}
+
+div#login-buttons {
+    float: right;
+    font-size: 20px;
+}
+
+
+button#resetButton {
+    float: right;
+}
+#score {
+    float: right;
+    width: 65%;
+
+    margin: 0px 0px 8px 0px;
+   display: inline
+}
+#messages {
+    margin-left: 20px;
+}
+#turn {
+    display: inline;
+    /*float: left;*/
+}
+
+#login-dropdown-list {
+    right: 1px;
+    left: initial;
+}
+#login-buttons .login-close-text {
+    float: right;
+}
+/*@media(max-width:1200px) {
+    canvas {
+            width: 100%;
+            height: auto;
+            
+        }
+    #canvasesdiv {
+        margin: 0 50px;
+    }    
+
+    }*/
 
 canvas {
     /*background: #8fcb7c;*/
-    margin: 20px;
+    margin: 0px 20px 10px 20px;
     position: absolute;
     left:0px;
     top:0px;
+    border-radius: 8px 0 0 8px;
 		}
 #canvas2 {
     /*Board with pieces*/
@@ -38,6 +109,11 @@ canvas {
     #396d28);}*/
 
 h1 {
+    font-size: 4.0em;
+    margin: 0;
+    margin-bottom: 10px;
+    display: inline-block;
+    margin-right: 1em;
     font-weight: lighter;
     }
 h3 {
@@ -46,13 +122,3 @@ h3 {
 p {
     }
 
-header {
-  background: #d2edf4;
-  background-image: linear-gradient(to bottom, #d0edf5, #e1e5f0 100%);
-  padding: 20px 15px 15px 15px;
-  position: relative;
-}
-
-#login-buttons {
-  display: block;
-}

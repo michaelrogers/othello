@@ -1,7 +1,8 @@
-PieceCollection = new Mongo.Collection("piece-collection");
+// PieceCollection = new Mongo.Collection("piece-collection");
 
 if (Meteor.isClient) {
   //Require username for players
+
 Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   });
@@ -17,30 +18,40 @@ Accounts.ui.config({
 //       // increment the counter when button is clicked
 //       Session.set('counter', Session.get('counter') + 1); }  });
 
+//Global for access from console
 var debugErrorMessage = false;
+
 //defining layers for canvas
 var layer1;
 var layer2;
-var boardPosition; //Holds 2d array of piece data
-var my_gradient;
-//Global variables instantiated for use in translateCoordinate and drawPieces
-var xPosition;
-var yPosition;
-var cellWidth;
-var p;
-// Global for addPiece function
-var cell_x;
-var cell_y;
+//For resizing
 
-var playerTurn;
-var blackScore;
-var whiteScore;
+var cellWidth;
+var padding;
+var radius;
+
+//Global variables instantiated for use in translateCoordinate and drawPieces
+// var xPosition;
+// var yPosition;
+// Global for addPiece function
+//var cell_x;
+//var cell_y;
+
+
+
+//Data
+var boardPosition; //Holds 2d array of piece data
 var flipCoordinate_x = [];
 var flipCoordinate_y = [];
 
-var intSet;
-var clickInputAccepted = true; //Used to lock the player out of clicking while pieces are flipping
+//States
+var intSet; //Used in interval delay function
+var clickInputAccepted = true; //Used to lock the player while setInterval is repeating/flipping
 var gameOn = true;
+var playerTurn;
+// var blackScore;
+// var whiteScore;
+
 
 //Wait for window load before calling initial functions
 window.onload = function drawAll(){
@@ -50,7 +61,18 @@ window.onload = function drawAll(){
   readArray();
   globalDebug();
   // createCanvasChart();
+  // $(window).resize(respondCanvas);
 }
+
+// function respondCanvas (){
+// //layer 1 = board with lines
+// layer1 = document.getElementById("canvas1");
+// context = layer1.getContext("2d");
+// //layer 2 = pieces
+// layer2 = document.getElementById("canvas2");
+// contextPieces = layer2.getContext("2d");
+
+// }
 
 function init() {
 //layer 1 = board with lines
@@ -67,9 +89,10 @@ document.getElementById("resetButton").addEventListener("click", function(){
   readArray();
   clickInputAccepted = true;
   gameOn = true;
-  if (playerTurn == 1){
-    switchTurn();
-  }
+  playerTurn = 0;
+  document.title = "Othello";
+    
+  
   });
 }
 
@@ -90,21 +113,21 @@ boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
 }
 
 function drawGrid() {
-//var context = canvas1.get(0).getContext("2d");
 //grid width and height
-var bw = 400;
-var bh = 400;
-//padding around grid
-var p = 10;
+var boardWidth = 400;
+var boardHeight = 400;
+padding = 10; //padding around grid
 //draw vertical lines of grid
-for (var x = 0; x <= bw; x += 50) {
-    context.moveTo(0.4 + x + p, p);
-    context.lineTo(0.4 + x + p, bh + p);
+context.beginPath();
+for (var x = 0; x <= boardWidth; x += 50) {
+    
+    context.moveTo(0.5 + x + padding, padding);
+    context.lineTo(0.5 + x + padding, boardHeight + padding);
   }
 //draw horizontal lines of grid
-  for (var x = 0; x <= bh; x += 50) {
-    context.moveTo(p, 0.4 + x + p);
-    context.lineTo(bw + p, 0.4 + x + p);
+  for (var x = 0; x <= boardHeight; x += 50) {
+    context.moveTo(padding, 0.5 + x + padding);
+    context.lineTo(boardWidth + padding, 0.5 + x + padding);
   }
   context.strokeStyle = "#323232";
   context.lineWidth = 1;
@@ -117,9 +140,9 @@ var x, y;
 for (y=0; y < boardPosition.length; y++) {
   for (x=0; x < boardPosition[y].length; x++){
     if (boardPosition[y][x] !== null) {
-      xPosition = x;
-      yPosition = y;
-      drawPieces();
+      //xPosition = x;
+      //yPosition = y;
+      drawPieces(y,x);
     }}}
   }
 function clearArray(){
@@ -129,9 +152,9 @@ function clearArray(){
       
       if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
         boardPosition[y][x] = null;
-        xPosition = x;
-        yPosition = y;
-        drawPieces();
+        // xPosition = x;
+        // yPosition = y;
+        drawPieces(y,x);
         }}}
         document.getElementById("score").innerHTML = "";
 }
@@ -156,7 +179,7 @@ function returnFlipCoordinate(){
     cell_x = flipCoordinate_x.pop();
     cell_y = flipCoordinate_y.pop();
     if (debugErrorMessage){console.log("Flip x: "+ cell_x + " y: " + cell_y);}
-    addPiece();
+    addPiece(cell_y,cell_x);
   }
   else {
   clearInterval(intSet);
@@ -169,8 +192,8 @@ function calculateScore(){
 //Reads the initialized array and draws the start position
 var x, y;
 //clear global variable count
-whiteScore = 0;
-blackScore = 0;
+var whiteScore = 0;
+var blackScore = 0;
 for (y=0; y < boardPosition.length; y++) {
   for (x=0; x < boardPosition[y].length; x++){
     if (boardPosition[y][x] == 0){
@@ -214,23 +237,23 @@ function listenMouseDown () {
   canvas_x = Math.round(event.pageX - offset_x);
   canvas_y = Math.round(event.pageY - offset_y);
   //console.log ("Mouse Click" + "\n" + "X: "+canvas_x+" Y: "+canvas_y);
-  translateCoordinate(canvas_x,canvas_y);
+  translateCoordinate(canvas_y,canvas_x);
   }
   else {
     if (debugErrorMessage){console.log("Mouse input locked!");}
   }
 }
 
-function translateCoordinate (){
+function translateCoordinate (canvas_y,canvas_x){
   //Determines which cell the coordinate from mouse listener belongs to
-  cell_x = Math.floor((canvas_x-p)/cellWidth);
-  cell_y = Math.floor((canvas_y-p)/cellWidth);
+  cell_x = Math.floor((canvas_x-padding)/cellWidth);
+  cell_y = Math.floor((canvas_y-padding)/cellWidth);
   if (debugErrorMessage){console.log ("Mouse x: " + canvas_x  + " y: " + canvas_y + "\n" + "Map x: "+cell_x+" y: "+cell_y);}
   //console.log ("Mouse Click" + "\n" + "X: "+canvas_x+" Y: "+canvas_y);
   //Remove erroneous coordinates like outside the grid in the padding
   if (0 <= cell_x && cell_x < 8 && 0 <= cell_y && cell_y < 8){
   //addPiece(cell_x, cell_y);
-  validMove();
+  validMove(cell_y,cell_x);
   }
   else {
     if (debugErrorMessage){console.log("Out of bounds");}
@@ -245,25 +268,25 @@ function switchTurn (){
     //Takes white's turn and switches to black's
     playerTurn = 1;
     playerText = "Player Turn: Black";
-    document.title = "White's turn - Othello";
+    document.title = "Black's turn - Othello";
   } 
   //Takes black's turn and switches to white's
   else if (playerTurn == 1) {
     playerTurn = 0;
     playerText = "Player Turn: White";
-    document.title = "Black's turn - Othello";
+    document.title = "White's turn - Othello";
   }
   if (debugErrorMessage){console.log("Switch turn");}
   document.getElementById("turn").innerHTML = playerText;
   document.getElementById("messages").innerHTML = "Please proceed!";
 }
 
-function validMove(){
+function validMove(cell_y,cell_x){
   var noOppositeMatch = true;
   var flipIndex = 0;
   //var multFactor = 2;
-  
-  if (boardPosition[cell_y][cell_x] == 1 | boardPosition[cell_y][cell_x] == 0){addPiece();return false;} //Bypass move validation when there is already a piece in the square
+  //Comment this out to prevent manual piece flipping
+  if (boardPosition[cell_y][cell_x] == 1 | boardPosition[cell_y][cell_x] == 0){addPiece(cell_y,cell_x);return false;} //Bypass move validation when there is already a piece in the square
 
   else if (boardPosition[cell_y][cell_x] == null){ 
     clickInputAccepted = false;
@@ -311,7 +334,7 @@ function validMove(){
       clickInputAccepted = true;
     }
     else if (noOppositeMatch == false){
-      addPiece(); //Add selection piece first
+      addPiece(cell_y,cell_x); //Add selection piece first
       
       intervalDelay(); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
 
@@ -323,50 +346,33 @@ function validMove(){
         // console.log("Index: "+ i + " x: "+ flipCoordinate_x[i] + " y: " + flipCoordinate_y[i]);
         //TODO: pass SetInterval on each loop and execute function with .pop() method
         //TODO: Add click lockout while setInterval is repeating
-        
-        
-
-        
-        
-        
+                
       }
 
-    //clearflipCoordinate();
     
   }
 
 
-
-
-
-
-
-function addPiece () {
-//Testing add piece by alternating between white, black, and null on click
+function addPiece (cell_y,cell_x) {
   var thisCell = boardPosition[cell_y][cell_x];
-  //var flipAfterDraw = false;
   if (thisCell == null){
     boardPosition[cell_y][cell_x] = playerTurn;
     //Move flip function to after draw 
     //Believe I can return this to default behavior, changed due to troubleshooting. 
-    //TODO: remove flipAfterDraw and call switchTurn() after setting the new value
      //switchTurn();  //MOVED: To after pieces are finished flipping
     }
-  //Leaving manual flipping functionality in place
+  //Leaving manual flipping functionality in place for testing
   else if (thisCell == 0){
     boardPosition[cell_y][cell_x] = 1;
     }
   else if (thisCell == 1){ //This will be commented out eventually, used for testing
     boardPosition[cell_y][cell_x] = 0;
     }
-  xPosition = cell_x;
-  yPosition = cell_y;
-  drawPieces();
+  // xPosition = cell_x;
+  // yPosition = cell_y;
+  drawPieces(cell_y,cell_x);
   calculateScore();
 }
-
-//define and draw canvas grid after page load
-
 //FOR USE LATER FOR CANVAS CHART
 //Code to createCanvasChart for eventual graphing of playerPieceCount
 // function createCanvasChart () {
@@ -386,9 +392,9 @@ function addPiece () {
 // }).appendTo("#boardChart");
 // }
 
-function drawPieces() {
-  var radius = 20;
-  p = 10;
+function drawPieces(yPosition,xPosition) {
+  radius = 20;
+  padding = 10;
   cellWidth = 50;
   //implement random positioning within cell for added interest and analog feel
   //uses a random number generator to vary between a value -1 to +1
@@ -396,21 +402,21 @@ function drawPieces() {
   var randomY = Math.floor((Math.random()*3))-1;
   //console.log("randomX = "+randomX);
   //console.log("randomY = "+randomY);
-  var centerX = cellWidth/2+p+randomX+cellWidth*xPosition;
-  var centerY = cellWidth/2+p+randomY+cellWidth*yPosition;
-  var my_gradient = contextPieces.createRadialGradient(centerX, centerY, radius/1.5, centerX, centerY, radius);
+  var centerX = cellWidth/2+padding+randomX+cellWidth*xPosition;
+  var centerY = cellWidth/2+padding+randomY+cellWidth*yPosition;
+  var pieceGradient = contextPieces.createRadialGradient(centerX, centerY, radius/1.5, centerX, centerY, radius);
   
   if (boardPosition[yPosition][xPosition] == 0) {
   //White piece gradient
-  my_gradient.addColorStop(0, "white");
-  my_gradient.addColorStop(1, "#cfcfcf");
+  pieceGradient.addColorStop(0, "white");
+  pieceGradient.addColorStop(1, "#cfcfcf");
   contextPieces.strokeStyle = '#404040';  //Old value #585858
     }
     
   else if (boardPosition[yPosition][xPosition] == 1){
   //Black piece gradient
-  my_gradient.addColorStop(0, "#202020");
-  my_gradient.addColorStop(1, "black");
+  pieceGradient.addColorStop(0, "#202020");
+  pieceGradient.addColorStop(1, "black");
   contextPieces.strokeStyle = '#b3b3b3'; //'#E0E0E0'
      }
 
@@ -424,13 +430,12 @@ function drawPieces() {
   contextPieces.clearRect(centerX-25,centerY-25,50,50);
   contextPieces.beginPath();
   contextPieces.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-  contextPieces.fillStyle = my_gradient;
+  contextPieces.fillStyle = pieceGradient;
   contextPieces.lineWidth = 0.5;
   
   if (debugErrorMessage){console.log("Draw x: " + xPosition + " y: " + yPosition);}
   contextPieces.fill();
   contextPieces.stroke();
-  //document.getElementById("messages").innerHTML = "Please proceed!";
   }
 
 
@@ -440,9 +445,6 @@ window.debugMode = debugMode; //Assign function to global window property
 function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");return true;} 
   }
 
-
-
-
 } //End isClient
 
 
@@ -451,8 +453,26 @@ function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");ret
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
-  // var pieceData {
-  // }
+  console.log("Server started");
+  if(PieceCollection.find().count() === 0)
+      {
+        console.log('Adding initial')
+    var row0 = [null,null,null,null,null,null,null,null],
+    row1 = [null,null,null,null,null,null,null,null],
+    row2 = [null,null,null,null,null,null,null,null],
+    row3 = [null,null,null,0,1,null,null,null],
+    row4 = [null,null,null,1,0,null,null,null],
+    row5 = [null,null,null,null,null,null,null,null],
+    row6 = [null,null,null,null,null,null,null,null],
+    row7 = [null,null,null,null,null,null,null,null];
+//Define 2d array
+boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
+
+//PieceCollection.insert(boardPosition,console.log(result));
+
+
+  }
+
 
   });
   //*/
