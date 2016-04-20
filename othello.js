@@ -1,4 +1,4 @@
-// PieceCollection = new Mongo.Collection("piece-collection");
+// 
 
 if (Meteor.isClient) {
   //Require username for players
@@ -60,6 +60,8 @@ window.onload = function drawAll(){
   drawGrid();
   readArray();
   globalDebug();
+
+  $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
   // createCanvasChart();
   // $(window).resize(respondCanvas);
 }
@@ -222,8 +224,16 @@ for (y=0; y < boardPosition.length; y++) {
     gameOn = false;
     document.getElementById("turn").innerHTML = "Draw! How unusual!";
   }
-
-
+  else if (blackScore == 0){
+    clickInputAccepted = false;
+    gameOn = false;
+    document.getElementById("turn").innerHTML = "White player wins with " + whiteScore + " pieces!";
+    }
+  else if (whiteScore == 0){
+    clickInputAccepted = false;
+    gameOn = false;
+    document.getElementById("turn").innerHTML = "Black player wins with " + blackScore + " pieces!";
+    }
 }
 
 function listenMouseDown () {
@@ -449,14 +459,15 @@ function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");ret
 
 
 
+PieceCollection = new Mongo.Collection("piece-collection")
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
-  console.log("Server started");
+  console.log('Server started');
   if(PieceCollection.find().count() === 0)
       {
-        console.log('Adding initial')
+        console.log('Adding initial');
     var row0 = [null,null,null,null,null,null,null,null],
     row1 = [null,null,null,null,null,null,null,null],
     row2 = [null,null,null,null,null,null,null,null],
@@ -468,14 +479,14 @@ if (Meteor.isServer) {
 //Define 2d array
 boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
 
-//PieceCollection.insert(boardPosition,console.log(result));
+PieceCollection.insert(boardPosition);
 
 
   }
 
 
   });
-  //*/
+  
 }
 
 

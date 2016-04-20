@@ -20,7 +20,21 @@
   <em><p id="messages">Welcome to Othello! To start, place the white piece first.</p></em> 
   <div>
   {{> Othello}}
-  <div class="chatbox"></div></div>
+  <div class="chatbox">
+    <div id="chat-header">Chat with {{#if currentuser}}{{username}}{{/if}}</div>
+    <hr>
+    <div id ="chat-message">
+    {{>messages}}
+    <div id ="chat-end"></div>
+    </div>
+    
+    <hr>
+    <div id ="chat-input">
+    {{>input}}
+    </div>
+  </div>
+
+  </div>
 
 <!-- <span class="text"><strong>{{username}}</strong> - {{text}}</span> -->
 <!-- <canvas id="canvas" width="420px" height="420px"></canvas> -->
@@ -31,12 +45,21 @@
   <!-- <button>Don't Click Me</button> -->
   <!-- <p>You've pressed the button {{counter}} times.</p> -->
  
-  <div id="canvasesdiv" width="420px" height="420px">
- 
+  <div id="canvasesdiv" width="420px" height="420px"> 
   <canvas id="canvas1" width="420px" height="420px" style='width:420px;height:420px'></canvas>
   <canvas id="canvas2" width="420px" height="420px" style='width:420px;height:420px'></canvas>
   </div>
   
-  
+</template>
 
+<template name="messages">
+{{#each messages}}
+<strong>{{username}}:</strong> {{message}}<br>
+{{/each}}
+</template>
+
+<template name="input">
+  <form class="message-input" onsubmit="return false">
+  <p><input type="text" id="message" placeholder="Type to chat here"></p>
+  </form>
 </template>
