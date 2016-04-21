@@ -459,34 +459,3 @@ function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");ret
 
 
 
-PieceCollection = new Mongo.Collection("piece-collection")
-
-if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
-  console.log('Server started');
-  if(PieceCollection.find().count() === 0)
-      {
-        console.log('Adding initial');
-    var row0 = [null,null,null,null,null,null,null,null],
-    row1 = [null,null,null,null,null,null,null,null],
-    row2 = [null,null,null,null,null,null,null,null],
-    row3 = [null,null,null,0,1,null,null,null],
-    row4 = [null,null,null,1,0,null,null,null],
-    row5 = [null,null,null,null,null,null,null,null],
-    row6 = [null,null,null,null,null,null,null,null],
-    row7 = [null,null,null,null,null,null,null,null];
-//Define 2d array
-boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
-
-PieceCollection.insert(boardPosition);
-
-
-  }
-
-
-  });
-  
-}
-
-
