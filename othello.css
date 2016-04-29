@@ -3,13 +3,14 @@ body {
     /*background: #eff7ec;*/
     /*background: linear-gradient(#d7ded4, #f8fbf7); /*eff7ec*/
     background-image: linear-gradient(to bottom, rgba(161, 157, 162, 0.68), #918e82 100%);
-    font-family: sans-serif;
+    
     /*stop bg gradiant repeat*/
     height: 100%;
     margin: 0;
     background-repeat: no-repeat;
     background-attachment: fixed;
     font-size: 14px;
+    font-family: sans-serif;
 	}
 
 header {
@@ -44,7 +45,7 @@ header {
 #chat-header {
     
 /*    background: linear-gradient(to bottom right, rgba(175, 175, 175, .1), rgba(175, 175, 175, .80));
-*/    min-height: 0px;
+*/  min-height: 0px;
     text-align: center;
     margin-top: 10px;
 }
@@ -78,23 +79,39 @@ hr {
     height: 1px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, .35), rgba(0, 0, 0, 0));
 }
-
-
 /*}
 ul {
     list-style-type: none;
 }*/
+.button {
+    float: right;
+    border: none;
+    background-image: linear-gradient(to top, #e6e6e6 , #ffffff);
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 4px 2px;
+    padding: 8px 15px;
+    border-radius: 3px;
+}
 
+#login-name-link {
+        /*background-image: linear-gradient(to top, #e6e6e6 , #ffffff);*/
+
+}
 
 div#login-buttons {
     float: right;
     font-size: 20px;
-}
 
 
-button#resetButton {
-    float: right;
-}
+    }
+#login-buttons a {
+    text-decoration: none;
+    }
+
 #score {
     float: right;
     width: 65%;
@@ -113,7 +130,7 @@ button#resetButton {
 #login-dropdown-list {
     right: 1px;
     left: initial;
-}
+    }
 #login-buttons .login-close-text {
     float: right;
 }
@@ -169,6 +186,5 @@ h1 {
 h3 {
     font-weight: lighter;
     }    
-p {
-    }
+
 

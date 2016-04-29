@@ -1,22 +1,9 @@
-// 
-
 if (Meteor.isClient) {
-  //Require username for players
-
+  
+//Require username for players
 Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   });
-
-// //Example helpers
-//   // counter starts at 0
-//   Session.setDefault('counter', 0);
-//   Template.hello.helpers({
-//     counter: function () {
-//       return Session.get('counter');// } });
-//   Template.hello.events({
-//     'click button': function () {
-//       // increment the counter when button is clicked
-//       Session.set('counter', Session.get('counter') + 1); }  });
 
 //Global for access from console
 var debugErrorMessage = false;
@@ -24,24 +11,15 @@ var debugErrorMessage = false;
 //defining layers for canvas
 var layer1;
 var layer2;
-//For resizing
 
+//For resizing
 var cellWidth;
 var padding;
 var radius;
 
-//Global variables instantiated for use in translateCoordinate and drawPieces
-// var xPosition;
-// var yPosition;
-// Global for addPiece function
-//var cell_x;
-//var cell_y;
-
-
-
 //Data
 var boardPosition; //Holds 2d array of piece data
-var flipCoordinate_x = [];
+var flipCoordinate_x = []; //Temporary coordinate array for holding pieces that need to be flipped
 var flipCoordinate_y = [];
 
 //States
@@ -49,21 +27,34 @@ var intSet; //Used in interval delay function
 var clickInputAccepted = true; //Used to lock the player while setInterval is repeating/flipping
 var gameOn = true;
 var playerTurn;
-// var blackScore;
-// var whiteScore;
-
 
 //Wait for window load before calling initial functions
 window.onload = function drawAll(){
+ 
+  // boardPosition = global.boardPosition.toArray;
   init();
   setInitialPosition();
   drawGrid();
   readArray();
   globalDebug();
 
+  // var arrayValue = PieceCollection.findOne({_id: "game1"},{"matrix": 1, _id: 0}).toArray().map( function(m) {return m.text;});
+  // var arrayValue = JSON.parse(PieceCollection.findOne({_id: "game1"},{'gamedata.0.1': 1 ,_id: 0});
+  // console.log("Array value: " + arrayValue);
+
+  // var valuePiece = JSON.parse(PieceCollection.findOne({_id: "game1"},{"gamedata.1": 1 , _id:0})).toArray();
+  // console.log("value: "+valuePiece[2]);
+var convertedJSON = PieceCollection.findOne({_id: "game1"});
+console.log(convertedJSON);
+
+
   $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
   // createCanvasChart();
-  // $(window).resize(respondCanvas);
+  $(window).resize(function(){
+    drawGrid();
+    // readArray();
+
+    });
 }
 
 // function respondCanvas (){
@@ -87,7 +78,7 @@ layer2.addEventListener("mousedown",listenMouseDown, false);
 playerTurn = 0; //white
 document.getElementById("resetButton").addEventListener("click", function(){
   clearArray();
-  setInitialPosition();
+  setInitialPosition(); //Local function for testing
   readArray();
   clickInputAccepted = true;
   gameOn = true;
@@ -95,6 +86,11 @@ document.getElementById("resetButton").addEventListener("click", function(){
   document.title = "Othello";
     
   
+  });
+document.getElementById("skipTurn").addEventListener("click", function(){
+  clickInputAccepted = true;
+  gameOn = true;
+  switchTurn();  
   });
 }
 
@@ -160,9 +156,11 @@ function clearArray(){
         }}}
         document.getElementById("score").innerHTML = "";
 }
+//DEPRECATED THIS FUNCTION AND AM LOOPING THROUGH USING INTERVAL DELAY
 //While (flipCoordinate_x.length > 0){
      // cell_x = flipCoordinate_x.pop();
     // cell_y = flipCoordinate_y.pop();
+
 function flippingLogTextAnimation(){
   if (document.getElementById("messages").innerHTML == "Flipping.....")
    document.getElementById("messages").innerHTML = "Flipping..";
@@ -191,9 +189,7 @@ function returnFlipCoordinate(){
   }
 
 function calculateScore(){
-//Reads the initialized array and draws the start position
 var x, y;
-//clear global variable count
 var whiteScore = 0;
 var blackScore = 0;
 for (y=0; y < boardPosition.length; y++) {
@@ -234,6 +230,7 @@ for (y=0; y < boardPosition.length; y++) {
     gameOn = false;
     document.getElementById("turn").innerHTML = "Black player wins with " + blackScore + " pieces!";
     }
+
 }
 
 function listenMouseDown () {

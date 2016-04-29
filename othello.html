@@ -9,17 +9,20 @@
   <h1>Othello</h1>
   
 
-  <div id="login-buttons">{{> loginButtons}} <p><br> <button type="button" id="resetButton">Reset match</button></p></div>
+  <div id="login-buttons">{{> loginButtons}} <p><br> <button type="button" class = "button" id="resetButton">Reset match</button>
+  <button type="button" class = "button" id="skipTurn">Skip Turn</button></p></div>
   
   <div>
   <p id="turn">Player Turn: White</p> 
   <p id="score"></p>
   </div>
-  
   </header>
+  
   <em><p id="messages">Welcome to Othello! To start, place the white piece first.</p></em> 
+
   <div>
   {{> Othello}}
+
   <div class="chatbox">
     <div id="chat-header">Chat with {{#if currentuser}}{{username}}{{/if}}</div>
     <hr>
@@ -32,24 +35,23 @@
     <div id ="chat-input">
     {{>input}}
     </div>
+  
+    </div>
   </div>
-
-  </div>
-
+  
 <!-- <span class="text"><strong>{{username}}</strong> - {{text}}</span> -->
 <!-- <canvas id="canvas" width="420px" height="420px"></canvas> -->
-  </div>
+</div>
+
 </body>
 
 <template name="Othello">
-  <!-- <button>Don't Click Me</button> -->
-  <!-- <p>You've pressed the button {{counter}} times.</p> -->
+ 
  
   <div id="canvasesdiv" width="420px" height="420px"> 
   <canvas id="canvas1" width="420px" height="420px" style='width:420px;height:420px'></canvas>
   <canvas id="canvas2" width="420px" height="420px" style='width:420px;height:420px'></canvas>
-  </div>
-  
+  </div>  
 </template>
 
 <template name="messages">
