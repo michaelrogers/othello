@@ -3,7 +3,6 @@ body {
     /*background: #eff7ec;*/
     /*background: linear-gradient(#d7ded4, #f8fbf7); /*eff7ec*/
     background-image: linear-gradient(to bottom, rgba(161, 157, 162, 0.68), #918e82 100%);
-    
     /*stop bg gradiant repeat*/
     height: 100%;
     margin: 0;
@@ -18,6 +17,7 @@ header {
     background-image: linear-gradient(to bottom right, rgba(173, 204, 165, 0.75), #e1e5f0 100%);
     padding: 20px 15px 15px 15px;
     position: relative;
+    box-shadow: 0px 0px 5px grey;
     }
 
 .container {
@@ -26,8 +26,8 @@ header {
     min-height: 650px;
     margin: 0 auto;
     background: white;
+    box-shadow: 5px 5px 8px grey;
     }
-
 
 .chatbox {
     max-width: 420px;
@@ -40,15 +40,14 @@ header {
     margin: 0px 20px 0px 20px;
     word-wrap: break-word;
     /*border-radius: 0 8px 8px 0;*/
-}
+    }
 
 #chat-header {
-    
-/*    background: linear-gradient(to bottom right, rgba(175, 175, 175, .1), rgba(175, 175, 175, .80));
+    /*    background: linear-gradient(to bottom right, rgba(175, 175, 175, .1), rgba(175, 175, 175, .80));
 */  min-height: 0px;
     text-align: center;
     margin-top: 10px;
-}
+    }
 
 #chat-message {
     height: 85%;
@@ -58,7 +57,7 @@ header {
 */    /*margin-top: 1em;*/
     overflow-y: scroll;
     max-height: 330px;
-}
+    }
 
 .message-input input {
     width: 90%;
@@ -69,16 +68,24 @@ header {
     padding-left: 20px;
     padding-right: 20px;
     font-size: 1em;
-    
     /*box-sizing: border-box;*/
     outline: none; /*Prevent browser outline*/
     }
+
+input:focus {
+    /*box-shadow: inset 0px 0px 1px 0px rgba(0, 0, 0, 0.2);*/
+    /*outline: none;*/
+    }
+
+ input#message {
+    background: transparent !important;
+    }       
 
 hr {
     border: 0;
     height: 1px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, .35), rgba(0, 0, 0, 0));
-}
+    }
 /*}
 ul {
     list-style-type: none;
@@ -95,19 +102,21 @@ ul {
     margin: 4px 2px;
     padding: 8px 15px;
     border-radius: 3px;
-}
+    }
+
+.button:hover {
+    background-image: linear-gradient(to top, #cfcfcf, #ffffff);
+    }
 
 #login-name-link {
         /*background-image: linear-gradient(to top, #e6e6e6 , #ffffff);*/
-
-}
+    }
 
 div#login-buttons {
     float: right;
     font-size: 20px;
+   }
 
-
-    }
 #login-buttons a {
     text-decoration: none;
     }
@@ -117,23 +126,25 @@ div#login-buttons {
     width: 65%;
     margin: 0px 0px 8px 0px;
     display: inline
-}
+    }
 /*For error handling and move updates*/
 #messages {
     margin-left: 26px;
-}
+    }
+
 #turn {
     display: inline;
     /*float: left;*/
-}
+    }
 
 #login-dropdown-list {
     right: 1px;
     left: initial;
     }
+
 #login-buttons .login-close-text {
     float: right;
-}
+    }
 /*@media(max-width:1200px) {
     canvas {
             width: 100%;
@@ -155,17 +166,20 @@ canvas {
     /*border-radius: 8px 0 0 8px;*/
 	border-radius: 8px;
     	}
+
 #canvas2 {
     /*Board with pieces*/
     background: initial;
     /*position: relative;*/
     }
+
 #canvas1 {
     /*Board with grid lines*/
     background: radial-gradient(circle, #9fd38e, #56a33d,
     #396d28);
     /*position: relative;*/
     }
+
 #canvasesdiv {
     position: relative;
 
@@ -183,6 +197,7 @@ h1 {
     margin-right: 1em;
     font-weight: lighter;
     }
+
 h3 {
     font-weight: lighter;
     }    

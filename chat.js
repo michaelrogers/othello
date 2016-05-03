@@ -1,10 +1,8 @@
 
 if (Meteor.isClient) {
-  
-    Template.messages.helpers({
+      Template.messages.helpers({
         messages: function() {
             return ChatMessages.find({}, { sort: { time: 1}}); //Ascending order; newest messages on bottom
-
         }
     });
 
@@ -21,14 +19,13 @@ if (Meteor.isClient) {
               username: name,
               message: message.value,
               time: Date.now(),
-            });
-            // $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
-            // event.stopPropagation();
+              });
+              $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
+              event.stopPropagation();
+              document.getElementById('message').value = ''; //Clear message element after insert
+              // message.value = '';
 
-            document.getElementById('message').value = ''; //Clear message element after insert
-            message.value = '';
-
-          }
+              }
         }
       }
     }

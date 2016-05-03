@@ -1,6 +1,5 @@
 if (Meteor.isClient) {
-  
-//Require username for players
+  //Require username for players
 Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   });
@@ -12,12 +11,12 @@ var debugErrorMessage = false;
 var layer1;
 var layer2;
 
-//For resizing
+//Canvas variables for window resizing
 var cellWidth;
 var padding;
 var radius;
 
-//Data
+//Local gamePiece Data
 var boardPosition; //Holds 2d array of piece data
 var flipCoordinate_x = []; //Temporary coordinate array for holding pieces that need to be flipped
 var flipCoordinate_y = [];
@@ -30,30 +29,18 @@ var playerTurn;
 
 //Wait for window load before calling initial functions
 window.onload = function drawAll(){
- 
-  // boardPosition = global.boardPosition.toArray;
   init();
   setInitialPosition();
   drawGrid();
   readArray();
   globalDebug();
-
-  // var arrayValue = PieceCollection.findOne({_id: "game1"},{"matrix": 1, _id: 0}).toArray().map( function(m) {return m.text;});
-  // var arrayValue = JSON.parse(PieceCollection.findOne({_id: "game1"},{'gamedata.0.1': 1 ,_id: 0});
-  // console.log("Array value: " + arrayValue);
-
-  // var valuePiece = JSON.parse(PieceCollection.findOne({_id: "game1"},{"gamedata.1": 1 , _id:0})).toArray();
-  // console.log("value: "+valuePiece[2]);
-var convertedJSON = PieceCollection.findOne({_id: "game1"});
-console.log(convertedJSON);
-
-
-  $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
-  // createCanvasChart();
+  readCollection();
+   // createCanvasChart();
+  $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
+  
   $(window).resize(function(){
     drawGrid();
     // readArray();
-
     });
 }
 
@@ -64,8 +51,21 @@ console.log(convertedJSON);
 // //layer 2 = pieces
 // layer2 = document.getElementById("canvas2");
 // contextPieces = layer2.getContext("2d");
-
 // }
+
+function readCollection(){
+  console.log(PieceCollection.findOne({_id: "game1"}, {_id: 0, gameData: 1}));
+  PieceCollection.findOne({_id: "game1"}, {gameData: 1, _id: 0}, function(err, res){
+  console.log("hi");
+  if (!err) {
+    console.log(res);
+    }
+  else {
+    console.log(err);
+    throw new Meteor.Error(400, "Invalid");
+    }
+    });
+    }
 
 function init() {
 //layer 1 = board with lines
@@ -76,24 +76,30 @@ layer2 = document.getElementById("canvas2");
 contextPieces = layer2.getContext("2d");
 layer2.addEventListener("mousedown",listenMouseDown, false);
 playerTurn = 0; //white
+
 document.getElementById("resetButton").addEventListener("click", function(){
   clearArray();
   setInitialPosition(); //Local function for testing
   readArray();
   clickInputAccepted = true;
   gameOn = true;
-  playerTurn = 0;
+  if (playerTurn=1){
+      switchTurn();
+      }
   document.title = "Othello";
-    
+   }); 
   
-  });
 document.getElementById("skipTurn").addEventListener("click", function(){
   clickInputAccepted = true;
   gameOn = true;
   switchTurn();  
   });
-}
 
+//Scroll down to the bottom of chat div
+$("input[type=text]").focus(function(){
+    $(this).css("background","#ffffff");
+  });
+}//init
 
 function setInitialPosition(){
 //Initialize beginning board position
@@ -143,6 +149,7 @@ for (y=0; y < boardPosition.length; y++) {
       drawPieces(y,x);
     }}}
   }
+
 function clearArray(){
   var x, y;
   for (y=0; y < boardPosition.length; y++) {
@@ -170,7 +177,6 @@ function flippingLogTextAnimation(){
    document.getElementById("messages").innerHTML = flippingTextValue + ".";
     }
   }
-
 
 function intervalDelay(){intSet = setInterval(returnFlipCoordinate,500);} 
 function returnFlipCoordinate(){
@@ -201,6 +207,7 @@ for (y=0; y < boardPosition.length; y++) {
       blackScore +=1;
     }
     }}
+
   //console.log("White: "+ whiteScore  + " Black: " + blackScore);
   if (whiteScore + blackScore <= 64){
   document.getElementById("score").innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
@@ -209,11 +216,13 @@ for (y=0; y < boardPosition.length; y++) {
     clickInputAccepted = false;
     gameOn = false;
     document.getElementById("turn").innerHTML = "White player wins with " + whiteScore + " pieces!";
+    document.getElementById("score").innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
   }
   else if (whiteScore + blackScore == 64 && blackScore > whiteScore){
     clickInputAccepted = false;
     gameOn = false;
     document.getElementById("turn").innerHTML = "Black player wins with " + blackScore + " pieces!";
+    document.getElementById("score").innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
   }
   else if (whiteScore + blackScore == 64 && blackScore == whiteScore){
     clickInputAccepted = false;
@@ -230,7 +239,6 @@ for (y=0; y < boardPosition.length; y++) {
     gameOn = false;
     document.getElementById("turn").innerHTML = "Black player wins with " + blackScore + " pieces!";
     }
-
 }
 
 function listenMouseDown () {
@@ -322,19 +330,16 @@ function validMove(cell_y,cell_x){
                 }
                 noOppositeMatch = false;
                 break;
-                
                 }
               else if (boardPosition[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] == null){break;} //Break the loop if it encounters an empty tile
-
               else if (boardPosition[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] != playerTurn){continue;} //If the piece beyond the adjacent is the same as the playerTurn, continue the for loop and increase the multFactor
-              //multFactor += 1;
               }
              }
             }
           }      
         }                  
-      
       }
+      
     if (noOppositeMatch) {
       document.getElementById("messages").innerHTML = "Invalid Move: Can't let you do that star fox!";
       if (debugErrorMessage){console.log("Invalid move");}
@@ -342,7 +347,6 @@ function validMove(cell_y,cell_x){
     }
     else if (noOppositeMatch == false){
       addPiece(cell_y,cell_x); //Add selection piece first
-      
       intervalDelay(); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
 
       //Function to read the flipCoordinate arrays and then add/flip pieces
@@ -355,10 +359,7 @@ function validMove(cell_y,cell_x){
         //TODO: Add click lockout while setInterval is repeating
                 
       }
-
-    
-  }
-
+    }
 
 function addPiece (cell_y,cell_x) {
   var thisCell = boardPosition[cell_y][cell_x];
@@ -380,6 +381,7 @@ function addPiece (cell_y,cell_x) {
   drawPieces(cell_y,cell_x);
   calculateScore();
 }
+
 //FOR USE LATER FOR CANVAS CHART
 //Code to createCanvasChart for eventual graphing of playerPieceCount
 // function createCanvasChart () {
@@ -443,7 +445,7 @@ function drawPieces(yPosition,xPosition) {
   if (debugErrorMessage){console.log("Draw x: " + xPosition + " y: " + yPosition);}
   contextPieces.fill();
   contextPieces.stroke();
-  }
+    }
 
 
 //Accessible through the console for debugging purposes
