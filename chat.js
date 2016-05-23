@@ -2,9 +2,12 @@
 if (Meteor.isClient) {
       Template.messages.helpers({
         messages: function() {
-            return ChatMessages.find({}, { sort: { time: 1}}); //Ascending order; newest messages on bottom
-        }
-    });
+            return ChatMessages.find({}, { sort: { time: 1}}, function (){
+
+            });
+            $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
+           }
+           });
 
     Template.input.events = {
       'keydown input#message' : function (event) {
@@ -21,7 +24,7 @@ if (Meteor.isClient) {
               time: Date.now(),
               });
               $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
-              event.stopPropagation();
+              // event.stopPropagation();
               document.getElementById('message').value = ''; //Clear message element after insert
               // message.value = '';
 

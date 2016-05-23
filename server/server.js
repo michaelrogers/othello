@@ -20,8 +20,7 @@ if (Meteor.isServer) {
     5: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null}, 
     6: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null}, 
     7: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null} 
-   
-          };
+       };
     //NOTES:
     //"3": [{0: null}, {1: null}, {2: null}, {3: 1}, {4: 1}, {5: null}, {6: null}, {7: null}], //Note: This format returns the object associated with the index instead of the field value.
     //"0": {{"0": null}, {"1": null}, {"2": null}, {"3": null}, {"4": null}, {"5": null}, {"6": null}, {"7": null}}, //Note: improper format
@@ -29,7 +28,7 @@ if (Meteor.isServer) {
        
         // }; //PieceCollection
         PieceCollection.update({_id: "game1"}, { $set: {gameData: serverData}}, {upsert: true});
-        console.log(PieceCollection.findOne({_id: "game1"},{"gameData": 1, _id: 0}));
+        // console.log(PieceCollection.findOne({_id: "game1"},{"gameData": 1, _id: 0}));
           
           // var pieceObject = PieceCollection.findOne({_id: "game1"},{gameData: 1, _id: 0});
           //   console.log(pieceObject);

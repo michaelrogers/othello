@@ -24,7 +24,7 @@
   {{> Othello}}
 
   <div class="chatbox">
-    <div id="chat-header">Chat with {{#if currentuser}}{{username}}{{/if}}</div>
+    <div id="chat-header">Chat with {{#if currentuser}}{{username}}.value{{/if}}</div>
     <hr>
     <div id ="chat-message">
     {{>messages}}
@@ -55,13 +55,21 @@
 </template>
 
 <template name="messages">
+{{#if Template.subscriptionsReady}}
 {{#each messages}}
 <strong>{{username}}:</strong> {{message}}<br>
 {{/each}}
+  {{else}}
+    {{>loading}}
+  {{/if}}
 </template>
 
 <template name="input">
   <form class="message-input" onsubmit="return false">
   <p><input type="text" id="message" placeholder="Type to chat here"></p>
   </form>
+</template>
+
+<template name="loading">
+<p>Loading...</p>
 </template>

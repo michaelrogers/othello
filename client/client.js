@@ -3,39 +3,32 @@ if (Meteor.isClient) {
 Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   });
+Session.set('data_loaded', false);
 
 //Global for access from console
 var debugErrorMessage = false;
-
+var currentGameId = "game1";
 //defining layers for canvas
-var layer1;
-var layer2;
-
+var layer1, layer2;
 //Canvas variables for window resizing
-var cellWidth;
-var padding;
-var radius;
-
+var cellWidth, padding, radius;
 //Local gamePiece Data
 var boardPosition; //Holds 2d array of piece data
-var flipCoordinate_x = []; //Temporary coordinate array for holding pieces that need to be flipped
-var flipCoordinate_y = [];
-
+var flipCoordinate_x = [], flipCoordinate_y = []; //Temporary coordinate array for holding pieces that need to be flipped
 //States
 var intSet; //Used in interval delay function
 var clickInputAccepted = true; //Used to lock the player while setInterval is repeating/flipping
 var gameOn = true;
 var playerTurn;
-
+var currentGameObject;
 //Wait for window load before calling initial functions
 window.onload = function drawAll(){
   init();
   setInitialPosition();
   drawGrid();
-  readArray();
+  // readArray();
   globalDebug();
-  readCollection();
-   // createCanvasChart();
+  readCollection();  
   $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
   
   $(window).resize(function(){
@@ -43,7 +36,6 @@ window.onload = function drawAll(){
     // readArray();
     });
 }
-
 // function respondCanvas (){
 // //layer 1 = board with lines
 // layer1 = document.getElementById("canvas1");
@@ -54,18 +46,44 @@ window.onload = function drawAll(){
 // }
 
 function readCollection(){
-  console.log(PieceCollection.findOne({_id: "game1"}, {_id: 0, gameData: 1}));
-  PieceCollection.findOne({_id: "game1"}, {gameData: 1, _id: 0}, function(err, res){
-  console.log("hi");
-  if (!err) {
-    console.log(res);
+ 
+  var currentGameSelector = {_id: "game1"};
+  var currentGameOptions = {_id: 0, gameData: 1};
+  var currentGameDocument = (PieceCollection.findOne(currentGameSelector, currentGameOptions));
+  // var currentGameObject = (PieceCollection.find({_id: "game1"}, {_id: 0, gameData: 1}).fetch());
+  if (currentGameDocument === undefined) {
+    console.log("GameDocument undefined");
     }
   else {
-    console.log(err);
-    throw new Meteor.Error(400, "Invalid");
-    }
-    });
-    }
+  // console.log(currentGameDocument);
+  currentGameObject = currentGameDocument['gameData'];
+  // console.log(currentGameObject[3][4]);
+  var x, y;
+  for (y=0; y < Object.keys(currentGameObject).length; y++) {
+    for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
+        boardPosition[y][x] = currentGameObject[y][x]
+      if (currentGameObject[y][x] !== null) {
+        drawPieces(y,x);
+        // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
+        }
+      }}
+   } 
+  // PieceCollection.findOne(currentGameSelector, {_id: 0, gameData: 1}, function(err, res){
+  // console.log("hi");
+  // if (!err) {
+  //   console.log(res);
+  //   }
+
+  //  else if (err == undefined){
+  //   console.log('undefined');
+  //  } 
+
+  // else {
+  //   console.log(err);
+  //   throw new Meteor.Error(400, "Invalid");
+  //   }
+  //   });
+}
 
 function init() {
 //layer 1 = board with lines
@@ -79,8 +97,9 @@ playerTurn = 0; //white
 
 document.getElementById("resetButton").addEventListener("click", function(){
   clearArray();
-  setInitialPosition(); //Local function for testing
-  readArray();
+  // setInitialPosition(); //Local function for testing
+  // readArray();
+  readCollection();
   clickInputAccepted = true;
   gameOn = true;
   if (playerTurn=1){
@@ -144,9 +163,7 @@ var x, y;
 for (y=0; y < boardPosition.length; y++) {
   for (x=0; x < boardPosition[y].length; x++){
     if (boardPosition[y][x] !== null) {
-      //xPosition = x;
-      //yPosition = y;
-      drawPieces(y,x);
+        drawPieces(y,x);
     }}}
   }
 
@@ -157,16 +174,10 @@ function clearArray(){
       
       if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
         boardPosition[y][x] = null;
-        // xPosition = x;
-        // yPosition = y;
         drawPieces(y,x);
         }}}
         document.getElementById("score").innerHTML = "";
 }
-//DEPRECATED THIS FUNCTION AND AM LOOPING THROUGH USING INTERVAL DELAY
-//While (flipCoordinate_x.length > 0){
-     // cell_x = flipCoordinate_x.pop();
-    // cell_y = flipCoordinate_y.pop();
 
 function flippingLogTextAnimation(){
   if (document.getElementById("messages").innerHTML == "Flipping.....")
@@ -190,14 +201,17 @@ function returnFlipCoordinate(){
   else {
   clearInterval(intSet);
   clickInputAccepted = true;
+  //Update Collection after all pieces are flipped and the currentGameObject has reflected all of the changes
+  // PieceCollection.update({_id: "game1"}, { $set: {gameData: currentGameObject}}, {upsert: true})
+  updateGameData();
+  // readCollection();
   if(gameOn){ switchTurn();}
     }
   }
 
 function calculateScore(){
 var x, y;
-var whiteScore = 0;
-var blackScore = 0;
+var whiteScore = 0,  blackScore = 0;
 for (y=0; y < boardPosition.length; y++) {
   for (x=0; x < boardPosition[y].length; x++){
     if (boardPosition[y][x] == 0){
@@ -208,7 +222,6 @@ for (y=0; y < boardPosition.length; y++) {
     }
     }}
 
-  //console.log("White: "+ whiteScore  + " Black: " + blackScore);
   if (whiteScore + blackScore <= 64){
   document.getElementById("score").innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
   }
@@ -314,12 +327,10 @@ function validMove(cell_y,cell_x){
             //Evaluating for the opposite of playerTurn value
             if (adjacentCellValue != playerTurn && typeof adjacentCellValue != 'undefined' && adjacentCellValue != null){
                if (debugErrorMessage){console.log("Adj x: " + (cell_x+dx) + " y: " + (cell_y+dy));} //Log the coordinates of the adjacent cell being checked to the console for debugging purposes
-                      
-             //Evaluating the piece(s) beyond the adjacent tile to ensure that a flip is possible
+              //Evaluating the piece(s) beyond the adjacent tile to ensure that a flip is possible
              for (multFactor = 2; (cell_y+(dy*multFactor)) >= 0 && (cell_x+(dx*multFactor)) >= 0 && (cell_y+(dy*multFactor)) <= 7 && (cell_x+(dx*multFactor)) <= 7; multFactor++){
              //while ((cell_y+(dy*multFactor)) >= 0, (cell_x+(dx*multFactor)) >= 0, (cell_y+(dy*multFactor)) <= 7, (cell_x+(dx*multFactor)) <= 7){
                if (debugErrorMessage){console.log("Mult: " + multFactor + " x: "+ (cell_x+(dx*multFactor)) +" y: "+ (cell_y+(dy*multFactor)));}
-               
                if (boardPosition[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] == playerTurn){ //If the end piece is the same as the player's color, write to a temporary array
                 multFactor -= 1; //To account for not flipping the end piece because the end piece has the max multFactor
                 while (multFactor >= 1){ //Write the coordinates of pieces that need to be flipped
@@ -348,23 +359,15 @@ function validMove(cell_y,cell_x){
     else if (noOppositeMatch == false){
       addPiece(cell_y,cell_x); //Add selection piece first
       intervalDelay(); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
-
-      //Function to read the flipCoordinate arrays and then add/flip pieces
-      //for (var i=0; i<flipCoordinate_x.length; i++){
-        //cell_x = flipCoordinate_x[i];
-        //cell_y = flipCoordinate_y[i];
-        //addPiece();
-        // console.log("Index: "+ i + " x: "+ flipCoordinate_x[i] + " y: " + flipCoordinate_y[i]);
-        //TODO: pass SetInterval on each loop and execute function with .pop() method
-        //TODO: Add click lockout while setInterval is repeating
-                
       }
     }
 
 function addPiece (cell_y,cell_x) {
   var thisCell = boardPosition[cell_y][cell_x];
+  
   if (thisCell == null){
     boardPosition[cell_y][cell_x] = playerTurn;
+    currentGameObject[cell_y][cell_x] = playerTurn;
     //Move flip function to after draw 
     //Believe I can return this to default behavior, changed due to troubleshooting. 
      //switchTurn();  //MOVED: To after pieces are finished flipping
@@ -372,14 +375,31 @@ function addPiece (cell_y,cell_x) {
   //Leaving manual flipping functionality in place for testing
   else if (thisCell == 0){
     boardPosition[cell_y][cell_x] = 1;
+    currentGameObject[cell_y][cell_x] = 1;
+    
     }
   else if (thisCell == 1){ //This will be commented out eventually, used for testing
     boardPosition[cell_y][cell_x] = 0;
+    currentGameObject[cell_y][cell_x] = 0;
     }
   // xPosition = cell_x;
   // yPosition = cell_y;
   drawPieces(cell_y,cell_x);
+  // PieceCollection.update({_id: "game1"}, { $set: {gameData: currentGameObject}}, {upsert: true})
   calculateScore();
+}
+
+function updateGameData() {
+  Meteor.call('othello.updateGameData', {
+  gameId: currentGameId,
+  changedGameData: currentGameObject
+}, (err, res) => {
+  if (err) {
+    alert(err);
+  } else {
+    console.log("Great success!");
+  }
+});
 }
 
 //FOR USE LATER FOR CANVAS CHART
@@ -446,8 +466,6 @@ function drawPieces(yPosition,xPosition) {
   contextPieces.fill();
   contextPieces.stroke();
     }
-
-
 //Accessible through the console for debugging purposes
 function globalDebug(){
 window.debugMode = debugMode; //Assign function to global window property
@@ -455,6 +473,3 @@ function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");ret
   }
 
 } //End isClient
-
-
-
