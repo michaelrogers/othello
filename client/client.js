@@ -1,92 +1,63 @@
 if (Meteor.isClient) {
-  //Require username for players
-Accounts.ui.config({
-    passwordSignupFields: "USERNAME_ONLY"
-  });
-Session.set('data_loaded', false);
+//Require username for players
+Accounts.ui.config({  passwordSignupFields: "USERNAME_ONLY"  });
 
 //Global for access from console
 var debugErrorMessage = false;
-var currentGameId = "game1";
 //defining layers for canvas
 var layer1, layer2;
 //Canvas variables for window resizing
 var cellWidth, padding, radius;
-//Local gamePiece Data
+//Local gamePiece Data -----
 var boardPosition; //Holds 2d array of piece data
 var flipCoordinate_x = [], flipCoordinate_y = []; //Temporary coordinate array for holding pieces that need to be flipped
-//States
+//States ------
 var intSet; //Used in interval delay function
 var clickInputAccepted = true; //Used to lock the player while setInterval is repeating/flipping
 var gameOn = true;
 var playerTurn;
 var currentGameObject;
-//Wait for window load before calling initial functions
-window.onload = function drawAll(){
-  init();
+var currentGameId = "game1";
+window.returnGameDocument = returnGameDocument;
+var updatedFromThisClient = false;
+
+Template.Othello.helpers({
+  autoRun: function () {
+  Tracker.autorun(function(){
+  Meteor.subscribe("piece-collection", function (){
+  var updateAvailable = Session.get('updateAvailable');
+  console.log(updateAvailable);
+  console.log("Othello helper ran");
+  returnGameDocument();
+   });
+  });
+  }
+});
+
+PieceCollection.find().observeChanges({
+   added: function () {
+       returnGameDocument();
+   },
+   changed: function () {
+       returnGameDocument();
+   },
+   removed: function () {
+       
+  }
+});
+
+window.onload = function init(){
+  getCanvasContext();
   setInitialPosition();
   drawGrid();
-  // readArray();
   globalDebug();
-  readCollection();  
+
   $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
-  
-  $(window).resize(function(){
-    drawGrid();
-    // readArray();
-    });
+  $(window).resize(function(){drawGrid();});
 }
-// function respondCanvas (){
-// //layer 1 = board with lines
-// layer1 = document.getElementById("canvas1");
-// context = layer1.getContext("2d");
-// //layer 2 = pieces
-// layer2 = document.getElementById("canvas2");
-// contextPieces = layer2.getContext("2d");
-// }
-
-function readCollection(){
  
-  var currentGameSelector = {_id: "game1"};
-  var currentGameOptions = {_id: 0, gameData: 1};
-  var currentGameDocument = (PieceCollection.findOne(currentGameSelector, currentGameOptions));
-  // var currentGameObject = (PieceCollection.find({_id: "game1"}, {_id: 0, gameData: 1}).fetch());
-  if (currentGameDocument === undefined) {
-    console.log("GameDocument undefined");
-    }
-  else {
-  // console.log(currentGameDocument);
-  currentGameObject = currentGameDocument['gameData'];
-  // console.log(currentGameObject[3][4]);
-  var x, y;
-  for (y=0; y < Object.keys(currentGameObject).length; y++) {
-    for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
-        boardPosition[y][x] = currentGameObject[y][x]
-      if (currentGameObject[y][x] !== null) {
-        drawPieces(y,x);
-        // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
-        }
-      }}
-   } 
-  // PieceCollection.findOne(currentGameSelector, {_id: 0, gameData: 1}, function(err, res){
-  // console.log("hi");
-  // if (!err) {
-  //   console.log(res);
-  //   }
-
-  //  else if (err == undefined){
-  //   console.log('undefined');
-  //  } 
-
-  // else {
-  //   console.log(err);
-  //   throw new Meteor.Error(400, "Invalid");
-  //   }
-  //   });
-}
-
-function init() {
-//layer 1 = board with lines
+function getCanvasContext() {
+ //layer 1 = board with lines
 layer1 = document.getElementById("canvas1");
 context = layer1.getContext("2d");
 //layer 2 = pieces
@@ -96,15 +67,10 @@ layer2.addEventListener("mousedown",listenMouseDown, false);
 playerTurn = 0; //white
 
 document.getElementById("resetButton").addEventListener("click", function(){
-  clearArray();
-  // setInitialPosition(); //Local function for testing
-  // readArray();
   readCollection();
   clickInputAccepted = true;
   gameOn = true;
-  if (playerTurn=1){
-      switchTurn();
-      }
+  if (playerTurn=1){ switchTurn(); }
   document.title = "Othello";
    }); 
   
@@ -143,7 +109,6 @@ padding = 10; //padding around grid
 //draw vertical lines of grid
 context.beginPath();
 for (var x = 0; x <= boardWidth; x += 50) {
-    
     context.moveTo(0.5 + x + padding, padding);
     context.lineTo(0.5 + x + padding, boardHeight + padding);
   }
@@ -151,33 +116,33 @@ for (var x = 0; x <= boardWidth; x += 50) {
   for (var x = 0; x <= boardHeight; x += 50) {
     context.moveTo(padding, 0.5 + x + padding);
     context.lineTo(boardWidth + padding, 0.5 + x + padding);
-  }
+   }
   context.strokeStyle = "#323232";
   context.lineWidth = 1;
   context.stroke();
   }
 
-function readArray(){
-//Reads the initialized array and draws the start position
-var x, y;
-for (y=0; y < boardPosition.length; y++) {
-  for (x=0; x < boardPosition[y].length; x++){
-    if (boardPosition[y][x] !== null) {
-        drawPieces(y,x);
-    }}}
-  }
+// function readArray(){
+// //Reads the initialized array and draws the start position
+// var x, y;
+// for (y=0; y < boardPosition.length; y++) {
+//   for (x=0; x < boardPosition[y].length; x++){
+//     if (boardPosition[y][x] !== null) {
+//         drawPieces(y,x);
+//     }}}
+//   }
 
-function clearArray(){
-  var x, y;
-  for (y=0; y < boardPosition.length; y++) {
-    for (x=0; x < boardPosition[y].length; x++){
+// function clearArray(){
+//   var x, y;
+//   for (y=0; y < boardPosition.length; y++) {
+//     for (x=0; x < boardPosition[y].length; x++){
       
-      if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
-        boardPosition[y][x] = null;
-        drawPieces(y,x);
-        }}}
-        document.getElementById("score").innerHTML = "";
-}
+//       if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
+//         boardPosition[y][x] = null;
+//         drawPieces(y,x);
+//         }}}
+//         document.getElementById("score").innerHTML = "";
+// }
 
 function flippingLogTextAnimation(){
   if (document.getElementById("messages").innerHTML == "Flipping.....")
@@ -186,26 +151,6 @@ function flippingLogTextAnimation(){
   else {
    var flippingTextValue = document.getElementById("messages").innerHTML;
    document.getElementById("messages").innerHTML = flippingTextValue + ".";
-    }
-  }
-
-function intervalDelay(){intSet = setInterval(returnFlipCoordinate,500);} 
-function returnFlipCoordinate(){
-   if (flipCoordinate_x.length > 0){
-    flippingLogTextAnimation();
-    cell_x = flipCoordinate_x.pop();
-    cell_y = flipCoordinate_y.pop();
-    if (debugErrorMessage){console.log("Flip x: "+ cell_x + " y: " + cell_y);}
-    addPiece(cell_y,cell_x);
-  }
-  else {
-  clearInterval(intSet);
-  clickInputAccepted = true;
-  //Update Collection after all pieces are flipped and the currentGameObject has reflected all of the changes
-  // PieceCollection.update({_id: "game1"}, { $set: {gameData: currentGameObject}}, {upsert: true})
-  updateGameData();
-  // readCollection();
-  if(gameOn){ switchTurn();}
     }
   }
 
@@ -292,6 +237,7 @@ function translateCoordinate (canvas_y,canvas_x){
 function switchTurn (){
   //switches the player turn and then updates h3 with id="turn"
   var playerText = "";
+  // Session.set('updateAvailable',true);
   if (playerTurn == 0) {
     //Takes white's turn and switches to black's
     playerTurn = 1;
@@ -360,7 +306,7 @@ function validMove(cell_y,cell_x){
       addPiece(cell_y,cell_x); //Add selection piece first
       intervalDelay(); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
       }
-    }
+    }//End validMove
 
 function addPiece (cell_y,cell_x) {
   var thisCell = boardPosition[cell_y][cell_x];
@@ -382,25 +328,27 @@ function addPiece (cell_y,cell_x) {
     boardPosition[cell_y][cell_x] = 0;
     currentGameObject[cell_y][cell_x] = 0;
     }
-  // xPosition = cell_x;
-  // yPosition = cell_y;
   drawPieces(cell_y,cell_x);
-  // PieceCollection.update({_id: "game1"}, { $set: {gameData: currentGameObject}}, {upsert: true})
   calculateScore();
 }
 
-function updateGameData() {
-  Meteor.call('othello.updateGameData', {
-  gameId: currentGameId,
-  changedGameData: currentGameObject
-}, (err, res) => {
-  if (err) {
-    alert(err);
-  } else {
-    console.log("Great success!");
+function intervalDelay(){intSet = setInterval(returnFlipCoordinate,500);} 
+function returnFlipCoordinate(){
+   if (flipCoordinate_x.length > 0){
+    flippingLogTextAnimation();
+    cell_x = flipCoordinate_x.pop();
+    cell_y = flipCoordinate_y.pop();
+    if (debugErrorMessage){console.log("Flip x: "+ cell_x + " y: " + cell_y);}
+    addPiece(cell_y,cell_x);
   }
-});
-}
+  else {
+  clearInterval(intSet);
+  clickInputAccepted = true;
+  //Update Collection after all pieces are flipped and the currentGameObject has reflected all of the changes
+  updateGameData();
+  if(gameOn){ switchTurn(); }
+    }
+  }
 
 //FOR USE LATER FOR CANVAS CHART
 //Code to createCanvasChart for eventual graphing of playerPieceCount
@@ -471,5 +419,93 @@ function globalDebug(){
 window.debugMode = debugMode; //Assign function to global window property
 function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");return true;} 
   }
+
+function returnGameDocument() {
+// if (!updatedFromThisClient){
+  var currentGameDocument = {};
+  // var currentGameSelector = {_id: "game1"};
+  // var currentGameOptions = {_id: 0, gameData: 1};
+  // var currentGameDocument = (PieceCollection.findOne(currentGameSelector, currentGameOptions));
+  
+  Meteor.call('othello.readGameData', { gameId: currentGameId}, (err, res) => {
+  if (err) {
+    console.log(err);
+      }
+   else if (currentGameDocument === undefined) {
+        console.log("GameDocument undefined");
+        }
+    else {   
+        console.log("returnGameDocument ran!");
+        currentGameDocument = res;
+        var pastGameObject = currentGameObject;
+        currentGameObject = currentGameDocument['gameData']; //define the currentGameObject for readCollection to use
+        
+
+
+
+
+        console.log(currentGameObject);
+        // readCollection();
+        diffCollections(pastGameObject, currentGameObject);
+      
+  }});
+// }
+// else {
+//   updatedFromThisClient = false;
+// }
+}
+
+// function respondCanvas (){
+// //layer 1 = board with lines
+// layer1 = document.getElementById("canvas1");
+// context = layer1.getContext("2d");
+// //layer 2 = pieces
+// layer2 = document.getElementById("canvas2");
+// contextPieces = layer2.getContext("2d");
+// }
+
+function updateGameData() {
+  Meteor.call('othello.updateGameData', {
+  gameId: currentGameId,
+  changedGameData: currentGameObject
+}, (err, res) => {
+  if (err) {
+    alert(err);
+  } else {
+    console.log("updateGameData ran!");
+    // updatedFromThisClient = true;
+    // Session.set('updateAvailable', Session.get('updateAvailable')+1);
+    }
+});
+}
+
+function readCollection(){
+  var x, y;
+  for (y=0; y < Object.keys(currentGameObject).length; y++) {
+    for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
+        boardPosition[y][x] = currentGameObject[y][x]
+      if (currentGameObject[y][x] !== null) {
+        drawPieces(y,x);
+        // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
+        }
+      }}
+   }
+
+ function diffCollections (pastGameObject, currentGameObject) {
+  var x, y, flipIndex = 0;
+  for (y=0; y < Object.keys(currentGameObject).length; y++) {
+    for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
+        // boardPosition[y][x] = currentGameObject[y][x]
+      if (currentGameObject[y][x] !== null && currentGameObject[y][x]!= pastGameObject[y][x] ) {
+        flipCoordinate_y[flipIndex] = y;
+        flipCoordinate_x[flipIndex] = x;
+        flipIndex += 1;
+        // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
+        }
+      }}
+   intervalDelay();
+   }
+
+ 
 
 } //End isClient

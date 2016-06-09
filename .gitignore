@@ -45,3 +45,5 @@ Temporary Items
 /settings.json
 /_Old
 TODO
+*.sublime-workspace
+othello.sublime-workspace

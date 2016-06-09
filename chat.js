@@ -3,8 +3,7 @@ if (Meteor.isClient) {
       Template.messages.helpers({
         messages: function() {
             return ChatMessages.find({}, { sort: { time: 1}}, function (){
-
-            });
+              });
             $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
            }
            });
@@ -23,10 +22,11 @@ if (Meteor.isClient) {
               message: message.value,
               time: Date.now(),
               });
-              $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
               // event.stopPropagation();
               document.getElementById('message').value = ''; //Clear message element after insert
               // message.value = '';
+              $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
+              
 
               }
         }

@@ -4,6 +4,110 @@
 		"selected_items":
 		[
 			[
+				"update",
+				"updateAvailable"
+			],
+			[
+				"curre",
+				"currentGameObject   ([])  [E]"
+			],
+			[
+				"game",
+				"gameId"
+			],
+			[
+				"ce",
+				"cell_y"
+			],
+			[
+				"read",
+				"readCollection       (fn)  [E]"
+			],
+			[
+				"current",
+				"currentGameOptions  (obj) [E]"
+			],
+			[
+				"cure",
+				"currentGameDocument (obj)  [E]"
+			],
+			[
+				"cur",
+				"currentGameDocument (?)   [E]"
+			],
+			[
+				"padding",
+				"padding-right"
+			],
+			[
+				"margin",
+				"margin-left"
+			],
+			[
+				"box",
+				"box-shadow"
+			],
+			[
+				"draw",
+				"drawPieces         (fn)   [E]"
+			],
+			[
+				"tex",
+				"text-decoration"
+			],
+			[
+				"border-r",
+				"border-radius"
+			],
+			[
+				"to",
+				"toArray"
+			],
+			[
+				"val",
+				"valuePiece (?)  [E]"
+			],
+			[
+				"text",
+				"text-align"
+			],
+			[
+				"min",
+				"min-height"
+			],
+			[
+				"max",
+				"max-height"
+			],
+			[
+				"overfl",
+				"overflow-wrap"
+			],
+			[
+				"over",
+				"text-overflow"
+			],
+			[
+				"margi",
+				"margin-top"
+			],
+			[
+				"list",
+				"list-style-type"
+			],
+			[
+				"border",
+				"border-radius"
+			],
+			[
+				"font",
+				"font-size"
+			],
+			[
+				"P",
+				"PieceCollection (obj) [E]"
+			],
+			[
 				"boar",
 				"boardWidth    (num) [E]"
 			],
@@ -60,10 +164,6 @@
 				"offset_y       (num) [C]"
 			],
 			[
-				"ce",
-				"cell_y        (num)  [E]"
-			],
-			[
 				"canva",
 				"canvas_y      (?)    [E]"
 			],
@@ -92,16 +192,8 @@
 				"randomY             (num) [E]"
 			],
 			[
-				"font",
-				"font-family"
-			],
-			[
 				"context",
 				"contextPieces (obj)  [C]"
-			],
-			[
-				"draw",
-				"drawPieces         (fn)  [E]"
 			]
 		]
 	},
@@ -111,39 +203,57 @@
 			"file": "othello.html",
 			"settings":
 			{
-				"buffer_size": 813,
+				"buffer_size": 1773,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "/* Grid declarations */\nbody {\n    /*background: #eff7ec;*/\n    background: linear-gradient(#d7ded4, #f8fbf7); /*eff7ec*/\n    font-family: sans-serif;\n    /*stop bg gradiant repeat*/\n    height: 100%;\n    margin: 0;\n    background-repeat: no-repeat;\n    background-attachment: fixed;\n	}\n\ncanvas {\n    /*background: #8fcb7c;*/\n    margin: 20px;\n    position: absolute;\n    left:0px;\n    top:0px;\n		}\n#canvas2 {\n    /*Board with pieces*/\n    background: initial;\n    /*position: relative;*/\n    }\n#canvas1 {\n    /*Board with grid lines*/\n    background: radial-gradient(circle, #9fd38e, #56a33d,\n    #396d28);\n    /*position: relative;*/\n    }\n#canvasesdiv {\n    position: relative;\n\n}\n/* FOR USE WITH CHART\n#barChart {\n     background: radial-gradient(circle, #9fd38e, #56a33d,\n    #396d28);}*/\n\nh1 {\n    font-weight: lighter;\n    }\nh3 {\n    font-weight: lighter;\n    }    \np {\n    }\n\n",
-			"file": "othello.css",
-			"file_size": 1081,
-			"file_write_time": 131048533355497936,
+			"file": "server/server.js",
 			"settings":
 			{
-				"buffer_size": 884,
-				"line_ending": "Unix"
+				"buffer_size": 2722,
+				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "PieceCollection = new Mongo.Collection(\"piece-collection\");\n\nif (Meteor.isClient) {\n  //Require username for players\n\nAccounts.ui.config({\n    passwordSignupFields: \"USERNAME_ONLY\"\n  });\n\n// //Example helpers\n//   // counter starts at 0\n//   Session.setDefault('counter', 0);\n//   Template.hello.helpers({\n//     counter: function () {\n//       return Session.get('counter');// } });\n//   Template.hello.events({\n//     'click button': function () {\n//       // increment the counter when button is clicked\n//       Session.set('counter', Session.get('counter') + 1); }  });\n\nvar debugErrorMessage = false;\n//defining layers for canvas\nvar layer1;\nvar layer2;\nvar boardPosition; //Holds 2d array of piece data\nvar my_gradient;\n//Global variables instantiated for use in translateCoordinate and drawPieces\nvar xPosition;\nvar yPosition;\nvar cellWidth;\nvar padding;\n// Global for addPiece function\nvar cell_x;\nvar cell_y;\n\nvar playerTurn;\nvar blackScore;\nvar whiteScore;\nvar flipCoordinate_x = [];\nvar flipCoordinate_y = [];\n\nvar intSet; //Used in interval delay function\nvar clickInputAccepted = true; //Used to lock the player out of clicking while pieces are flipping\nvar gameOn = true;\n\n//Wait for window load before calling initial functions\nwindow.onload = function drawAll(){\n  init();\n  setInitialPosition();\n  drawGrid();\n  readArray();\n  globalDebug();\n  // createCanvasChart();\n}\n\nfunction init() {\n//layer 1 = board with lines\nlayer1 = document.getElementById(\"canvas1\");\ncontext = layer1.getContext(\"2d\");\n//layer 2 = pieces\nlayer2 = document.getElementById(\"canvas2\");\ncontextPieces = layer2.getContext(\"2d\");\nlayer2.addEventListener(\"mousedown\",listenMouseDown, false);\nplayerTurn = 0; //white\ndocument.getElementById(\"resetButton\").addEventListener(\"click\", function(){\n  clearArray();\n  setInitialPosition();\n  readArray();\n  clickInputAccepted = true;\n  gameOn = true;\n  playerTurn = 0;\n  document.title = \"Othello\";\n    \n  \n  });\n}\n\n\nfunction setInitialPosition(){\n//Initialize beginning board position\n//0 for white, 1 for black\nvar row0 = [null,null,null,null,null,null,null,null],\n    row1 = [null,null,null,null,null,null,null,null],\n    row2 = [null,null,null,null,null,null,null,null],\n    row3 = [null,null,null,0,1,null,null,null],\n    row4 = [null,null,null,1,0,null,null,null],\n    row5 = [null,null,null,null,null,null,null,null],\n    row6 = [null,null,null,null,null,null,null,null],\n    row7 = [null,null,null,null,null,null,null,null];\n//Define 2d array\nboardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];\n}\n\nfunction drawGrid() {\n//grid width and height\nvar boardWidth = 400;\nvar boardHeight = 400;\npadding = 10; //padding around grid\n//draw vertical lines of grid\ncontext.beginPath();\nfor (var x = 0; x <= boardWidth; x += 50) {\n    \n    context.moveTo(0.5 + x + padding, padding);\n    context.lineTo(0.5 + x + padding, boardHeight + padding);\n  }\n//draw horizontal lines of grid\n  for (var x = 0; x <= boardHeight; x += 50) {\n    context.moveTo(padding, 0.5 + x + padding);\n    context.lineTo(boardWidth + padding, 0.5 + x + padding);\n  }\n  context.strokeStyle = \"#323232\";\n  context.lineWidth = 1;\n  context.stroke();\n  }\n\nfunction readArray(){\n//Reads the initialized array and draws the start position\nvar x, y;\nfor (y=0; y < boardPosition.length; y++) {\n  for (x=0; x < boardPosition[y].length; x++){\n    if (boardPosition[y][x] !== null) {\n      xPosition = x;\n      yPosition = y;\n      drawPieces();\n    }}}\n  }\nfunction clearArray(){\n  var x, y;\n  for (y=0; y < boardPosition.length; y++) {\n    for (x=0; x < boardPosition[y].length; x++){\n      \n      if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {\n        boardPosition[y][x] = null;\n        xPosition = x;\n        yPosition = y;\n        drawPieces();\n        }}}\n        document.getElementById(\"score\").innerHTML = \"\";\n}\n//While (flipCoordinate_x.length > 0){\n     // cell_x = flipCoordinate_x.pop();\n    // cell_y = flipCoordinate_y.pop();\nfunction flippingLogTextAnimation(){\n  if (document.getElementById(\"messages\").innerHTML == \"Flipping.....\")\n   document.getElementById(\"messages\").innerHTML = \"Flipping..\";\n  \n  else {\n   var flippingTextValue = document.getElementById(\"messages\").innerHTML;\n   document.getElementById(\"messages\").innerHTML = flippingTextValue + \".\";\n    }\n  }\n\n\nfunction intervalDelay(){intSet = setInterval(returnFlipCoordinate,500);} \nfunction returnFlipCoordinate(){\n   if (flipCoordinate_x.length > 0){\n    flippingLogTextAnimation();\n    cell_x = flipCoordinate_x.pop();\n    cell_y = flipCoordinate_y.pop();\n    if (debugErrorMessage){console.log(\"Flip x: \"+ cell_x + \" y: \" + cell_y);}\n    addPiece();\n  }\n  else {\n  clearInterval(intSet);\n  clickInputAccepted = true;\n  if(gameOn){ switchTurn();}\n    }\n  }\n\nfunction calculateScore(){\n//Reads the initialized array and draws the start position\nvar x, y;\n//clear global variable count\nwhiteScore = 0;\nblackScore = 0;\nfor (y=0; y < boardPosition.length; y++) {\n  for (x=0; x < boardPosition[y].length; x++){\n    if (boardPosition[y][x] == 0){\n        whiteScore +=1;\n    }\n    else if (boardPosition[y][x] == 1){\n      blackScore +=1;\n    }\n    }}\n  //console.log(\"White: \"+ whiteScore  + \" Black: \" + blackScore);\n  if (whiteScore + blackScore <= 64){\n  document.getElementById(\"score\").innerHTML = \"White: \"+ whiteScore  + \" Black: \" + blackScore;\n  }\n  if (whiteScore + blackScore == 64 && whiteScore > blackScore){\n    clickInputAccepted = false;\n    gameOn = false;\n    document.getElementById(\"turn\").innerHTML = \"White player wins with \" + whiteScore + \" pieces!\";\n  }\n  else if (whiteScore + blackScore == 64 && blackScore > whiteScore){\n    clickInputAccepted = false;\n    gameOn = false;\n    document.getElementById(\"turn\").innerHTML = \"Black player wins with \" + blackScore + \" pieces!\";\n  }\n  else if (whiteScore + blackScore == 64 && blackScore == whiteScore){\n    clickInputAccepted = false;\n    gameOn = false;\n    document.getElementById(\"turn\").innerHTML = \"Draw! How unusual!\";\n  }\n\n\n}\n\nfunction listenMouseDown () {\n  if (clickInputAccepted){\n  //Get canvas offset using jQuery to get a relative mouse position\n  var canvasOffset=$(\"#canvas2\").offset();\n  var offset_x = canvasOffset.left;\n  var offset_y = canvasOffset.top;\n\n  //Remove ofset from pageX and pageY to get an accurate position\n  canvas_x = Math.round(event.pageX - offset_x);\n  canvas_y = Math.round(event.pageY - offset_y);\n  //console.log (\"Mouse Click\" + \"\\n\" + \"X: \"+canvas_x+\" Y: \"+canvas_y);\n  translateCoordinate(canvas_x,canvas_y);\n  }\n  else {\n    if (debugErrorMessage){console.log(\"Mouse input locked!\");}\n  }\n}\n\nfunction translateCoordinate (){\n  //Determines which cell the coordinate from mouse listener belongs to\n  cell_x = Math.floor((canvas_x-p)/cellWidth);\n  cell_y = Math.floor((canvas_y-p)/cellWidth);\n  if (debugErrorMessage){console.log (\"Mouse x: \" + canvas_x  + \" y: \" + canvas_y + \"\\n\" + \"Map x: \"+cell_x+\" y: \"+cell_y);}\n  //console.log (\"Mouse Click\" + \"\\n\" + \"X: \"+canvas_x+\" Y: \"+canvas_y);\n  //Remove erroneous coordinates like outside the grid in the padding\n  if (0 <= cell_x && cell_x < 8 && 0 <= cell_y && cell_y < 8){\n  //addPiece(cell_x, cell_y);\n  validMove();\n  }\n  else {\n    if (debugErrorMessage){console.log(\"Out of bounds\");}\n    document.getElementById(\"messages\").innerHTML = \"Out of bounds: try to keep it in the lines!\";\n  }\n}\n\nfunction switchTurn (){\n  //switches the player turn and then updates h3 with id=\"turn\"\n  var playerText = \"\";\n  if (playerTurn == 0) {\n    //Takes white's turn and switches to black's\n    playerTurn = 1;\n    playerText = \"Player Turn: Black\";\n    document.title = \"Black's turn - Othello\";\n  } \n  //Takes black's turn and switches to white's\n  else if (playerTurn == 1) {\n    playerTurn = 0;\n    playerText = \"Player Turn: White\";\n    document.title = \"White's turn - Othello\";\n  }\n  if (debugErrorMessage){console.log(\"Switch turn\");}\n  document.getElementById(\"turn\").innerHTML = playerText;\n  document.getElementById(\"messages\").innerHTML = \"Please proceed!\";\n}\n\nfunction validMove(){\n  var noOppositeMatch = true;\n  var flipIndex = 0;\n  //var multFactor = 2;\n  //Comment this out to prevent manual piece flipping\n  if (boardPosition[cell_y][cell_x] == 1 | boardPosition[cell_y][cell_x] == 0){addPiece();return false;} //Bypass move validation when there is already a piece in the square\n\n  else if (boardPosition[cell_y][cell_x] == null){ \n    clickInputAccepted = false;\n    document.getElementById(\"messages\").innerHTML = \"Flipping..\";\n    for (dx = -1; dx <= 1; dx++){ //Iterate horizontally\n        for (dy = -1; dy <=1; dy++){ //Iterate vertically\n          if (typeof boardPosition[cell_y+dy] != 'undefined' && typeof boardPosition[cell_y+dy][cell_x+dx] != 'undefined'){ //Prevent attempting to scan outside of the array\n           if (dx == 0 && dy == 0) {continue;} //prevent boardPosition[cell_y][cell_x] from being processed\n            var adjacentCellValue = boardPosition[cell_y+dy][cell_x+dx];\n            //Evaluating for the opposite of playerTurn value\n            if (adjacentCellValue != playerTurn && typeof adjacentCellValue != 'undefined' && adjacentCellValue != null){\n               if (debugErrorMessage){console.log(\"Adj x: \" + (cell_x+dx) + \" y: \" + (cell_y+dy));} //Log the coordinates of the adjacent cell being checked to the console for debugging purposes\n                      \n             //Evaluating the piece(s) beyond the adjacent tile to ensure that a flip is possible\n             for (multFactor = 2; (cell_y+(dy*multFactor)) >= 0 && (cell_x+(dx*multFactor)) >= 0 && (cell_y+(dy*multFactor)) <= 7 && (cell_x+(dx*multFactor)) <= 7; multFactor++){\n             //while ((cell_y+(dy*multFactor)) >= 0, (cell_x+(dx*multFactor)) >= 0, (cell_y+(dy*multFactor)) <= 7, (cell_x+(dx*multFactor)) <= 7){\n               if (debugErrorMessage){console.log(\"Mult: \" + multFactor + \" x: \"+ (cell_x+(dx*multFactor)) +\" y: \"+ (cell_y+(dy*multFactor)));}\n               \n               if (boardPosition[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] == playerTurn){ //If the end piece is the same as the player's color, write to a temporary array\n                multFactor -= 1; //To account for not flipping the end piece because the end piece has the max multFactor\n                while (multFactor >= 1){ //Write the coordinates of pieces that need to be flipped\n                flipCoordinate_y[flipIndex] = cell_y+(dy*multFactor);\n                flipCoordinate_x[flipIndex] = cell_x+(dx*multFactor);\n                flipIndex += 1;\n                multFactor -= 1;\n                }\n                noOppositeMatch = false;\n                break;\n                \n                }\n              else if (boardPosition[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] == null){break;} //Break the loop if it encounters an empty tile\n\n              else if (boardPosition[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] != playerTurn){continue;} //If the piece beyond the adjacent is the same as the playerTurn, continue the for loop and increase the multFactor\n              //multFactor += 1;\n              }\n             }\n            }\n          }      \n        }                  \n      \n      }\n    if (noOppositeMatch) {\n      document.getElementById(\"messages\").innerHTML = \"Invalid Move: Can't let you do that star fox!\";\n      if (debugErrorMessage){console.log(\"Invalid move\");}\n      clickInputAccepted = true;\n    }\n    else if (noOppositeMatch == false){\n      addPiece(); //Add selection piece first\n      \n      intervalDelay(); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function\n\n      //Function to read the flipCoordinate arrays and then add/flip pieces\n      //for (var i=0; i<flipCoordinate_x.length; i++){\n        //cell_x = flipCoordinate_x[i];\n        //cell_y = flipCoordinate_y[i];\n        //addPiece();\n        // console.log(\"Index: \"+ i + \" x: \"+ flipCoordinate_x[i] + \" y: \" + flipCoordinate_y[i]);\n        //TODO: pass SetInterval on each loop and execute function with .pop() method\n        //TODO: Add click lockout while setInterval is repeating\n                \n      }\n\n    \n  }\n\n\n\n\n\n\n\nfunction addPiece () {\n  var thisCell = boardPosition[cell_y][cell_x];\n  if (thisCell == null){\n    boardPosition[cell_y][cell_x] = playerTurn;\n    //Move flip function to after draw \n    //Believe I can return this to default behavior, changed due to troubleshooting. \n     //switchTurn();  //MOVED: To after pieces are finished flipping\n    }\n  //Leaving manual flipping functionality in place for testing\n  else if (thisCell == 0){\n    boardPosition[cell_y][cell_x] = 1;\n    }\n  else if (thisCell == 1){ //This will be commented out eventually, used for testing\n    boardPosition[cell_y][cell_x] = 0;\n    }\n  xPosition = cell_x;\n  yPosition = cell_y;\n  drawPieces();\n  calculateScore();\n}\n//FOR USE LATER FOR CANVAS CHART\n//Code to createCanvasChart for eventual graphing of playerPieceCount\n// function createCanvasChart () {\n// //grid width and height\n// var bw = 400;\n// var bh = 40;\n// //padding around grid\n// //var p = 10;\n// //size of canvas\n// var cw = bw + (p * 2);\n// var ch = bh;\n\n// var canvas = $('<canvas/>').attr({\n//   width: cw,\n//   height: ch,\n//   id: \"barChart\"\n// }).appendTo(\"#boardChart\");\n// }\n\nfunction drawPieces() {\n  var radius = 20;\n  p = 10;\n  cellWidth = 50;\n  //implement random positioning within cell for added interest and analog feel\n  //uses a random number generator to vary between a value -1 to +1\n  var randomX = Math.floor((Math.random()*3))-1;\n  var randomY = Math.floor((Math.random()*3))-1;\n  //console.log(\"randomX = \"+randomX);\n  //console.log(\"randomY = \"+randomY);\n  var centerX = cellWidth/2+p+randomX+cellWidth*xPosition;\n  var centerY = cellWidth/2+p+randomY+cellWidth*yPosition;\n  var my_gradient = contextPieces.createRadialGradient(centerX, centerY, radius/1.5, centerX, centerY, radius);\n  \n  if (boardPosition[yPosition][xPosition] == 0) {\n  //White piece gradient\n  my_gradient.addColorStop(0, \"white\");\n  my_gradient.addColorStop(1, \"#cfcfcf\");\n  contextPieces.strokeStyle = '#404040';  //Old value #585858\n    }\n    \n  else if (boardPosition[yPosition][xPosition] == 1){\n  //Black piece gradient\n  my_gradient.addColorStop(0, \"#202020\");\n  my_gradient.addColorStop(1, \"black\");\n  contextPieces.strokeStyle = '#b3b3b3'; //'#E0E0E0'\n     }\n\n  else if (boardPosition[yPosition][xPosition] == null){\n    //Clear existing piece and exit function\n    contextPieces.clearRect(centerX-25,centerY-25,50,50);\n    return false;\n    }\n\n  //draw circle with gradient fill\n  contextPieces.clearRect(centerX-25,centerY-25,50,50);\n  contextPieces.beginPath();\n  contextPieces.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);\n  contextPieces.fillStyle = my_gradient;\n  contextPieces.lineWidth = 0.5;\n  \n  if (debugErrorMessage){console.log(\"Draw x: \" + xPosition + \" y: \" + yPosition);}\n  contextPieces.fill();\n  contextPieces.stroke();\n  }\n\n\n//Accessible through the console for debugging purposes\nfunction globalDebug(){\nwindow.debugMode = debugMode; //Assign function to global window property\nfunction debugMode(){debugErrorMessage = true; console.log(\"Debug mode on!\");return true;} \n  }\n\n} //End isClient\n\n\n\n\nif (Meteor.isServer) {\n  Meteor.startup(function () {\n    // code to run on server at startup\n  console.log(\"\\n\"+ \"Server started\");\n  if(PieceCollection.find().count() === 0)\n      {\n        console.log('Adding starting')\n    var row0 = [null,null,null,null,null,null,null,null],\n    row1 = [null,null,null,null,null,null,null,null],\n    row2 = [null,null,null,null,null,null,null,null],\n    row3 = [null,null,null,0,1,null,null,null],\n    row4 = [null,null,null,1,0,null,null,null],\n    row5 = [null,null,null,null,null,null,null,null],\n    row6 = [null,null,null,null,null,null,null,null],\n    row7 = [null,null,null,null,null,null,null,null];\n//Define 2d array\nboardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];\n\n  _.each(boardPosition, function())\n\n  }\n\n\n  });\n  //*/\n}\n\n\n",
-			"file": "othello.js",
-			"file_size": 15995,
-			"file_write_time": 131049802328591532,
+			"file": "client/client.js",
 			"settings":
 			{
-				"buffer_size": 16021,
-				"line_ending": "Unix"
+				"buffer_size": 18018,
+				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "settings.json",
+			"file": "TODO",
 			"settings":
 			{
-				"buffer_size": 234,
+				"buffer_size": 871,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "chat.js",
+			"settings":
+			{
+				"buffer_size": 1195,
 				"line_ending": "Windows",
-				"name": "{"
+				"name": "if (Meteor.isClient) {"
+			}
+		},
+		{
+			"file": "lib/collections.js",
+			"settings":
+			{
+				"buffer_size": 2230,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "othello.css",
+			"settings":
+			{
+				"buffer_size": 4097,
+				"line_ending": "Windows"
 			}
 		}
 	],
@@ -154,7 +264,7 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 45.0,
+		"height": 297.0,
 		"last_filter": "Install Package",
 		"selected_items":
 		[
@@ -184,10 +294,13 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Michael/othello/settings.json",
+		"/C/Users/Michael/othello/othello.js",
+		"/C/Users/Michael/othello/server.js",
+		"/C/Users/Michael/othello/server/collections.js",
 		"/C/Users/Michael/othello/.gitignore",
 		"/C/Users/Michael/othello/.gitattributes",
 		"/C/Users/Michael/othello/canvas.js",
-		"/C/Users/Michael/othello/othello.js",
 		"/C/Users/Michael/othello/othello.css",
 		"/C/Users/Michael/othello/othello.html",
 		"/C/Users/Michael/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings"
@@ -208,6 +321,83 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Session.set('updateAvailable'",
+			"Session",
+			"returnGame",
+			"Session",
+			"drawAll",
+			"init",
+			"returnGameDocument",
+			"data_loaded",
+			"template",
+			"observe",
+			"Session",
+			"Session.set",
+			"currentGameDocument",
+			"currentGameObject",
+			"updateGameData",
+			"Session",
+			"Session.set",
+			"Meteor.call",
+			"debugErrorMessage",
+			"changedGameData",
+			"result:",
+			"returnGame",
+			"method here",
+			"call",
+			"console.log",
+			"/",
+			"/n",
+			"Meteor.call",
+			"call",
+			"loading",
+			"load",
+			"loading",
+			"autorun",
+			"boardPosition",
+			"currentGameId",
+			"gameID",
+			"upsert",
+			"PieceCollection",
+			"Meteor",
+			"switchTurn",
+			"currentGameObject",
+			"  PieceCollection.update({_id: \"game1\"}, { $set: {gameData: currentGameObject}}, {upsert: true})\n",
+			"gameOn",
+			"SetInit",
+			"Meteor",
+			"if",
+			"\n	",
+			"	\n",
+			"Mete",
+			"	\n",
+			"gameOn",
+			"gameON",
+			"this",
+			"drawAll",
+			"ChatMessages",
+			"messages",
+			"calculateScore",
+			"Collection",
+			"Piece",
+			"Mongo",
+			"PieceCollection",
+			"setInitialPosition",
+			"Reac",
+			"Reactive",
+			"boardPosition",
+			"setinital",
+			"u",
+			"value",
+			"1",
+			"hello",
+			"addPiece",
+			"padding",
+			"my_gradient",
+			"whiteScore",
+			"lipCo",
+			"p = ",
+			"readArray",
 			"intSet",
 			"swit",
 			"swith",
@@ -244,6 +434,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"\"value\"",
+			"pieceGradient"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -263,20 +455,50 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 813,
+						"buffer_size": 1773,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6,
-								6
+								1328,
+								1328
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 924.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "server/server.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2722,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								324,
+								324
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
@@ -288,50 +510,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "othello.css",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 884,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								884,
-								884
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 750.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
 					"buffer": 2,
-					"file": "othello.js",
+					"file": "client/client.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 16021,
+						"buffer_size": 18018,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								15235,
-								15235
+								16228,
+								16228
 							]
 						],
 						"settings":
@@ -341,33 +533,69 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 10650.0,
+						"translation.y": 10025.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "settings.json",
+					"file": "TODO",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 234,
+						"buffer_size": 871,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								55,
-								55
+								871,
+								871
 							]
 						],
 						"settings":
 						{
-							"auto_name": "{",
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 4,
+					"file": "chat.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1195,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1195,
+								1195
+							]
+						],
+						"settings":
+						{
+							"auto_name": "if (Meteor.isClient) {",
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -375,13 +603,71 @@
 					},
 					"stack_index": 3,
 					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/collections.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2230,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1007,
+								1007
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 134.0,
+						"translation.y": 198.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "othello.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4097,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								753,
+								753
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
 				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 33.0
+		"height": 30.0
 	},
 	"input":
 	{
@@ -396,11 +682,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.5,
 			1.0
 		],
 		"rows":
@@ -418,7 +711,7 @@
 	"project": "Othello.sublime-project",
 	"replace":
 	{
-		"height": 62.0
+		"height": 80.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -452,7 +745,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},

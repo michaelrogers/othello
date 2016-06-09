@@ -1,17 +1,19 @@
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
+    //PieceCollection.ready();
     // code to run on server at startup
     serverInitialize();
     });
-  
 
   function serverInitialize (){  
   // console.log('Server started');
   // if (PieceCollection.find().count() === 0) {
-      console.log('Adding initial');        
+      // console.log('Adding initial');   
+      var currentGameId = "game1";
+     
 
-  var serverData = {
+  var serverData = { //Initial starting positions in object literal notation
     0: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null},
     1: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null}, 
     2: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null}, 
@@ -27,14 +29,20 @@ if (Meteor.isServer) {
     //"1": [null,null,null,1,0,null,null,null], //NOTE: Calls to arrays in objects work properly, but sticking with JSON
        
         // }; //PieceCollection
-        PieceCollection.update({_id: "game1"}, { $set: {gameData: serverData}}, {upsert: true});
+      Meteor.call('othello.updateGameData', { gameId: currentGameId, changedGameData: serverData } , (err, res) => {
+            if (err) {console.log("Error: \n" + err);                }
+             else {// console.log("Result: \n" + res);  
+                console.log("Initial DB Data Updated")
+                }
+              });
+
+        //PieceCollection.update({_id: "game1"}, { $set: {gameData: serverData}}, {upsert: true});
         // console.log(PieceCollection.findOne({_id: "game1"},{"gameData": 1, _id: 0}));
           
           // var pieceObject = PieceCollection.findOne({_id: "game1"},{gameData: 1, _id: 0});
           //   console.log(pieceObject);
           // var thisPiece = pieceObject["gameData"]["1"]["4"];
           //   console.log(thisPiece);
-
 
           // console.log(PieceCollection.findOne({_id: "game1"},{$inc: {'gameData'[2][1': 1 , _id: 0}}));
           // console.log(JSON.parse(PieceCollection.findOne({_id: "game1"},{'gamedata.2.1': 1 ,_id: 0}));

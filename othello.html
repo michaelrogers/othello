@@ -8,7 +8,6 @@
   <header>
   <h1>Othello</h1>
   
-
   <div id="login-buttons">{{> loginButtons}} <p><br> <button type="button" class = "button" id="resetButton">Reset match</button>
   <button type="button" class = "button" id="skipTurn">Skip Turn</button></p></div>
   
@@ -46,12 +45,14 @@
 </body>
 
 <template name="Othello">
- 
- 
+  
+  {{#if Template.subscriptionsReady}}
+  {{#each autoRun}}{{/each}}
   <div id="canvasesdiv" width="420px" height="420px"> 
   <canvas id="canvas1" width="420px" height="420px" style='width:420px;height:420px'></canvas>
   <canvas id="canvas2" width="420px" height="420px" style='width:420px;height:420px'></canvas>
-  </div>  
+  </div>
+  {{/if}}
 </template>
 
 <template name="messages">
