@@ -2,16 +2,13 @@
 if (Meteor.isClient) {
       Template.messages.helpers({
         messages: function() {
-            return ChatMessages.find({}, { sort: { time: 1}}, function (){
-              });
-            //Not playing nice with Firefox
-            // $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
-           }
+            return ChatMessages.find({}, { sort: { time: 1}}, function (){});
+            }
            });
 
     Template.input.events = {
       'keydown input#message' : function (event) {
-        if (event.which == 13) { // Enter key event
+        if (event.which == 13) { // Enter or return key event
           if (Meteor.user())
             var name = Meteor.user().username;
           else
@@ -26,12 +23,16 @@ if (Meteor.isClient) {
               // event.stopPropagation();
               document.getElementById('message').value = ''; //Clear message element after insert
               // message.value = '';
-              $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
-              
-
+              // $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
               }
+            }
+          }
         }
-      }
-    }
 
-}
+  ChatMessages.find().observeChanges({
+    added: function () {
+      $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
+    }
+    });
+
+}//isClient

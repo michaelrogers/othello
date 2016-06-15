@@ -124,7 +124,7 @@ div#login-buttons {
 
 #score {
     float: right;
-    width: 65%;
+    width: 37%;
     margin: 0px 0px 8px 0px;
     display: inline
     }
@@ -146,6 +146,12 @@ div#login-buttons {
 #login-buttons .login-close-text {
     float: right;
     }
+
+ #playerChoice {
+    float: right;
+    padding-right: 45px;
+    font-size: 16px;
+ }   
 /*@media(max-width:1200px) {
     canvas {
             width: 100%;

@@ -7,7 +7,6 @@ if (Meteor.isServer) {
     });
 
   function serverInitialize (){  
-  // console.log('Server started');
   // if (PieceCollection.find().count() === 0) {
       // console.log('Adding initial');   
       var currentGameId = "game1";
@@ -15,7 +14,6 @@ if (Meteor.isServer) {
             if (err) {console.log("Error: \n" + err);                }
              else {
                     // console.log("Result: \n" + res);  
-  //               console.log("Initial DB Data Updated")
                 }
               });
 

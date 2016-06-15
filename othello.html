@@ -9,7 +9,12 @@
   <h1>Othello</h1>
   
   <div id="login-buttons">{{> loginButtons}} <p><br> <button type="button" class = "button" id="resetButton">Reset match</button>
-  <button type="button" class = "button" id="skipTurn">Skip Turn</button></p></div>
+  <button type="button" class = "button" id="skipTurn">Skip Turn</button></p>
+  <form id=playerChoice>
+  <input type="radio" name=playerChoice value=0 id=playerChoiceWhite>White
+  <input type="radio" name=playerChoice value=1 id=playerChoiceBlack >Black
+  </form>
+  </div>
   
   <div>
   <p id="turn">Player Turn: White</p> 
@@ -47,7 +52,7 @@
 <template name="Othello">
   
   {{#if Template.subscriptionsReady}}
-  {{#each autoRun}}{{/each}}
+<!--   {{#each autoRun}}{{/each}} -->
   <div id="canvasesdiv" width="420px" height="420px"> 
   <canvas id="canvas1" width="420px" height="420px" style='width:420px;height:420px'></canvas>
   <canvas id="canvas2" width="420px" height="420px" style='width:420px;height:420px'></canvas>
