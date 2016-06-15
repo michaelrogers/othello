@@ -4,7 +4,8 @@ if (Meteor.isClient) {
         messages: function() {
             return ChatMessages.find({}, { sort: { time: 1}}, function (){
               });
-            $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
+            //Not playing nice with Firefox
+            // $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
            }
            });
 

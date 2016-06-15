@@ -4,12 +4,36 @@
 		"selected_items":
 		[
 			[
-				"update",
-				"updateAvailable"
+				"read",
+				"readCollection"
+			],
+			[
+				"flip",
+				"flipCoordinate_x         ([])  [E]"
+			],
+			[
+				"currentG",
+				"currentGameObject  (?)    [E]"
 			],
 			[
 				"curre",
-				"currentGameObject   ([])  [E]"
+				"currentGameObject   (?)   [E]"
+			],
+			[
+				"current",
+				"currentGameObject   (?)    [E]"
+			],
+			[
+				"ret",
+				"returnGameDocument   (fn)  [E]"
+			],
+			[
+				"update",
+				"updatedFromThisClient (bool) [E]"
+			],
+			[
+				"up",
+				"updatedFromThisClient (bool) [E]"
 			],
 			[
 				"game",
@@ -18,14 +42,6 @@
 			[
 				"ce",
 				"cell_y"
-			],
-			[
-				"read",
-				"readCollection       (fn)  [E]"
-			],
-			[
-				"current",
-				"currentGameOptions  (obj) [E]"
 			],
 			[
 				"cure",
@@ -140,10 +156,6 @@
 				"timeoutIndex            (?)  [E]"
 			],
 			[
-				"flip",
-				"flipCoordinate_y ([])  [E]"
-			],
-			[
 				"fli",
 				"flipCoordinate_x ([])  [E]"
 			],
@@ -203,7 +215,7 @@
 			"file": "othello.html",
 			"settings":
 			{
-				"buffer_size": 1773,
+				"buffer_size": 1794,
 				"line_ending": "Unix"
 			}
 		},
@@ -211,7 +223,7 @@
 			"file": "server/server.js",
 			"settings":
 			{
-				"buffer_size": 2722,
+				"buffer_size": 2740,
 				"line_ending": "Windows"
 			}
 		},
@@ -219,7 +231,7 @@
 			"file": "client/client.js",
 			"settings":
 			{
-				"buffer_size": 18018,
+				"buffer_size": 19101,
 				"line_ending": "Windows"
 			}
 		},
@@ -227,7 +239,7 @@
 			"file": "TODO",
 			"settings":
 			{
-				"buffer_size": 871,
+				"buffer_size": 1034,
 				"line_ending": "Windows"
 			}
 		},
@@ -235,7 +247,7 @@
 			"file": "chat.js",
 			"settings":
 			{
-				"buffer_size": 1195,
+				"buffer_size": 1210,
 				"line_ending": "Windows",
 				"name": "if (Meteor.isClient) {"
 			}
@@ -244,7 +256,7 @@
 			"file": "lib/collections.js",
 			"settings":
 			{
-				"buffer_size": 2230,
+				"buffer_size": 3833,
 				"line_ending": "Windows"
 			}
 		},
@@ -321,6 +333,96 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"clearArray",
+			"clear",
+			"addPiece",
+			"add",
+			"addPiece(cell_y,cell_x);",
+			"interval",
+			"set",
+			"addPiece",
+			"updateGameData",
+			"notBoardReset",
+			"intervalDelay",
+			"updateGameData",
+			"Object.keys",
+			"returnGameDocument",
+			"diff",
+			"returngGame",
+			"notBoardReset",
+			"clearArray",
+			"reset",
+			"intervalDelay",
+			"updateGameData",
+			"returnGame",
+			"readCollection",
+			"updateGameData",
+			"reset",
+			"returnGameDocument",
+			"reset",
+			"readCollection",
+			"setInterval",
+			"returnGameDocument",
+			"intervalDelay",
+			"drawPiece",
+			"addPiece",
+			"clearArray",
+			"reset",
+			"notBoard",
+			"notBoardReset",
+			"noOppositeMatch",
+			"addPiece",
+			"intervalDelay",
+			"calc",
+			"gameOn",
+			"switchTurn",
+			"addPiece",
+			"calculateScore",
+			"drawPieces",
+			"returnGameDocument",
+			"returngGame",
+			"readCollection",
+			"setInitialPosition",
+			"readCollection",
+			"readArray",
+			"flipping",
+			"clear",
+			"addPiece",
+			"reset",
+			"returnGame",
+			"returnGameDoc",
+			"returnGameDocument",
+			"updateGameData",
+			"intervalDelay",
+			"setInterval",
+			"flipCoordinate",
+			"returnGameDocument",
+			"diff",
+			"flipCoordinate",
+			"readCollection",
+			"returnGame",
+			"flip",
+			"returnGame",
+			"return",
+			"returnGa",
+			"return",
+			"boardPosition",
+			"updateGameData",
+			"returnGame",
+			"Error:",
+			"update",
+			"Session.set",
+			"set",
+			"Session.set",
+			"returnGame",
+			"console",
+			"returnGameDoc",
+			"clearArray",
+			"readArray",
+			"readCollection",
+			"currentGameDocument",
+			"returnGameDocument",
+			"Great Success",
 			"Session.set('updateAvailable'",
 			"Session",
 			"returnGame",
@@ -358,75 +460,7 @@
 			"currentGameId",
 			"gameID",
 			"upsert",
-			"PieceCollection",
-			"Meteor",
-			"switchTurn",
-			"currentGameObject",
-			"  PieceCollection.update({_id: \"game1\"}, { $set: {gameData: currentGameObject}}, {upsert: true})\n",
-			"gameOn",
-			"SetInit",
-			"Meteor",
-			"if",
-			"\n	",
-			"	\n",
-			"Mete",
-			"	\n",
-			"gameOn",
-			"gameON",
-			"this",
-			"drawAll",
-			"ChatMessages",
-			"messages",
-			"calculateScore",
-			"Collection",
-			"Piece",
-			"Mongo",
-			"PieceCollection",
-			"setInitialPosition",
-			"Reac",
-			"Reactive",
-			"boardPosition",
-			"setinital",
-			"u",
-			"value",
-			"1",
-			"hello",
-			"addPiece",
-			"padding",
-			"my_gradient",
-			"whiteScore",
-			"lipCo",
-			"p = ",
-			"readArray",
-			"intSet",
-			"swit",
-			"swith",
-			"flipTurn",
-			"turn",
-			"calculate",
-			"map",
-			"debugErrorMessage",
-			"console.log",
-			"if (debugErrorMessage){",
-			"console.log",
-			"flipping",
-			"score",
-			"lipping",
-			"mouse input",
-			"clickinput",
-			"switch",
-			"switchTurn",
-			"clearflip",
-			"flipindex",
-			"calculate",
-			";}\n",
-			"PlayerTurn",
-			"witch",
-			"cellValue",
-			"switchTurn",
-			"switch",
-			"invalid",
-			"for"
+			"PieceCollection"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -455,15 +489,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1773,
+						"buffer_size": 1794,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1328,
-								1328
+								109,
+								109
 							]
 						],
 						"settings":
@@ -476,7 +510,7 @@
 						"translation.y": 924.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -485,15 +519,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2722,
+						"buffer_size": 2740,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								324,
-								324
+								1562,
+								1562
 							]
 						],
 						"settings":
@@ -506,7 +540,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -515,15 +549,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 18018,
+						"buffer_size": 19101,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								16228,
-								16228
+								6176,
+								6176
 							]
 						],
 						"settings":
@@ -533,10 +567,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 10025.0,
+						"translation.y": 3249.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -545,15 +579,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 871,
+						"buffer_size": 1034,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								871,
-								871
+								472,
+								472
 							]
 						],
 						"settings":
@@ -564,13 +598,13 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 5,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -579,15 +613,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1195,
+						"buffer_size": 1210,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1195,
-								1195
+								668,
+								668
 							]
 						],
 						"settings":
@@ -610,26 +644,26 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2230,
+						"buffer_size": 3833,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1007,
-								1007
+								1150,
+								1150
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
 						},
-						"translation.x": 134.0,
-						"translation.y": 198.0,
+						"translation.x": 0.0,
+						"translation.y": 330.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -693,7 +727,7 @@
 		"cols":
 		[
 			0.0,
-			0.5,
+			0.6859375,
 			1.0
 		],
 		"rows":
@@ -745,7 +779,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 1,
+	"selected_group": 0,
 	"settings":
 	{
 	},
