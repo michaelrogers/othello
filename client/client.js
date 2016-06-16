@@ -13,20 +13,23 @@ var boardPosition; //Holds 2d array of piece data
 var flipCoordinate_x = [], flipCoordinate_y = []; //Temporary coordinate array for holding pieces that need to be flipped
 //States ------
 var intSet; //Used in interval delay function
-var clickInputAccepted = true; //Used to lock the player while setInterval is repeating/flipping
+var clickInputAccepted = false; //Used to lock the player while setInterval is repeating/flipping
 var gameOn = true;
 var notBoardReset = true;
 var playerTurn;
 var currentGameObject = {};
 var currentGameId = "game1";
+var playerColorSelection;
+var clientUpdated = false;
 window.returnGameDocument = returnGameDocument();
 // var updatedFromThisClient = false;
 
 PieceCollection.find().observeChanges({
-   added: function () {returnGameDocument();},
-   changed: function () {returnGameDocument();},
+   added: function () {returnGameDocument(); console.log('added');},
+   changed: function () {returnGameDocument();console.log('changed')},
    // removed: function () {  }
     });
+
 
 window.onload = function init(){
   getCanvasContext();
@@ -34,7 +37,7 @@ window.onload = function init(){
   drawGrid();
   globalDebug();
   buttonListeners()
-  playerTurn = 0; //white
+  document.getElementById('messages').innerHTML = "Please select a color.";
   $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
   $(window).resize(function(){drawGrid();});
 }
@@ -51,18 +54,17 @@ $("input[type=text]").focus(function(){$(this).css("background","#ffffff");});
 }//getCanvasContext
 
 function buttonListeners() {
-  notBoardReset = false;
+  notBoardReset = false
+  document.getElementById('playerChoice').addEventListener("click", function(){playerColorSelection = $('input[name="playerChoice"]:checked').val(); switchTurn(); console.log("Player Color: "+playerColorSelection);  });
   
   document.getElementById("resetButton").addEventListener("click", function(){
-  Meteor.call('othello.resetGameData', { gameId: currentGameId } , (err, res) => {
+    clearArray(); setInitialPosition(); currentGameObject = boardPosition;
+    Meteor.call('othello.resetGameData', { gameId: currentGameId } , (err, res) => {
             if (err) {console.log("Error: \n" + err);}
-             else { clearArray(); console.log("Reset method called");}
+             else {readCollection();  console.log("Reset method called");}
               });
-    // notBoardReset = false;
-    
     clickInputAccepted = true;
     gameOn = true;
-    if (playerTurn=1){ switchTurn(); }
     document.title = "Othello";
    }); 
   
@@ -108,15 +110,15 @@ for (var x = 0; x <= boardWidth; x += 50) {
   context.lineWidth = 1;
   context.stroke();
   }
- function readArray(){
- //Reads the initialized array and draws the start position
- var x, y;
- for (y=0; y < boardPosition.length; y++) {
-   for (x=0; x < boardPosition[y].length; x++){
-     if (boardPosition[y][x] !== null) {
-         drawPieces(y,x);
-     }}}
-   }
+ // function readArray(){
+ // //Reads the initialized array and draws the start position
+ // var x, y;
+ // for (y=0; y < boardPosition.length; y++) {
+ //   for (x=0; x < boardPosition[y].length; x++){
+ //     if (boardPosition[y][x] !== null) {
+ //         drawPieces(y,x);
+ //     }}}
+ //   }
 
  function clearArray(){
    var x, y;
@@ -145,12 +147,8 @@ var x, y;
 var whiteScore = 0,  blackScore = 0;
 for (y=0; y < boardPosition.length; y++) {
   for (x=0; x < boardPosition[y].length; x++){
-    if (boardPosition[y][x] == 0){
-        whiteScore +=1;
-    }
-    else if (boardPosition[y][x] == 1){
-      blackScore +=1;
-    }
+    if (boardPosition[y][x] == 0){whiteScore +=1;}
+    else if (boardPosition[y][x] == 1){blackScore +=1;}
     }}
 
   if (whiteScore + blackScore <= 64){
@@ -188,8 +186,6 @@ for (y=0; y < boardPosition.length; y++) {
 function listenMouseDown (event) {
   if (clickInputAccepted){
     event = event || window.event; //Accomodate cross browser support
-
-
   //Get canvas offset using jQuery to get a relative mouse position
   var canvasOffset=$("#canvas2").offset();
   var offset_x = canvasOffset.left;
@@ -202,8 +198,16 @@ function listenMouseDown (event) {
   translateCoordinate(canvas_y,canvas_x);
   }
   else {
-    if (debugErrorMessage){console.log("Mouse input locked!");}
-  }
+      var opponent;
+      
+       if (playerColorSelection == 0){opponent = "Black"}
+        else if (playerColorSelection == 1){opponent = "White"}
+
+      document.getElementById("messages").innerHTML = "Waiting on " + opponent + " to finish playing!";
+    }
+    
+    // if (debugErrorMessage){console.log("Mouse input locked!");}
+    
 }
 
 function translateCoordinate (canvas_y,canvas_x){
@@ -225,22 +229,28 @@ function translateCoordinate (canvas_y,canvas_x){
 function switchTurn (){
   //switches the player turn and then updates h3 with id="turn"
   var playerText = "";
-  // Session.set('updateAvailable',true);
+  var messages = "";
+  if (playerTurn == playerColorSelection){clickInputAccepted = true;}
   if (playerTurn == 0) {
-    //Takes white's turn and switches to black's
-    playerTurn = 1;
+      playerText = "Player Turn: White";
+    document.title = "White's turn - Othello";
+  } 
+  else if (playerTurn == 1) {
     playerText = "Player Turn: Black";
     document.title = "Black's turn - Othello";
-  } 
-  //Takes black's turn and switches to white's
-  else if (playerTurn == 1) {
-    playerTurn = 0;
-    playerText = "Player Turn: White";
-    document.title = "White's turn - Othello";
   }
-  if (debugErrorMessage){console.log("Switch turn");}
   document.getElementById("turn").innerHTML = playerText;
-  document.getElementById("messages").innerHTML = "Please proceed!";
+  
+  if (playerColorSelection === undefined){
+    messages = "Please select a piece color to play with.";}
+  else if (playerColorSelection == playerTurn){
+    messages = "Your move!"
+  }
+  else {messages = "Waiting on your opponent to play.";}
+  
+
+  document.getElementById('messages').innerHTML = messages;
+  // if (debugErrorMessage){console.log("Switch turn");}
 }
 
 function validMove(cell_y,cell_x){
@@ -289,6 +299,7 @@ function validMove(cell_y,cell_x){
       clickInputAccepted = true;
     }
     else if (noOppositeMatch == false){
+      clientUpdated = true;
       addPiece(cell_y,cell_x); //Add selection piece first
       console.log("validMove");
       intervalDelay(); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
@@ -301,9 +312,8 @@ function addPiece (cell_y,cell_x) {
   if (thisCell == null){
     boardPosition[cell_y][cell_x] = playerTurn;
     currentGameObject[cell_y][cell_x] = playerTurn;
-    //Move flip function to after draw 
     //Believe I can return this to default behavior, changed due to troubleshooting. 
-     //switchTurn();  //MOVED: To after pieces are finished flipping
+
     }
   //Leaving manual flipping functionality in place for testing
   else if (thisCell == 0){
@@ -332,14 +342,13 @@ function returnFlipCoordinate(){
   else {
     console.log("flip function")
   clearInterval(intSet);
-  clickInputAccepted = true;
+  // if(gameOn){clickInputAccepted = true;}
   //Update Collection after all pieces are flipped and the currentGameObject has reflected all of the changes
-  updateGameData();
+  if(clientUpdated){ updateGameData();}
+  clientUpdated = false;
 
-  if(gameOn){ switchTurn(); }
     }
   }
-
 
 function drawPieces(yPosition,xPosition) {
   radius = 20;
@@ -403,17 +412,22 @@ function returnGameDocument() {
         var pastGameObject = currentGameObject;
         currentGameDocument = res;
         currentGameObject = currentGameDocument['gameData']; //define the currentGameObject for readCollection to use
-        // console.log(currentGameObject);
-        // readCollection();
+        console.log(playerTurn);
+        playerTurn = currentGameDocument['playerTurn'];
+        console.log('Player Turn: '+ playerTurn);
         diffCollections(pastGameObject, currentGameObject);
+        switchTurn()
+        
     }});
 }
 
 function updateGameData() {
+  if (playerTurn == playerColorSelection){ //Remove logic
   Meteor.call('othello.updateGameData', {
   gameId: currentGameId,
-  changedGameData: currentGameObject
-}, (err, res) => {
+  changedGameData: currentGameObject,
+  currentPlayerTurn: playerColorSelection},
+  (err, res) => {
   if (err) {
     alert(err);
   } else {
@@ -423,8 +437,10 @@ function updateGameData() {
     }
 });
 }
+}
 
 function readCollection(){
+  console.log('readCollection');
   var x, y;
   for (y=0; y < Object.keys(currentGameObject).length; y++) {
     for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
@@ -438,7 +454,7 @@ function readCollection(){
 
  function diffCollections (pastGameObject, currentGameObject) {
   // console.log(pastGameObject); // console.log(currentGameObject);
-  if (Object.keys(pastGameObject).length == 0){console.log('readCollection'); readCollection();}
+  if (Object.keys(pastGameObject).length == 0){ readCollection();}
   else {
     var x, y, flipIndex = 0;
     for (y=0; y < Object.keys(currentGameObject).length; y++) {
@@ -446,7 +462,8 @@ function readCollection(){
           // boardPosition[y][x] = currentGameObject[y][x]
         if (currentGameObject[y][x] !== null && currentGameObject[y][x] != pastGameObject[y][x] ) {
           if (pastGameObject[y][x] == null){
-            addPiece(y,x);
+            boardPosition[y][x] = currentGameObject[y][x];
+            drawPieces(y,x);
             console.log("diffCollection addPiece");
             }
           else {
