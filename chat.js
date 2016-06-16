@@ -31,7 +31,8 @@ if (Meteor.isClient) {
 
   ChatMessages.find().observeChanges({
     added: function () {
-      $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
+      $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'fast'); //Ascending order; newest messages on bottom
+      event.stopPropagation();
     }
     });
 
