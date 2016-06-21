@@ -5,9 +5,9 @@ Accounts.ui.config({  passwordSignupFields: "USERNAME_ONLY"  });
 //Global for access from console
 var debugErrorMessage = false;
 //defining layers for canvas
-var layer1, layer2;
+var layer1, layer2, layer3;
 //Canvas variables for window resizing
-var cellWidth, padding, radius;
+var  radius, padding, cellWidth, linePadding;
 //Local gamePiece Data -----
 var boardPosition; //Holds 2d array of piece data
 var flipCoordinate_x = [], flipCoordinate_y = []; //Temporary coordinate array for holding pieces that need to be flipped
@@ -18,7 +18,7 @@ var gameOn = true;
 var notBoardReset = true;
 var playerTurn;
 var currentGameObject = {};
-var currentGameId = "game1";
+const currentGameId = "game1";
 var playerColorSelection;
 var clientUpdated = false;
 window.returnGameDocument = returnGameDocument();
@@ -26,7 +26,7 @@ window.returnGameDocument = returnGameDocument();
 
 PieceCollection.find().observeChanges({
    added: function () {returnGameDocument(); console.log('added');},
-   changed: function () {returnGameDocument();console.log('changed')},
+   changed: function () {returnGameDocument();console.log('changed');},
    // removed: function () {  }
     });
 
@@ -34,12 +34,13 @@ PieceCollection.find().observeChanges({
 window.onload = function init(){
   getCanvasContext();
   setInitialPosition();
-  drawGrid();
+  resizingDeclarations(); //drawGrid();
   globalDebug();
   buttonListeners()
+
   document.getElementById('messages').innerHTML = "Please select a color.";
   $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
-  $(window).resize(function(){drawGrid();});
+  $(window).resize(function(){resizingDeclarations});
 }
  
 function getCanvasContext() {
@@ -50,6 +51,10 @@ context = layer1.getContext("2d");
 layer2 = document.getElementById("canvas2");
 contextPieces = layer2.getContext("2d");
 layer2.addEventListener("click",listenMouseDown); //Event listener for mouse input and event is implicitely passed as an argument
+
+layer3 = document.getElementById("canvas3");
+contextMarkers = layer3.getContext("2d");
+
 $("input[type=text]").focus(function(){$(this).css("background","#ffffff");});
 }//getCanvasContext
 
@@ -69,10 +74,15 @@ function buttonListeners() {
    }); 
   
 document.getElementById("skipTurn").addEventListener("click", function(){
-  clickInputAccepted = true;
-  gameOn = true;
-  switchTurn();  
+  
+  updateGameData();
   });
+}
+
+function resizingDeclarations (){
+radius = 20, padding = 10, cellWidth = 50;
+drawGrid();
+
 }
 
 function setInitialPosition(){
@@ -96,15 +106,16 @@ var boardWidth = 400;
 var boardHeight = 400;
 padding = 10; //padding around grid
 //draw vertical lines of grid
+linePadding = 0.5;
 context.beginPath();
 for (var x = 0; x <= boardWidth; x += 50) {
-    context.moveTo(0.5 + x + padding, padding);
-    context.lineTo(0.5 + x + padding, boardHeight + padding);
+    context.moveTo(linePadding + x + padding, padding);
+    context.lineTo(linePadding + x + padding, boardHeight + padding);
   }
 //draw horizontal lines of grid
   for (var x = 0; x <= boardHeight; x += 50) {
-    context.moveTo(padding, 0.5 + x + padding);
-    context.lineTo(boardWidth + padding, 0.5 + x + padding);
+    context.moveTo(padding, linePadding + x + padding);
+    context.lineTo(boardWidth + padding, linePadding + x + padding);
    }
   context.strokeStyle = "#323232";
   context.lineWidth = 1;
@@ -205,7 +216,6 @@ function listenMouseDown (event) {
 
       document.getElementById("messages").innerHTML = "Waiting on " + opponent + " to finish playing!";
     }
-    
     // if (debugErrorMessage){console.log("Mouse input locked!");}
     
 }
@@ -226,11 +236,14 @@ function translateCoordinate (canvas_y,canvas_x){
   }
 }
 
+
+
 function switchTurn (){
   //switches the player turn and then updates h3 with id="turn"
   var playerText = "";
   var messages = "";
   if (playerTurn == playerColorSelection){clickInputAccepted = true;}
+  else {clickInputAccepted = false;}
   if (playerTurn == 0) {
       playerText = "Player Turn: White";
     document.title = "White's turn - Othello";
@@ -301,6 +314,8 @@ function validMove(cell_y,cell_x){
     else if (noOppositeMatch == false){
       clientUpdated = true;
       addPiece(cell_y,cell_x); //Add selection piece first
+      clearMarkerCanvas();
+      drawMarker(cell_y, cell_x, true);
       console.log("validMove");
       intervalDelay(); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
       }
@@ -338,6 +353,7 @@ function returnFlipCoordinate(){
     cell_y = flipCoordinate_y.pop();
     if (debugErrorMessage){console.log("Flip x: "+ cell_x + " y: " + cell_y);}
     addPiece(cell_y,cell_x);
+    drawMarker(cell_y, cell_x, false);
   }
   else {
     console.log("flip function")
@@ -351,9 +367,9 @@ function returnFlipCoordinate(){
   }
 
 function drawPieces(yPosition,xPosition) {
-  radius = 20;
-  padding = 10;
-  cellWidth = 50;
+  // radius = 20;
+  // padding = 10;
+  // cellWidth = 50;
   //implement random positioning within cell for added interest and analog feel
   //uses a random number generator to vary between a value -1 to +1
   var randomX = Math.floor((Math.random()*3))-1;
@@ -395,6 +411,38 @@ function drawPieces(yPosition,xPosition) {
   contextPieces.fill();
   contextPieces.stroke();
     }
+
+function drawMarker (y, x, initialPiece, ){ //initialPiece is a boolean value representing the piece played by the player
+  var yCoordinate = padding+cellWidth*y;
+  var xCoordinate = padding+cellWidth*x;
+  var centerY = yCoordinate + cellWidth/2;
+  var centerX = xCoordinate + cellWidth/2;
+  
+  if (initialPiece){
+  var markerGradient = 'rgba(0,0,125,0.4)';
+  }
+  else {
+    var markerGradient = 'rgba(0,0,125,0.2)';
+  }
+
+  // var markerGradient = contextMarkers.createRadialGradient(centerX, centerY, radius/1.5, centerX, centerY, radius);
+  // // markerGradient.addColorStop(0, 'rgba(0,0,0,.5)');
+  // // markerGradient.addColorStop(1, 'rgba(32,45,21,.5)');
+  // markerGradient.addColorStop(0, "white");
+  // markerGradient.addColorStop(1, "#cfcfcf");
+
+  contextMarkers.fillStyle = markerGradient;
+  contextMarkers.clearRect(centerX-25,centerY-25,50,50);
+  var bufferValue = 0;
+  contextMarkers.fillRect(centerX-25+bufferValue+linePadding,centerY-25+bufferValue+linePadding,50-(bufferValue*2),50-(bufferValue*2));
+}
+
+function clearMarkerCanvas (){
+  contextMarkers.clearRect(0,0,410,410);
+}
+
+
+
 //Accessible through the console for debugging purposes
 function globalDebug(){
 window.debugMode = debugMode; //Assign function to global window property
@@ -437,6 +485,8 @@ function updateGameData() {
     }
 });
 }
+  switchTurn();  
+
 }
 
 function readCollection(){
@@ -463,7 +513,9 @@ function readCollection(){
         if (currentGameObject[y][x] !== null && currentGameObject[y][x] != pastGameObject[y][x] ) {
           if (pastGameObject[y][x] == null){
             boardPosition[y][x] = currentGameObject[y][x];
-            drawPieces(y,x);
+            drawPieces(y,x); //Add opponents selection first
+            clearMarkerCanvas();
+            drawMarker(y,x,true);
             console.log("diffCollection addPiece");
             }
           else {

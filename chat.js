@@ -2,7 +2,8 @@
 if (Meteor.isClient) {
       Template.messages.helpers({
         messages: function() {
-            return ChatMessages.find({}, { sort: { time: 1}}, function (){});
+            // var game_Id = Session.get('game_Id');
+            return ChatMessages.find({_id: "game1"}, { sort: { time: 1}}, function (){});
             }
            });
 
@@ -15,7 +16,9 @@ if (Meteor.isClient) {
             var name = 'Guest'; //Comment out after testing
           var message = document.getElementById('message');
           if (message.value != '') {
+              var game_Id = Session.get('game_Id');
             ChatMessages.insert({
+              _id: "game1",
               username: name,
               message: message.value,
               time: Date.now(),

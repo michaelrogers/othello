@@ -8,7 +8,7 @@
   <header>
   <h1>Othello</h1>
   
-  <div id="login-buttons">{{> loginButtons}} <p><br> <button type="button" class = "button" id="resetButton">Reset match</button>
+  <div id="login-buttons">{{> loginButtons}} <p><br> <button type="button" class = "button" id="resetButton">Rematch</button>
   <button type="button" class = "button" id="skipTurn">Skip Turn</button></p>
   <form id=playerChoice>
   <input type="radio" name=playerChoice value=0 id=playerChoiceWhite>White
@@ -55,7 +55,9 @@
 <!--   {{#each autoRun}}{{/each}} -->
   <div id="canvasesdiv" width="420px" height="420px"> 
   <canvas id="canvas1" width="420px" height="420px" style='width:420px;height:420px'></canvas>
+  <canvas id="canvas3" width="420px" height="420px" style='width:420px;height:420px'></canvas>
   <canvas id="canvas2" width="420px" height="420px" style='width:420px;height:420px'></canvas>
+
   </div>
   {{/if}}
 </template>
