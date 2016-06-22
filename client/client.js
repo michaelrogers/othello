@@ -21,8 +21,7 @@ var currentGameObject = {};
 const currentGameId = "game1";
 var playerColorSelection;
 var clientUpdated = false;
-window.returnGameDocument = returnGameDocument();
-// var updatedFromThisClient = false;
+//No longer used: window.returnGameDocument = returnGameDocument();
 
 PieceCollection.find().observeChanges({
    added: function () {returnGameDocument(); console.log('added');},
@@ -80,9 +79,8 @@ document.getElementById("skipTurn").addEventListener("click", function(){
 }
 
 function resizingDeclarations (){
-radius = 20, padding = 10, cellWidth = 50;
+radius = 20, padding = 10, cellWidth = 50; //Used for drawing the pieces
 drawGrid();
-
 }
 
 function setInitialPosition(){
@@ -210,15 +208,13 @@ function listenMouseDown (event) {
   }
   else {
       var opponent;
-      
-       if (playerColorSelection == 0){opponent = "Black"}
+      if (playerColorSelection == 0){opponent = "Black"}
         else if (playerColorSelection == 1){opponent = "White"}
 
       document.getElementById("messages").innerHTML = "Waiting on " + opponent + " to finish playing!";
     }
     // if (debugErrorMessage){console.log("Mouse input locked!");}
-    
-}
+  }
 
 function translateCoordinate (canvas_y,canvas_x){
   //Determines which cell the coordinate from mouse listener belongs to
@@ -235,8 +231,6 @@ function translateCoordinate (canvas_y,canvas_x){
     document.getElementById("messages").innerHTML = "Out of bounds: try to keep it in the lines!";
   }
 }
-
-
 
 function switchTurn (){
   //switches the player turn and then updates h3 with id="turn"
@@ -342,7 +336,6 @@ function addPiece (cell_y,cell_x) {
     }
   drawPieces(cell_y,cell_x);
   if (notBoardReset){calculateScore();}
-  
 }//End addPiece
 
 function intervalDelay(){intSet = setInterval(returnFlipCoordinate,500);} 
@@ -459,9 +452,19 @@ function returnGameDocument() {
         console.log("returnGameDocument ran!");
         var pastGameObject = currentGameObject;
         currentGameDocument = res;
-        currentGameObject = currentGameDocument['gameData']; //define the currentGameObject for readCollection to use
+        console.log(currentGameDocument);
+        var maxDate = 0;
+        var turnIndex;
+        var turnData = currentGameDocument['turnData']
+        console.log(turnData);
+        for (x=0; x<turnData.length; x++){
+          if (turnData[x]['date'] > maxDate){maxDate = turnData[x]['date']; turnIndex = x;}
+        }
+        console.log('Seconds ago: ' + (Date.now()-maxDate)/1000); //JavaScript time is in milliseconds
+        currentGameObject = turnData[turnIndex]['turnMove']; //define the currentGameObject for readCollection to use
+
         console.log(playerTurn);
-        playerTurn = currentGameDocument['playerTurn'];
+        playerTurn = turnData[turnIndex]['playerTurn'];
         console.log('Player Turn: '+ playerTurn);
         diffCollections(pastGameObject, currentGameObject);
         switchTurn()
@@ -491,6 +494,7 @@ function updateGameData() {
 
 function readCollection(){
   console.log('readCollection');
+  clearMarkerCanvas();
   var x, y;
   for (y=0; y < Object.keys(currentGameObject).length; y++) {
     for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
