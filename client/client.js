@@ -18,7 +18,7 @@ var gameOn = true;
 var notBoardReset = true;
 var playerTurn;
 var currentGameObject = {};
-const currentGameId = "game1";
+var currentGameId = "game1";
 var playerColorSelection;
 var clientUpdated = false;
 //No longer used: window.returnGameDocument = returnGameDocument();
@@ -36,7 +36,7 @@ window.onload = function init(){
   resizingDeclarations(); //drawGrid();
   globalDebug();
   buttonListeners()
-
+  generateGameId();
   document.getElementById('messages').innerHTML = "Please select a color.";
   $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
   $(window).resize(function(){resizingDeclarations});
@@ -78,6 +78,17 @@ document.getElementById("skipTurn").addEventListener("click", function(){
   });
 }
 
+
+function generateGameId () {
+  var userId = Meteor.userId();
+  console.log(userId);
+
+  Meteor.call('othello.generateGameId', { userId: userId } , (err, res) => {
+            if (err) {console.log("Error: \n" + err);}
+            else {currentGameId = res; console.log(currentGameId);}
+
+});
+}
 function resizingDeclarations (){
 radius = 20, padding = 10, cellWidth = 50; //Used for drawing the pieces
 drawGrid();
@@ -355,6 +366,7 @@ function returnFlipCoordinate(){
   //Update Collection after all pieces are flipped and the currentGameObject has reflected all of the changes
   if(clientUpdated){ updateGameData();}
   clientUpdated = false;
+  switchTurn();
 
     }
   }
@@ -405,28 +417,46 @@ function drawPieces(yPosition,xPosition) {
   contextPieces.stroke();
     }
 
-function drawMarker (y, x, initialPiece, ){ //initialPiece is a boolean value representing the piece played by the player
+function drawMarker (y, x, initialPiece,  ){ //initialPiece is a boolean value representing the piece played by the player
   var yCoordinate = padding+cellWidth*y;
   var xCoordinate = padding+cellWidth*x;
   var centerY = yCoordinate + cellWidth/2;
   var centerX = xCoordinate + cellWidth/2;
   
+  var markerGradient = contextMarkers.createRadialGradient(centerX, centerY, radius*0.9, centerX, centerY, radius*1.8);
+  if (clientUpdated){
   if (initialPiece){
-  var markerGradient = 'rgba(0,0,125,0.4)';
+  // var markerGradient = 'rgba(0,0,125,0.4)';
+  markerGradient.addColorStop(0, "rgba(0,0,125,0.4)");
+  markerGradient.addColorStop(1, "rgba(0,0,125,0.5)");
   }
   else {
-    var markerGradient = 'rgba(0,0,125,0.2)';
+    // var markerGradient = 'rgba(0,0,125,0.2)';
+    markerGradient.addColorStop(0, "rgba(0,0,125,0.2)");
+    markerGradient.addColorStop(1, "rgba(0,0,125,0.3)");
   }
-
-  // var markerGradient = contextMarkers.createRadialGradient(centerX, centerY, radius/1.5, centerX, centerY, radius);
+}
+else {
+if (initialPiece){
+  // var markerGradient = 'rgba(0,0,125,0.4)';
+  markerGradient.addColorStop(0, "rgba(125,0,0,0.4)");
+  markerGradient.addColorStop(1, "rgba(125,0,0,0.5)");
+  }
+  else {
+    // var markerGradient = 'rgba(0,0,125,0.2)';
+    markerGradient.addColorStop(0, "rgba(125,0,0,0.2)");
+    markerGradient.addColorStop(1, "rgba(125,0,0,0.3)");
+  }
+}
+  
   // // markerGradient.addColorStop(0, 'rgba(0,0,0,.5)');
   // // markerGradient.addColorStop(1, 'rgba(32,45,21,.5)');
-  // markerGradient.addColorStop(0, "white");
-  // markerGradient.addColorStop(1, "#cfcfcf");
+  
 
-  contextMarkers.fillStyle = markerGradient;
+  
   contextMarkers.clearRect(centerX-25,centerY-25,50,50);
   var bufferValue = 0;
+  contextMarkers.fillStyle = markerGradient;
   contextMarkers.fillRect(centerX-25+bufferValue+linePadding,centerY-25+bufferValue+linePadding,50-(bufferValue*2),50-(bufferValue*2));
 }
 
@@ -444,27 +474,26 @@ function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");ret
 
 function returnGameDocument() {
 // if (!updatedFromThisClient){
-  var currentGameDocument = {};
+  var currentGameData = {};
   Meteor.call('othello.readGameData', { gameId: currentGameId}, (err, res) => {
   if (err) {console.log(err);}
-   else if (currentGameDocument === undefined) {console.log("GameDocument undefined");}
+   else if (currentGameData === undefined) {console.log("GameData undefined");}
     else {   
         console.log("returnGameDocument ran!");
         var pastGameObject = currentGameObject;
-        currentGameDocument = res;
-        console.log(currentGameDocument);
-        var maxDate = 0;
-        var turnIndex;
-        var turnData = currentGameDocument['turnData']
-        console.log(turnData);
-        for (x=0; x<turnData.length; x++){
-          if (turnData[x]['date'] > maxDate){maxDate = turnData[x]['date']; turnIndex = x;}
-        }
-        console.log('Seconds ago: ' + (Date.now()-maxDate)/1000); //JavaScript time is in milliseconds
-        currentGameObject = turnData[turnIndex]['turnMove']; //define the currentGameObject for readCollection to use
+        currentGameData = res;
+        console.log(currentGameData);
+        currentGameObject = currentGameData['turnPieceData'];
+        // var maxDate = 0;
+        // var turnIndex;
+        // var turnData = currentGameDocument['turnData']
+        // console.log(turnData);
+        // for (x=0; x<turnData.length; x++){
+        //   if (turnData[x]['date'] > maxDate){maxDate = turnData[x]['date']; turnIndex = x;}
+        // }
+        // console.log('Seconds ago: ' + (Date.now()-maxDate)/1000); //JavaScript time is in milliseconds
 
-        console.log(playerTurn);
-        playerTurn = turnData[turnIndex]['playerTurn'];
+        playerTurn = currentGameData['playerTurn'];
         console.log('Player Turn: '+ playerTurn);
         diffCollections(pastGameObject, currentGameObject);
         switchTurn()
@@ -531,6 +560,7 @@ function readCollection(){
         }}
      if (flipCoordinate_x.length > 0){
       console.log("diffCollection");
+      flippingLogTextAnimation();
       intervalDelay();
      }
    }
