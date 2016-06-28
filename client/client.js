@@ -18,29 +18,40 @@ var gameOn = true;
 var notBoardReset = true;
 var playerTurn;
 var currentGameObject = {};
-var currentGameId = "game1";
+var currentGameId;
 var playerColorSelection;
 var clientUpdated = false;
-//No longer used: window.returnGameDocument = returnGameDocument();
-
-PieceCollection.find().observeChanges({
-   added: function () {returnGameDocument(); console.log('added');},
-   changed: function () {returnGameDocument();console.log('changed');},
-   // removed: function () {  }
-    });
-
+// window.returnGameDocument = returnGameDocument();
+// window.pieceObserver = pieceObserver();
+// window.readCollection = readCollection();
 
 window.onload = function init(){
   getCanvasContext();
-  setInitialPosition();
   resizingDeclarations(); //drawGrid();
+  setInitialPosition();
   globalDebug();
-  buttonListeners()
-  generateGameId();
-  document.getElementById('messages').innerHTML = "Please select a color.";
+  buttonListeners();
+  document.getElementById('messages').innerHTML = "Please select a color to play as.";
   $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
   $(window).resize(function(){resizingDeclarations});
+  if (sessionStorage.getItem('gameId') !== null){currentGameId = sessionStorage.getItem('gameId'); Session.set('gameId', sessionStorage.getItem('gameId')); returnGameDocument();}
+  else {generateGameId();}
+  pieceObserver();
+  console.log("currentGameId: "+ currentGameId);
 }
+
+function pieceObserver (){
+if (sessionStorage.getItem('gameId') !== null){
+  console.log("pieceObserver observing!");
+PieceCollection.find({_id: sessionStorage.getItem('gameId')}).observeChanges({
+   // added: function () {returnGameDocument(); console.log('added');},
+   changed: function () {returnGameDocument();console.log('changed');},
+   // removed: function () {  }
+    });
+}
+else {console.log("gameId undefined")}
+}
+
  
 function getCanvasContext() {
  //layer 1 = board with lines
@@ -54,40 +65,40 @@ layer2.addEventListener("click",listenMouseDown); //Event listener for mouse inp
 layer3 = document.getElementById("canvas3");
 contextMarkers = layer3.getContext("2d");
 
-$("input[type=text]").focus(function(){$(this).css("background","#ffffff");});
+// $("input[type=text]").focus(function(){$(this).css("background","#ffffff");});
 }//getCanvasContext
 
 function buttonListeners() {
   notBoardReset = false
+  //Color selection radio
   document.getElementById('playerChoice').addEventListener("click", function(){playerColorSelection = $('input[name="playerChoice"]:checked').val(); switchTurn(); console.log("Player Color: "+playerColorSelection);  });
-  
+  //Reset button
   document.getElementById("resetButton").addEventListener("click", function(){
-    clearArray(); setInitialPosition(); currentGameObject = boardPosition;
+    
     Meteor.call('othello.resetGameData', { gameId: currentGameId } , (err, res) => {
             if (err) {console.log("Error: \n" + err);}
              else {readCollection();  console.log("Reset method called");}
               });
+    clearArray(); generateGameId(); setInitialPosition(); currentGameObject = boardPosition; 
     clickInputAccepted = true;
     gameOn = true;
     document.title = "Othello";
    }); 
-  
-document.getElementById("skipTurn").addEventListener("click", function(){
-  
-  updateGameData();
+  //Skip turn button
+  document.getElementById("skipTurn").addEventListener("click", function(){
+    updateGameData();
   });
 }
 
-
 function generateGameId () {
-  var userId = Meteor.userId();
-  console.log(userId);
-
-  Meteor.call('othello.generateGameId', { userId: userId } , (err, res) => {
+  var clientUserId = Meteor.userId();
+  console.log("userId: "+ clientUserId);
+  Meteor.call('othello.generateGameId', { userId: clientUserId } , (err, res) => {
             if (err) {console.log("Error: \n" + err);}
-            else {currentGameId = res; console.log(currentGameId);}
+            else {currentGameId = res; console.log("gameId: "+ currentGameId); window.sessionStorage.setItem("gameId", currentGameId); Session.set("gameId", currentGameId); returnGameDocument();}
 
 });
+  
 }
 function resizingDeclarations (){
 radius = 20, padding = 10, cellWidth = 50; //Used for drawing the pieces
@@ -147,7 +158,7 @@ for (var x = 0; x <= boardWidth; x += 50) {
       
        if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
          boardPosition[y][x] = null;
-         drawPieces(y,x);
+         drawPieces(y,x, null);
          }}}
          document.getElementById("score").innerHTML = "";
  }
@@ -204,7 +215,7 @@ for (y=0; y < boardPosition.length; y++) {
 }
 
 function listenMouseDown (event) {
-  if (clickInputAccepted){
+  if (clickInputAccepted && Meteor.user()){
     event = event || window.event; //Accomodate cross browser support
   //Get canvas offset using jQuery to get a relative mouse position
   var canvasOffset=$("#canvas2").offset();
@@ -217,7 +228,11 @@ function listenMouseDown (event) {
   //console.log ("Mouse Click" + "\n" + "X: "+canvas_x+" Y: "+canvas_y);
   translateCoordinate(canvas_y,canvas_x);
   }
-  else {
+  else if (Meteor.user() == null){document.getElementById("messages").innerHTML = "Please login to play.";}
+
+
+
+    else {
       var opponent;
       if (playerColorSelection == 0){opponent = "Black"}
         else if (playerColorSelection == 1){opponent = "White"}
@@ -259,7 +274,7 @@ function switchTurn (){
   }
   document.getElementById("turn").innerHTML = playerText;
   
-  if (playerColorSelection === undefined){
+  if (typeof playerColorSelection === "undefined"){
     messages = "Please select a piece color to play with.";}
   else if (playerColorSelection == playerTurn){
     messages = "Your move!"
@@ -281,11 +296,11 @@ function validMove(cell_y,cell_x){
     document.getElementById("messages").innerHTML = "Flipping..";
     for (dx = -1; dx <= 1; dx++){ //Iterate horizontally
         for (dy = -1; dy <=1; dy++){ //Iterate vertically
-          if (typeof boardPosition[cell_y+dy] != 'undefined' && typeof boardPosition[cell_y+dy][cell_x+dx] != 'undefined'){ //Prevent attempting to scan outside of the array
+          if (typeof boardPosition[cell_y+dy] !== 'undefined' && typeof boardPosition[cell_y+dy][cell_x+dx] !== 'undefined'){ //Prevent attempting to scan outside of the array
            if (dx == 0 && dy == 0) {continue;} //prevent boardPosition[cell_y][cell_x] from being processed
             var adjacentCellValue = boardPosition[cell_y+dy][cell_x+dx];
             //Evaluating for the opposite of playerTurn value
-            if (adjacentCellValue != playerTurn && typeof adjacentCellValue != 'undefined' && adjacentCellValue != null){
+            if (adjacentCellValue != playerTurn && typeof adjacentCellValue !== 'undefined' && adjacentCellValue != null){
                if (debugErrorMessage){console.log("Adj x: " + (cell_x+dx) + " y: " + (cell_y+dy));} //Log the coordinates of the adjacent cell being checked to the console for debugging purposes
               //Evaluating the piece(s) beyond the adjacent tile to ensure that a flip is possible
              for (multFactor = 2; (cell_y+(dy*multFactor)) >= 0 && (cell_x+(dx*multFactor)) >= 0 && (cell_y+(dy*multFactor)) <= 7 && (cell_x+(dx*multFactor)) <= 7; multFactor++){
@@ -345,7 +360,7 @@ function addPiece (cell_y,cell_x) {
     boardPosition[cell_y][cell_x] = 0;
     currentGameObject[cell_y][cell_x] = 0;
     }
-  drawPieces(cell_y,cell_x);
+  drawPieces(cell_y,cell_x, currentGameObject[cell_y][cell_x]);
   if (notBoardReset){calculateScore();}
 }//End addPiece
 
@@ -360,18 +375,18 @@ function returnFlipCoordinate(){
     drawMarker(cell_y, cell_x, false);
   }
   else {
+    clearInterval(intSet);
     console.log("flip function")
-  clearInterval(intSet);
   // if(gameOn){clickInputAccepted = true;}
   //Update Collection after all pieces are flipped and the currentGameObject has reflected all of the changes
-  if(clientUpdated){ updateGameData();}
-  clientUpdated = false;
-  switchTurn();
+    if(clientUpdated){ updateGameData();}
+    clientUpdated = false;
+    switchTurn();
 
     }
   }
 
-function drawPieces(yPosition,xPosition) {
+function drawPieces(yPosition,xPosition, pieceColor) {
   // radius = 20;
   // padding = 10;
   // cellWidth = 50;
@@ -385,21 +400,21 @@ function drawPieces(yPosition,xPosition) {
   var centerY = cellWidth/2+padding+randomY+cellWidth*yPosition;
   var pieceGradient = contextPieces.createRadialGradient(centerX, centerY, radius/1.5, centerX, centerY, radius);
   
-  if (boardPosition[yPosition][xPosition] == 0) {
+  if (pieceColor == 0) {
   //White piece gradient
   pieceGradient.addColorStop(0, "white");
   pieceGradient.addColorStop(1, "#cfcfcf");
   contextPieces.strokeStyle = '#404040';  //Old value #585858
     }
     
-  else if (boardPosition[yPosition][xPosition] == 1){
+  else if (pieceColor == 1){
   //Black piece gradient
   pieceGradient.addColorStop(0, "#202020");
   pieceGradient.addColorStop(1, "black");
   contextPieces.strokeStyle = '#b3b3b3'; //'#E0E0E0'
      }
 
-  else if (boardPosition[yPosition][xPosition] == null){
+  else if (pieceColor == null){
     //Clear existing piece and exit function
     contextPieces.clearRect(centerX-25,centerY-25,50,50);
     return false;
@@ -417,7 +432,7 @@ function drawPieces(yPosition,xPosition) {
   contextPieces.stroke();
     }
 
-function drawMarker (y, x, initialPiece,  ){ //initialPiece is a boolean value representing the piece played by the player
+function drawMarker (y, x, initialPiece){ //initialPiece is a boolean value representing the piece played by the player
   var yCoordinate = padding+cellWidth*y;
   var xCoordinate = padding+cellWidth*x;
   var centerY = yCoordinate + cellWidth/2;
@@ -475,15 +490,18 @@ function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");ret
 function returnGameDocument() {
 // if (!updatedFromThisClient){
   var currentGameData = {};
+  currentGameId = sessionStorage.getItem('gameId')
+  if (typeof currentGameId !== "undefined"){
   Meteor.call('othello.readGameData', { gameId: currentGameId}, (err, res) => {
   if (err) {console.log(err);}
-   else if (currentGameData === undefined) {console.log("GameData undefined");}
+   else if (typeof currentGameData === 'undefined') {console.log("GameData undefined");}
     else {   
         console.log("returnGameDocument ran!");
         var pastGameObject = currentGameObject;
         currentGameData = res;
         console.log(currentGameData);
         currentGameObject = currentGameData['turnPieceData'];
+        //Calculation moved to server
         // var maxDate = 0;
         // var turnIndex;
         // var turnData = currentGameDocument['turnData']
@@ -497,9 +515,13 @@ function returnGameDocument() {
         console.log('Player Turn: '+ playerTurn);
         diffCollections(pastGameObject, currentGameObject);
         switchTurn()
+        if (notBoardReset){calculateScore();}
         
     }});
+}//currentGame if statement
+else {console.log('No gameId');}
 }
+
 
 function updateGameData() {
   if (playerTurn == playerColorSelection){ //Remove logic
@@ -529,7 +551,7 @@ function readCollection(){
     for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
         boardPosition[y][x] = currentGameObject[y][x]
       if (currentGameObject[y][x] !== null) {
-        drawPieces(y,x);
+        drawPieces(y,x,currentGameObject[y][x]);
         // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
         }
       }}
@@ -546,7 +568,7 @@ function readCollection(){
         if (currentGameObject[y][x] !== null && currentGameObject[y][x] != pastGameObject[y][x] ) {
           if (pastGameObject[y][x] == null){
             boardPosition[y][x] = currentGameObject[y][x];
-            drawPieces(y,x); //Add opponents selection first
+            drawPieces(y,x,currentGameObject[y][x]); //Add opponents selection first
             clearMarkerCanvas();
             drawMarker(y,x,true);
             console.log("diffCollection addPiece");

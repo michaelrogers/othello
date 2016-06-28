@@ -43,6 +43,24 @@ header {
     /*border-radius: 0 8px 8px 0;*/
     }
 
+ ::-webkit-scrollbar
+{
+  width: 10px;   /*for vertical scrollbars */
+  /*height: 12px;  for horizontal scrollbars*/ 
+}
+
+::-webkit-scrollbar-track
+{
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb
+{
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}   
+
 #chat-header {
     /*    background: linear-gradient(to bottom right, rgba(175, 175, 175, .1), rgba(175, 175, 175, .80));
 */  min-height: 0px;
@@ -56,7 +74,7 @@ header {
     margin-left: 1em;
 /*    margin-right: 1em;
 */    /*margin-top: 1em;*/
-    overflow-y: scroll;
+    overflow-y: auto;
     max-height: 330px;
     }
 
@@ -74,12 +92,15 @@ header {
     }
 
 input:focus {
-    /*box-shadow: inset 0px 0px 1px 0px rgba(0, 0, 0, 0.2);*/
-    /*outline: none;*/
+    /*box-shadow: inset -1px -1px 2px 0px rgba(0, 0, 0, 0.2);*/
+    outline: none;
     }
 
  input#message {
     background: transparent !important;
+    height: 32px;
+    margin-top: -10px;
+    font-size: 14px;
     }       
 
 hr {
@@ -116,6 +137,7 @@ ul {
 div#login-buttons {
     float: right;
     font-size: 20px;
+    margin-right: 4px;
    }
 
 #login-buttons a {
@@ -151,7 +173,7 @@ div#login-buttons {
     float: right;
     padding-right: 45px;
     font-size: 16px;
- }   
+    }   
 /*@media(max-width:1200px) {
     canvas {
             width: 100%;

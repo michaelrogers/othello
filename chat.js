@@ -2,9 +2,14 @@
 if (Meteor.isClient) {
       Template.messages.helpers({
         messages: function() {
-            // var game_Id = Session.get('game_Id');
-            return ChatMessages.find({_id: "game1"}, { sort: { time: 1}}, function (){});
+            var gameId = Session.get('gameId');
+            if (gameId !== 'undefined'){
+            console.log('Chat gameId: '+gameId);
+            return ChatMessages.find({gameId: gameId}, { sort: { time: 1}});
             }
+             else { return [{username: "", message: "You are not connected to a game."}];}
+            }
+
            });
 
     Template.input.events = {
@@ -16,12 +21,12 @@ if (Meteor.isClient) {
             var name = 'Guest'; //Comment out after testing
           var message = document.getElementById('message');
           if (message.value != '') {
-              var game_Id = Session.get('game_Id');
+            var gameId = Session.get('gameId');
             ChatMessages.insert({
-              _id: "game1",
+              gameId: gameId,
               username: name,
               message: message.value,
-              time: Date.now(),
+              time: Date.now()
               });
               // event.stopPropagation();
               document.getElementById('message').value = ''; //Clear message element after insert
@@ -31,12 +36,12 @@ if (Meteor.isClient) {
             }
           }
         }
-
-  ChatMessages.find().observeChanges({
+if (typeof Session.get('gameId') !== 'undefined'){
+  ChatMessages.find({gameId: Session.get('gameId')}).observeChanges({
     added: function () {
       $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'fast'); //Ascending order; newest messages on bottom
-      event.stopPropagation();
+      // event.stopPropagation();
     }
     });
-
+}
 }//isClient
