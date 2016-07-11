@@ -7,7 +7,7 @@ var debugErrorMessage = false;
 //defining layers for canvas
 var layer1, layer2, layer3;
 //Canvas variables for window resizing
-var  radius, padding, cellWidth, linePadding;
+var radius, padding, cellWidth, linePadding;
 //Local gamePiece Data -----
 var boardPosition; //Holds 2d array of piece data
 var flipCoordinate_x = [], flipCoordinate_y = []; //Temporary coordinate array for holding pieces that need to be flipped
@@ -18,34 +18,58 @@ var gameOn = true;
 var notBoardReset = true;
 var playerTurn;
 var currentGameObject = {};
-var currentGameId;
+// var currentGameId;
 var playerColorSelection;
 var clientUpdated = false;
-// window.returnGameDocument = returnGameDocument();
-// window.pieceObserver = pieceObserver();
-// window.readCollection = readCollection();
 
-window.onload = function init(){
-  getCanvasContext();
-  resizingDeclarations(); //drawGrid();
-  setInitialPosition();
-  globalDebug();
-  buttonListeners();
-  document.getElementById('messages').innerHTML = "Please select a color to play as.";
-  $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
-  $(window).resize(function(){resizingDeclarations});
-  if (sessionStorage.getItem('gameId') !== null){currentGameId = sessionStorage.getItem('gameId'); Session.set('gameId', sessionStorage.getItem('gameId')); returnGameDocument();}
-  else {generateGameId();}
-  pieceObserver();
-  console.log("currentGameId: "+ currentGameId);
+window.onload = function (){
+  setSession(sessionStorage.getItem("gameId"));
+ }
+  
+function setSession(gameId){
+  console.count("client setSession")
+  if (gameId == null){
+    console.count('Session nullified');    
+    sessionStorage.clear();
+    // currentGameId = undefined;
+    Session.clear();
+    
+  }
+  else {
+  Session.set('gameId', gameId);
+  sessionStorage.setItem('gameId', gameId);
+  // currentGameId = gameId;
+  }
 }
 
-function pieceObserver (){
+gameInit = function init(){ //Declaring this function to be globally accessible
+  $(document).ready(function(){
+    currentGameObject = {};
+    gameOn = true;
+    notBoardReset = true;
+    document.title = "Othello";
+    console.count("gameInit");
+    buttonListeners();
+    getCanvasContext();
+    resizingDeclarations();
+    clearArray(); //drawGrid();
+    setInitialPosition();
+    globalDebug();
+    // document.getElementById('messages').innerHTML = "Please select a color to play as.";
+    $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
+    $(window).resize(function(){resizingDeclarations});
+    pieceObserver();
+    whatPlayerAmI(Session.get("gameId"));
+    returnGameDocument();
+      });
+}
+
+function pieceObserver(){
 if (sessionStorage.getItem('gameId') !== null){
-  console.log("pieceObserver observing!");
+  console.count("pieceObserver");
 PieceCollection.find({_id: sessionStorage.getItem('gameId')}).observeChanges({
    // added: function () {returnGameDocument(); console.log('added');},
-   changed: function () {returnGameDocument();console.log('changed');},
+   changed: function () {returnGameDocument(); console.log('changed');},
    // removed: function () {  }
     });
 }
@@ -65,42 +89,48 @@ layer2.addEventListener("click",listenMouseDown); //Event listener for mouse inp
 layer3 = document.getElementById("canvas3");
 contextMarkers = layer3.getContext("2d");
 
-// $("input[type=text]").focus(function(){$(this).css("background","#ffffff");});
 }//getCanvasContext
 
 function buttonListeners() {
-  notBoardReset = false
   //Color selection radio
-  document.getElementById('playerChoice').addEventListener("click", function(){playerColorSelection = $('input[name="playerChoice"]:checked').val(); switchTurn(); console.log("Player Color: "+playerColorSelection);  });
+  // document.getElementById('playerChoice').addEventListener("click", function(){playerColorSelection = $('input[name="playerChoice"]:checked').val(); switchTurn(); console.log("Player Color: "+playerColorSelection);  });
   //Reset button
-  document.getElementById("resetButton").addEventListener("click", function(){
-    
-    Meteor.call('othello.resetGameData', { gameId: currentGameId } , (err, res) => {
-            if (err) {console.log("Error: \n" + err);}
-             else {readCollection();  console.log("Reset method called");}
-              });
-    clearArray(); generateGameId(); setInitialPosition(); currentGameObject = boardPosition; 
-    clickInputAccepted = true;
-    gameOn = true;
-    document.title = "Othello";
-   }); 
+  // document.getElementById("resetButton").addEventListener("click", function(){notBoardReset = false; init()}); 
   //Skip turn button
-  document.getElementById("skipTurn").addEventListener("click", function(){
-    updateGameData();
-  });
+  document.getElementById("skipTurn").addEventListener("click", function(){updateGameData(Session.get("gameId"), currentGameObject);});
+  //Join button
+  // document.getElementById('joinButton').addEventListener("click", function(){joinGame(null);});
+  //Lobby button
+  document.getElementById('lobby').addEventListener("click", function(){setSession(null);});
+  //Resign button
+  document.getElementById('resignButton').addEventListener("click", function(){resignationButtonConfirmation();});
+
+
 }
 
-function generateGameId () {
-  var clientUserId = Meteor.userId();
-  console.log("userId: "+ clientUserId);
-  Meteor.call('othello.generateGameId', { userId: clientUserId } , (err, res) => {
-            if (err) {console.log("Error: \n" + err);}
-            else {currentGameId = res; console.log("gameId: "+ currentGameId); window.sessionStorage.setItem("gameId", currentGameId); Session.set("gameId", currentGameId); returnGameDocument();}
+function resignationButtonConfirmation(){
+  var resignationConfirmation = confirm("Are you sure you want to resign? This will be counted as a loss");
+    if (resignationConfirmation){
+      endGame(true);
+      clickInputAccepted = false;
+      document.getElementById("messages").innerHTML = "You have resigned.";
+      setSession(null);
 
-});
-  
+    }
 }
-function resizingDeclarations (){
+
+function whatPlayerAmI(gameId){
+  console.count("whatPlayerAmI");
+  if (Meteor.user()){ //!Meteor.user() == false
+    console.log(Meteor.user().username)
+    Meteor.call('othello.whatPlayerAmI', {username: Meteor.user().username, gameId: Session.get('gameId')}, (err, res) => {
+    if (err) {console.log("Error: \n" + err);}
+    else {console.count("playerColorSelection set"); playerColorSelection = res; console.log(playerColorSelection); switchTurn();}
+    });
+  }
+}
+
+function resizingDeclarations(){
 radius = 20, padding = 10, cellWidth = 50; //Used for drawing the pieces
 drawGrid();
 }
@@ -152,6 +182,7 @@ for (var x = 0; x <= boardWidth; x += 50) {
  //   }
 
  function clearArray(){
+   if (typeof boardPosition !== 'undefined'){
    var x, y;
    for (y=0; y < boardPosition.length; y++) {
      for (x=0; x < boardPosition[y].length; x++){
@@ -160,7 +191,8 @@ for (var x = 0; x <= boardWidth; x += 50) {
          boardPosition[y][x] = null;
          drawPieces(y,x, null);
          }}}
-         document.getElementById("score").innerHTML = "";
+         // document.getElementById("score").innerHTML = "";
+  }
  }
 
 function flippingLogTextAnimation(){
@@ -172,6 +204,24 @@ function flippingLogTextAnimation(){
    document.getElementById("messages").innerHTML = flippingTextValue + ".";
     }
   }
+
+function endGame(resignation) {
+  Meteor.call("othello.endGame", {gameId: Session.get("gameId"), resignation: resignation, userId: Meteor.user().username}, (err, res) => {
+    if (err){console.log(err)}
+    else {
+        if(res){
+          //Do something if game is ended
+          clickInputAccepted = false; //To catch resignation
+        }
+        else {
+          //Do something if server returns false
+        }
+
+    }
+  });
+  } 
+
+
 
 function calculateScore(){
 var x, y;
@@ -212,9 +262,11 @@ for (y=0; y < boardPosition.length; y++) {
     gameOn = false;
     document.getElementById("turn").innerHTML = "Black player wins with " + blackScore + " pieces!";
     }
-}
+  
+    if (gameOn == false){endGame(false)}
+  }
 
-function listenMouseDown (event) {
+function listenMouseDown(event) {
   if (clickInputAccepted && Meteor.user()){
     event = event || window.event; //Accomodate cross browser support
   //Get canvas offset using jQuery to get a relative mouse position
@@ -229,20 +281,17 @@ function listenMouseDown (event) {
   translateCoordinate(canvas_y,canvas_x);
   }
   else if (Meteor.user() == null){document.getElementById("messages").innerHTML = "Please login to play.";}
+  else {
+    var opponent;
+    if (playerColorSelection == 0){opponent = "Black"}
+      else if (playerColorSelection == 1){opponent = "White"}
 
-
-
-    else {
-      var opponent;
-      if (playerColorSelection == 0){opponent = "Black"}
-        else if (playerColorSelection == 1){opponent = "White"}
-
-      document.getElementById("messages").innerHTML = "Waiting on " + opponent + " to finish playing!";
-    }
+    document.getElementById("messages").innerHTML = "Waiting on " + opponent + " to finish playing!";
+      }
     // if (debugErrorMessage){console.log("Mouse input locked!");}
   }
 
-function translateCoordinate (canvas_y,canvas_x){
+function translateCoordinate(canvas_y,canvas_x){
   //Determines which cell the coordinate from mouse listener belongs to
   cell_x = Math.floor((canvas_x-padding)/cellWidth);
   cell_y = Math.floor((canvas_y-padding)/cellWidth);
@@ -251,14 +300,14 @@ function translateCoordinate (canvas_y,canvas_x){
   //Remove erroneous coordinates like outside the grid in the padding
   if (0 <= cell_x && cell_x < 8 && 0 <= cell_y && cell_y < 8){
   validMove(cell_y,cell_x);
-  }
+    }
   else {
     if (debugErrorMessage){console.log("Out of bounds");}
     document.getElementById("messages").innerHTML = "Out of bounds: try to keep it in the lines!";
+    }
   }
-}
 
-function switchTurn (){
+function switchTurn(){
   //switches the player turn and then updates h3 with id="turn"
   var playerText = "";
   var messages = "";
@@ -281,9 +330,7 @@ function switchTurn (){
   }
   else {messages = "Waiting on your opponent to play.";}
   
-
   document.getElementById('messages').innerHTML = messages;
-  // if (debugErrorMessage){console.log("Switch turn");}
 }
 
 function validMove(cell_y,cell_x){
@@ -341,22 +388,21 @@ function validMove(cell_y,cell_x){
       }
     }//End validMove
 
-function addPiece (cell_y,cell_x) {
+function addPiece(cell_y,cell_x) {
   var thisCell = boardPosition[cell_y][cell_x];
   
   if (thisCell == null){
     boardPosition[cell_y][cell_x] = playerTurn;
     currentGameObject[cell_y][cell_x] = playerTurn;
-    //Believe I can return this to default behavior, changed due to troubleshooting. 
 
     }
-  //Leaving manual flipping functionality in place for testing
-  else if (thisCell == 0){
+  
+  else if (thisCell == 0){ //Used returnFlipCoordinate function for flipping pieces
     boardPosition[cell_y][cell_x] = 1;
     currentGameObject[cell_y][cell_x] = 1;
     
     }
-  else if (thisCell == 1){ //This will be commented out eventually, used for testing
+  else if (thisCell == 1){  //Used returnFlipCoordinate function for flipping pieces
     boardPosition[cell_y][cell_x] = 0;
     currentGameObject[cell_y][cell_x] = 0;
     }
@@ -370,19 +416,21 @@ function returnFlipCoordinate(){
     flippingLogTextAnimation();
     cell_x = flipCoordinate_x.pop();
     cell_y = flipCoordinate_y.pop();
+    console.count("Flipping")
     if (debugErrorMessage){console.log("Flip x: "+ cell_x + " y: " + cell_y);}
     addPiece(cell_y,cell_x);
     drawMarker(cell_y, cell_x, false);
   }
   else {
-    clearInterval(intSet);
-    console.log("flip function")
+    
   // if(gameOn){clickInputAccepted = true;}
   //Update Collection after all pieces are flipped and the currentGameObject has reflected all of the changes
-    if(clientUpdated){ updateGameData();}
+    if(clientUpdated){ updateGameData(Session.get("gameId"), currentGameObject);}
     clientUpdated = false;
     switchTurn();
-
+    clearInterval(intSet);
+    console.log("Flipping finished")
+    return false;
     }
   }
 
@@ -432,7 +480,7 @@ function drawPieces(yPosition,xPosition, pieceColor) {
   contextPieces.stroke();
     }
 
-function drawMarker (y, x, initialPiece){ //initialPiece is a boolean value representing the piece played by the player
+function drawMarker(y, x, initialPiece){ //initialPiece is a boolean value representing the piece played by the player
   var yCoordinate = padding+cellWidth*y;
   var xCoordinate = padding+cellWidth*x;
   var centerY = yCoordinate + cellWidth/2;
@@ -466,16 +514,14 @@ if (initialPiece){
   
   // // markerGradient.addColorStop(0, 'rgba(0,0,0,.5)');
   // // markerGradient.addColorStop(1, 'rgba(32,45,21,.5)');
-  
-
-  
+    
   contextMarkers.clearRect(centerX-25,centerY-25,50,50);
   var bufferValue = 0;
   contextMarkers.fillStyle = markerGradient;
   contextMarkers.fillRect(centerX-25+bufferValue+linePadding,centerY-25+bufferValue+linePadding,50-(bufferValue*2),50-(bufferValue*2));
 }
 
-function clearMarkerCanvas (){
+function clearMarkerCanvas(){
   contextMarkers.clearRect(0,0,410,410);
 }
 
@@ -490,77 +536,48 @@ function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");ret
 function returnGameDocument() {
 // if (!updatedFromThisClient){
   var currentGameData = {};
-  currentGameId = sessionStorage.getItem('gameId')
-  if (typeof currentGameId !== "undefined"){
-  Meteor.call('othello.readGameData', { gameId: currentGameId}, (err, res) => {
+ 
+  if (Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined){
+  Meteor.call('othello.readGameData', { gameId: Session.get("gameId")}, (err, res) => {
   if (err) {console.log(err);}
-   else if (typeof currentGameData === 'undefined') {console.log("GameData undefined");}
-    else {   
-        console.log("returnGameDocument ran!");
+       else {   
+        console.count("returnGameDocument");
         var pastGameObject = currentGameObject;
+        // console.log(currentGameObject);
+        
         currentGameData = res;
         console.log(currentGameData);
         currentGameObject = currentGameData['turnPieceData'];
-        //Calculation moved to server
-        // var maxDate = 0;
-        // var turnIndex;
-        // var turnData = currentGameDocument['turnData']
-        // console.log(turnData);
-        // for (x=0; x<turnData.length; x++){
-        //   if (turnData[x]['date'] > maxDate){maxDate = turnData[x]['date']; turnIndex = x;}
-        // }
-        // console.log('Seconds ago: ' + (Date.now()-maxDate)/1000); //JavaScript time is in milliseconds
-
         playerTurn = currentGameData['playerTurn'];
         console.log('Player Turn: '+ playerTurn);
+        whatPlayerAmI(Session.get("gameId"));
         diffCollections(pastGameObject, currentGameObject);
-        switchTurn()
+        switchTurn();
         if (notBoardReset){calculateScore();}
         
     }});
-}//currentGame if statement
+  }//currentGame if statement
 else {console.log('No gameId');}
 }
 
 
-function updateGameData() {
-  if (playerTurn == playerColorSelection){ //Remove logic
+function updateGameData(currentGameId, currentGameObject) {
+  if (playerTurn == playerColorSelection){ 
   Meteor.call('othello.updateGameData', {
-  gameId: currentGameId,
-  changedGameData: currentGameObject,
-  currentPlayerTurn: playerColorSelection},
+    gameId: currentGameId,
+    changedGameData: currentGameObject,
+    currentPlayerTurn: playerColorSelection},
   (err, res) => {
-  if (err) {
-    alert(err);
-  } else {
-    console.log("updateGameData ran!");
-    // updatedFromThisClient = true;
-    // Session.set('updateAvailable', Session.get('updateAvailable')+1);
-    }
-});
-}
+  if (err) {alert(err);} else {console.count("updateGameData");}
+    });
+  } 
   switchTurn();  
 
 }
 
-function readCollection(){
-  console.log('readCollection');
-  clearMarkerCanvas();
-  var x, y;
-  for (y=0; y < Object.keys(currentGameObject).length; y++) {
-    for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
-        boardPosition[y][x] = currentGameObject[y][x]
-      if (currentGameObject[y][x] !== null) {
-        drawPieces(y,x,currentGameObject[y][x]);
-        // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
-        }
-      }}
-   }
-
- function diffCollections (pastGameObject, currentGameObject) {
-  // console.log(pastGameObject); // console.log(currentGameObject);
+ function diffCollections(pastGameObject, currentGameObject) {
   if (Object.keys(pastGameObject).length == 0){ readCollection();}
-  else {
+  else {console.count("diffCollections");
     var x, y, flipIndex = 0;
     for (y=0; y < Object.keys(currentGameObject).length; y++) {
       for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
@@ -571,7 +588,7 @@ function readCollection(){
             drawPieces(y,x,currentGameObject[y][x]); //Add opponents selection first
             clearMarkerCanvas();
             drawMarker(y,x,true);
-            console.log("diffCollection addPiece");
+            // console.log("diffCollection addPiece");
             }
           else {
           flipCoordinate_y[flipIndex] = y;
@@ -581,14 +598,28 @@ function readCollection(){
           }}
         }}
      if (flipCoordinate_x.length > 0){
-      console.log("diffCollection");
+      console.log("Initiate flipping");
       flippingLogTextAnimation();
       intervalDelay();
      }
    }
    notBoardReset = true;
 }
- 
+
+function readCollection(){
+  console.count('readCollection');
+  clearMarkerCanvas();
+  clearArray();
+  var x, y;
+  for (y=0; y < Object.keys(currentGameObject).length; y++) {
+    for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
+        boardPosition[y][x] = currentGameObject[y][x]
+      if (currentGameObject[y][x] !== null) {
+        drawPieces(y,x,currentGameObject[y][x]);
+        // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
+        }
+      }}
+   }
 
 } //End isClient
 

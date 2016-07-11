@@ -3,23 +3,14 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     //PieceCollection.ready();
     // code to run on server at startup
-    serverInitialize();
+    // serverInitialize();
     });
 
   function serverInitialize (){  
-  // if (PieceCollection.find().count() === 0) {
-      // console.log('Adding initial');   
-      var currentGameId = "game1";
-     Meteor.call('othello.resetGameData', { gameId: currentGameId } , (err, res) => {
-            if (err) {console.log("Error: \n" + err);                }
-             else {
-                    // console.log("Result: \n" + res);  
-                }
-              });
 
 
 
-
+    }//ServerInit
 
   // var serverData = { //Initial starting positions in object literal notation
   //   0: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null},
@@ -57,5 +48,5 @@ if (Meteor.isServer) {
           // JSON.parse(PieceCollection.findOne({_id: "game1"},{'gamedata.0.1': 1 ,_id: 0});
         
       // }//If empty
-     }//ServerInit
+     
     } //isServer

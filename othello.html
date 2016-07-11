@@ -4,82 +4,29 @@
 
 <body>
   <div class="container">
-  
   <header>
   <h1>Othello</h1>
-  
-  <div id="login-buttons">{{> loginButtons}} <p><br> <button type="button" class = "button" id="resetButton">Rematch</button>
-  <button type="button" class = "button" id="skipTurn">Skip Turn</button></p>
-  <div>
-  <form id=playerChoice>
-  <input type="radio" name=playerChoice value=0 id=playerChoiceWhite>White
-  <input type="radio" name=playerChoice value=1 id=playerChoiceBlack >Black
-  </form>
+    <div id="login-buttons">{{> loginButtons}} <br>
+    <p>
+    {{>buttons}}
+
+  </p>
+
+    <!-- <div>
+      <form id=playerChoice>
+        <input type="radio" name=playerChoice value=0 id=playerChoiceWhite>White
+        <input type="radio" name=playerChoice value=1 id=playerChoiceBlack >Black
+      </form>
+    </div> -->
   </div>
-  </div>
-  
-  <div>
-  <p id="turn">Player Turn: White</p> 
-  <p id="score"></p>
-  </div>
+  {{>playerTurn}}
   </header>
+  {{>messaging}}
   
-  <em><p id="messages">Welcome to Othello! To start, place the white piece first.</p></em> 
 
-  <div>
-  {{> Othello}}
-
-  <div class="chatbox">
-    <div id="chat-header">Chat with {{#if currentuser}}{{username}}.value{{/if}}</div>
-    <hr>
-    <div id ="chat-message">
-    {{>messages}}
-    <div id ="chat-end"></div>
-    </div>
-    
-    <hr>
-    <div id ="chat-input">
-    {{>input}}
-    </div>
+    {{> sessionId}}
   
-    </div>
-  </div>
-  
-<!-- <span class="text"><strong>{{username}}</strong> - {{text}}</span> -->
-<!-- <canvas id="canvas" width="420px" height="420px"></canvas> -->
-</div>
+ </div>
 
 </body>
 
-<template name="Othello">
-  
-  {{#if Template.subscriptionsReady}}
-<!--   {{#each autoRun}}{{/each}} -->
-  <div id="canvasesdiv" width="420px" height="420px"> 
-  <canvas id="canvas1" width="420px" height="420px" style='width:420px;height:420px'></canvas>
-  <canvas id="canvas3" width="420px" height="420px" style='width:420px;height:420px'></canvas>
-  <canvas id="canvas2" width="420px" height="420px" style='width:420px;height:420px'></canvas>
-
-  </div>
-  {{/if}}
-</template>
-
-<template name="messages">
-{{#if Template.subscriptionsReady}}
-{{#each messages}}
-<strong>{{username}}:</strong> {{message}}<br>
-{{/each}}
-  {{else}}
-    {{>loading}}
-  {{/if}}
-</template>
-
-<template name="input">
-  <form class="message-input" onsubmit="return false">
-  <p><input type="text" id="message" placeholder="Type to chat here"></p>
-  </form>
-</template>
-
-<template name="loading">
-<p>Loading...</p>
-</template>

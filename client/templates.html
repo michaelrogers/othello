@@ -1,0 +1,136 @@
+<template name="sessionId">
+  {{#if gameId}}
+    {{> gameCanvas}}
+   {{else}}
+    {{> lobby}}
+  {{/if}}
+</template>
+
+<template name="gameCanvas">
+  <div id="canvasesdiv" > 
+  <canvas id="canvas1" width="420px" height="420px" ></canvas>
+  <canvas id="canvas3" width="420px" height="420px" ></canvas>
+  <canvas id="canvas2" width="420px" height="420px" ></canvas>
+  </div>
+  <div class="chatbox">
+      <div id="chat-header">Chat with {{>opponentUsername}}</div>
+      <hr>
+      <div id ="chat-message">
+        {{>chatMessagesTemplate}}
+        <div id ="chat-end"></div>
+      </div>
+     <hr>
+      <div id ="chat-input">
+      {{>input}}
+      </div>
+  </div>
+
+    {{>playerDesignation}}
+
+</template>
+
+<template name="lobby">
+  {{#if Template.subscriptionsReady}}
+
+  <div id="matchList">
+       <div id="matchListHeader">
+       Active games: {{active}}
+       <hr>
+      </div>
+      <div id="matchListScroll">
+      {{#each matchData}}
+        <div id={{_id}} class="matchBoxItem">
+          <!-- {{#if ({{playerWhite}} == {{currentUser}})}}
+          Game against {{playerBlack}}
+          {{/if}}
+          {{#if ({{playerBlack}} == {{currentUser}})}}
+          Game against {{playerWhite}}
+          {{/if}} -->
+          <div class="floatLeft">
+            White: <strong><p id="playerWhite">{{playerWhite}}</p></strong><br>
+            Black: <p id="playerBlack">{{#if playerBlack}}<strong>{{playerBlack}}</strong>{{else}} -Open Slot- {{/if}}</p>
+          </div>
+          
+          <div class="floatRight">
+            Score: {{whiteScore}} <br>
+            Score: {{blackScore}}
+          </div>
+          <div class="floatRight" id="thisPlayerTurn">
+            {{#if thisPlayerTurn}}
+              <strong><p>Your Turn!</p></strong>
+            {{else}}
+              <p>Waiting on opponent.</p>
+            {{/if}}
+          </div>
+
+          </div>
+      {{/each}}
+      </div>
+    </div>
+    {{else}}
+        {{>loading}}
+    {{/if}}
+</template>
+
+<template name="chatMessagesTemplate">
+  {{#if Template.subscriptionsReady}}
+  {{#each messages}}
+    <strong>{{username}}:</strong> {{message}}
+    <br>
+  {{/each}}
+  {{else}}
+      {{>loading}}
+  {{/if}}
+</template>
+
+<template name="opponentUsername">
+  {{opponentUsername}}
+</template>
+
+<template name="playerDesignation">
+  {{#if Template.subscriptionsReady}}
+  <div id="playerDesignation">
+    {{#with players}}
+    White Player: {{playerWhite}} <br>
+    Black Player: {{playerBlack}}
+    {{/with}}
+    </div>
+  {{/if}}
+</template>
+
+<template name="input">
+  <form class="message-input" onsubmit="return false">
+  <p><input type="text" id="message" placeholder="Type to chat here" autocomplete="off"></p>
+  </form>
+</template>
+
+<template name="playerTurn">
+  {{#if gameId}}
+  <div>
+    <p id="turn">Player Turn: White</p> 
+    <p id="score"></p>
+    </div>
+    {{/if}}
+
+</template>
+  
+ <template name="messaging">
+  {{#if gameId}}
+  <em><p id="messages">Welcome to Othello! To start, place the white piece first.</p></em>
+  {{/if}}
+</template>
+
+<template name="loading">
+<p>Loading...</p>
+</template>
+
+<template name="buttons">
+  {{#if gameId}}
+  <button type="button" class = "button" id="lobby">Return to Lobby</button>
+  <button type="button" class = "button" id="skipTurn">Skip Turn</button>
+  <!-- <button type="button" class = "button" id="resetButton">Rematch</button> -->
+  <button type="button" class = "button" id="resignButton">Resign</button>
+  {{else}}
+  <button type="button" class = "button" id="joinButton">New game</button> 
+  {{/if}}
+</template>
