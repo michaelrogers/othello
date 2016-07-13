@@ -1,16 +1,58 @@
+<!-- Templates on othello.html -->
+
+<!-- This template controls the lobby/game state -->
 <template name="sessionId">
-  {{#if gameId}}
-    {{> gameCanvas}}
-   {{else}}
-    {{> lobby}}
+  {{#if currentUser}}
+    {{#if gameId}}
+      {{> gameCanvas}}
+    {{else}}
+      {{> lobby}}
+    {{/if}}
+  {{else}}
+    {{> loginPage}}
+  {{/if}}  
+</template>
+
+<template name="buttons">
+  {{#if currentUser}}
+    {{#if gameId}}
+    <button type="button" class = "button" id="lobby">Return to Lobby</button>
+    <button type="button" class = "button" id="skipTurn">Skip Turn</button>
+    <!-- <button type="button" class = "button" id="resetButton">Rematch</button> -->
+    <button type="button" class = "button" id="resignButton">Resign</button>
+    {{else}}
+    <button type="button" class = "button" id="joinButton">New game</button> 
+    {{/if}}
+  {{/if}}  
+</template>
+
+<template name="playerTurn">
+  {{#if currentUser}}
+    {{#if gameId}}
+      <div>
+      <p id="turn">Player Turn: White</p> 
+      <p id="score"></p>
+      </div>
+    {{/if}}
   {{/if}}
 </template>
 
+ <template name="messaging">
+  {{#if currentUser}}
+    {{#if gameId}} <div id="informationLine">
+      <em><p id="messages">Welcome to Othello! To start, place the white piece first.</p></em>
+      {{>playerDesignation}}
+    </div>
+    {{/if}}
+  {{/if}}  
+</template>
+
+<!-- Subtemplates -->
 <template name="gameCanvas">
   <div id="canvasesdiv" > 
-  <canvas id="canvas1" width="420px" height="420px" ></canvas>
-  <canvas id="canvas3" width="420px" height="420px" ></canvas>
-  <canvas id="canvas2" width="420px" height="420px" ></canvas>
+    <canvas id="canvas1" width="420px" height="420px" ></canvas>
+    <canvas id="canvas3" width="420px" height="420px" ></canvas>
+    <canvas id="canvas2" width="420px" height="420px" ></canvas>
   </div>
   <div class="chatbox">
       <div id="chat-header">Chat with {{>opponentUsername}}</div>
@@ -21,12 +63,10 @@
       </div>
      <hr>
       <div id ="chat-input">
-      {{>input}}
+        {{>input}}
       </div>
   </div>
-
-    {{>playerDesignation}}
-
+  
 </template>
 
 <template name="lobby">
@@ -34,11 +74,11 @@
 
   <div id="matchList">
        <div id="matchListHeader">
-       Active games: {{active}}
-       <hr>
+        Active games: {{active}}
+        <hr>
       </div>
       <div id="matchListScroll">
-      {{#each matchData}}
+        {{#each matchData}}
         <div id={{_id}} class="matchBoxItem">
           <!-- {{#if ({{playerWhite}} == {{currentUser}})}}
           Game against {{playerBlack}}
@@ -74,10 +114,10 @@
 
 <template name="chatMessagesTemplate">
   {{#if Template.subscriptionsReady}}
-  {{#each messages}}
-    <strong>{{username}}:</strong> {{message}}
-    <br>
-  {{/each}}
+    {{#each messages}}
+      <strong>{{username}}:</strong> {{message}}
+      <br>
+    {{/each}}
   {{else}}
       {{>loading}}
   {{/if}}
@@ -87,12 +127,26 @@
   {{opponentUsername}}
 </template>
 
+<template name="loginPage">
+  <div id="loginPageDiv">
+    <h2>Welcome to Othello</h2>
+    <h3>Please create an account or sign in to begin playing.</h3>
+    <h3><a href="https://en.wikipedia.org/wiki/Reversi">From Wikipedia:</a></h3>
+    <h4>History</h4>
+    <p class="loginPage">Reversi is a strategy board game for two players, played on an 8×8 uncheckered board. There are sixty-four identical game pieces called disks (often spelled "discs"), which are light on one side and dark on the other. Players take turns placing disks on the board with their assigned color facing up. During a play, any disks of the opponent's color that are in a straight line and bounded by the disk just placed and another disk of the current player's color are turned over to the current player's color.
+The object of the game is to have the majority of disks turned to display your color when the last playable empty square is filled.</p>
+  <h4>Rules</h4>
+  <p class="loginPage">Each of the disks' two sides corresponds to one player; they are referred to here as light and dark after the sides of Othello pieces, but any counters with distinctive faces are suitable. The game may for example be played with a chessboard and Scrabble pieces, with one player letters and the other backs.</p>
+  <p class="loginPage">Players take alternate turns. If one player can not make a valid move, play passes back to the other player. When neither player can move, the game ends. This occurs when the grid has filled up or when neither player can legally place a piece in any of the remaining squares. This means the game may end before the grid is completely filled. This possibility may occur because one player has no pieces remaining on the board in that player's color. In over-the-board play this is generally scored as if the board were full (64–0).</p>
+  </div>
+</template>
+
 <template name="playerDesignation">
   {{#if Template.subscriptionsReady}}
   <div id="playerDesignation">
-    {{#with players}}
-    White Player: {{playerWhite}} <br>
-    Black Player: {{playerBlack}}
+    {{#with playerDesignation}}
+    White Player: <p>{{playerWhite}}</p> <em>vs.</em>
+    Black Player: <p>{{playerBlack}}</p>
     {{/with}}
     </div>
   {{/if}}
@@ -100,37 +154,11 @@
 
 <template name="input">
   <form class="message-input" onsubmit="return false">
-  <p><input type="text" id="message" placeholder="Type to chat here" autocomplete="off"></p>
+  <input type="text" id="message" placeholder="Type to chat here" autocomplete="off">
   </form>
-</template>
-
-<template name="playerTurn">
-  {{#if gameId}}
-  <div>
-    <p id="turn">Player Turn: White</p> 
-    <p id="score"></p>
-    </div>
-    {{/if}}
-
-</template>
-  
- <template name="messaging">
-  {{#if gameId}}
-  <em><p id="messages">Welcome to Othello! To start, place the white piece first.</p></em>
-  {{/if}}
 </template>
 
 <template name="loading">
 <p>Loading...</p>
 </template>
 
-<template name="buttons">
-  {{#if gameId}}
-  <button type="button" class = "button" id="lobby">Return to Lobby</button>
-  <button type="button" class = "button" id="skipTurn">Skip Turn</button>
-  <!-- <button type="button" class = "button" id="resetButton">Rematch</button> -->
-  <button type="button" class = "button" id="resignButton">Resign</button>
-  {{else}}
-  <button type="button" class = "button" id="joinButton">New game</button> 
-  {{/if}}
-</template>

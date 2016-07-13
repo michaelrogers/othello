@@ -16,10 +16,8 @@ if (Meteor.isClient) {
     Template.input.events = {
       'keydown input#message' : function (event) {
         if (event.which == 13) { // Enter or return key event
-          if (Meteor.user())
-            var name = Meteor.user().username;
-          else
-            return false;
+          if (Meteor.user()) {var name = Meteor.user().username;}
+          else {return false;}
             // var name = 'Guest'; //Comment out after testing
           var message = document.getElementById('message');
           if (message.value != '') {
@@ -31,23 +29,27 @@ if (Meteor.isClient) {
               message: message.value,
               time: Date.now()
               });
-              $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'fast'); //Ascending order; newest messages on bottom
-               // event.stopPropagation();
-         
-              document.getElementById('message').value = ''; //Clear message element after insert
+              $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
+               event.stopPropagation();
+             document.getElementById('message').value = ''; //Clear message element after insert
               // message.value = '';
               // $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
               }
             }
           }
         }
-      if (typeof Session.get('gameId') !== 'undefined'){
-        ChatMessages.find({gameId: Session.get('gameId')}).observeChanges({
-          added: function () {
-            $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'fast'); //Ascending order; newest messages on bottom
-          }
-          });
-          }
+      // if (typeof Session.get('gameId') !== 'undefined'){
+      //   $(document).ready(function(){
+      //   ChatMessages.find({gameId: (Session.get('gameId'))}).observeChanges({
+      //     added: function () {
+      //       console.count('Chat listener triggered')
+      //       $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'fast'); //Ascending order; newest messages on bottom
+      //        event.stopPropagation();
+
+      //     }
+      //     });
+      // });
+      //     }
 }//isClient
 // NOTES:
 // $("input[type=text]").focus(function(){$(this).css("background","#ffffff");});

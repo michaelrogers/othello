@@ -37,7 +37,10 @@ if (Meteor.isClient) {
       	
   		active: function (){
   			if (Meteor.user()){
-  			return PieceCollection.find({$and: [{$or: [{playerBlack: Meteor.user().username}, {playerWhite: Meteor.user().username}]}, {gameEnd: null}]}).count()
+  			var activeCount = PieceCollection.find({$and: [{$or: [{playerBlack: Meteor.user().username}, {playerWhite: Meteor.user().username}]}, {gameEnd: null}]}).count();
+  			if (activeCount > 14){document.getElementById("joinButton").disabled = true; }
+  			else {document.getElementById("joinButton").disabled = false; }
+  			return activeCount;
   		}
   	},
   		matchData: function(){
@@ -83,7 +86,7 @@ if (Meteor.isClient) {
 				     
 
 						}//for loop
-					console.log(matchScoreArray);	
+					// console.log(matchScoreArray);	
   					return matchScoreArray;
   					}
   				}
@@ -107,14 +110,16 @@ if (Meteor.isClient) {
 
   Template.playerDesignation.helpers({
       	playerDesignation: function(){
-      		var currentGame =  PieceCollection.findOne({_id: Session.get('gameId')},{playerWhite: 1, playerBlack: 1});
-       		},
-   		// players: {
-   		// 	playerWhite: PieceCollection.findOne({_id: Session.get('gameId')})['playerWhite'],
-   		// 	playerBlack: PieceCollection.findOne({_id: Session.get('gameId')})['playerBlack']
-   		// 	}
-       		
-      		});
+      		// var currentGame =  PieceCollection.findOne({_id: Session.get('gameId')},{playerWhite: 1, playerBlack: 1});
+       		var thisSession = Session.get('gameId');
+   			var players = {
+   				playerWhite: PieceCollection.findOne({_id: Session.get('gameId')})['playerWhite'],
+   				playerBlack: PieceCollection.findOne({_id: Session.get('gameId')})['playerBlack']
+   			}
+   			console.log(players);
+       		return players;
+      		}
+      	});
   Template.messaging.helpers({
       	gameId: function() {
       		// return Session.get("gameId") !== undefined;

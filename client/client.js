@@ -56,8 +56,8 @@ gameInit = function init(){ //Declaring this function to be globally accessible
     setInitialPosition();
     globalDebug();
     // document.getElementById('messages').innerHTML = "Please select a color to play as.";
-    $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
     $(window).resize(function(){resizingDeclarations});
+    $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
     pieceObserver();
     whatPlayerAmI(Session.get("gameId"));
     returnGameDocument();
@@ -67,7 +67,7 @@ gameInit = function init(){ //Declaring this function to be globally accessible
 function pieceObserver(){
 if (sessionStorage.getItem('gameId') !== null){
   console.count("pieceObserver");
-PieceCollection.find({_id: sessionStorage.getItem('gameId')}).observeChanges({
+  PieceCollection.find({_id: sessionStorage.getItem('gameId')}).observeChanges({
    // added: function () {returnGameDocument(); console.log('added');},
    changed: function () {returnGameDocument(); console.log('changed');},
    // removed: function () {  }
@@ -122,10 +122,13 @@ function resignationButtonConfirmation(){
 function whatPlayerAmI(gameId){
   console.count("whatPlayerAmI");
   if (Meteor.user()){ //!Meteor.user() == false
-    console.log(Meteor.user().username)
+    // console.log(Meteor.user().username)
     Meteor.call('othello.whatPlayerAmI', {username: Meteor.user().username, gameId: Session.get('gameId')}, (err, res) => {
     if (err) {console.log("Error: \n" + err);}
-    else {console.count("playerColorSelection set"); playerColorSelection = res; console.log(playerColorSelection); switchTurn();}
+    else {if (res !== false){
+      // console.count("playerColorSelection set"); 
+      playerColorSelection = res; console.log("playerColorSelection: "+playerColorSelection); switchTurn();}
+      }
     });
   }
 }
@@ -269,8 +272,7 @@ for (y=0; y < boardPosition.length; y++) {
 function listenMouseDown(event) {
   if (clickInputAccepted && Meteor.user()){
     event = event || window.event; //Accomodate cross browser support
-  //Get canvas offset using jQuery to get a relative mouse position
-  var canvasOffset=$("#canvas2").offset();
+  var canvasOffset = $("#canvas2").offset();  //Get canvas offset using jQuery to get a relative mouse position
   var offset_x = canvasOffset.left;
   var offset_y = canvasOffset.top;
 
@@ -390,17 +392,13 @@ function validMove(cell_y,cell_x){
 
 function addPiece(cell_y,cell_x) {
   var thisCell = boardPosition[cell_y][cell_x];
-  
   if (thisCell == null){
     boardPosition[cell_y][cell_x] = playerTurn;
     currentGameObject[cell_y][cell_x] = playerTurn;
-
     }
-  
   else if (thisCell == 0){ //Used returnFlipCoordinate function for flipping pieces
     boardPosition[cell_y][cell_x] = 1;
     currentGameObject[cell_y][cell_x] = 1;
-    
     }
   else if (thisCell == 1){  //Used returnFlipCoordinate function for flipping pieces
     boardPosition[cell_y][cell_x] = 0;
@@ -422,7 +420,6 @@ function returnFlipCoordinate(){
     drawMarker(cell_y, cell_x, false);
   }
   else {
-    
   // if(gameOn){clickInputAccepted = true;}
   //Update Collection after all pieces are flipped and the currentGameObject has reflected all of the changes
     if(clientUpdated){ updateGameData(Session.get("gameId"), currentGameObject);}
@@ -442,8 +439,7 @@ function drawPieces(yPosition,xPosition, pieceColor) {
   //uses a random number generator to vary between a value -1 to +1
   var randomX = Math.floor((Math.random()*3))-1;
   var randomY = Math.floor((Math.random()*3))-1;
-  //console.log("randomX = "+randomX);
-  //console.log("randomY = "+randomY);
+
   var centerX = cellWidth/2+padding+randomX+cellWidth*xPosition;
   var centerY = cellWidth/2+padding+randomY+cellWidth*yPosition;
   var pieceGradient = contextPieces.createRadialGradient(centerX, centerY, radius/1.5, centerX, centerY, radius);
@@ -543,14 +539,12 @@ function returnGameDocument() {
        else {   
         console.count("returnGameDocument");
         var pastGameObject = currentGameObject;
-        // console.log(currentGameObject);
-        
         currentGameData = res;
-        console.log(currentGameData);
+          console.log(currentGameData);
         currentGameObject = currentGameData['turnPieceData'];
         playerTurn = currentGameData['playerTurn'];
-        console.log('Player Turn: '+ playerTurn);
-        whatPlayerAmI(Session.get("gameId"));
+          console.log('Player Turn: '+ playerTurn);
+        // whatPlayerAmI(Session.get("gameId"));
         diffCollections(pastGameObject, currentGameObject);
         switchTurn();
         if (notBoardReset){calculateScore();}
@@ -599,7 +593,6 @@ function updateGameData(currentGameId, currentGameObject) {
         }}
      if (flipCoordinate_x.length > 0){
       console.log("Initiate flipping");
-      flippingLogTextAnimation();
       intervalDelay();
      }
    }
