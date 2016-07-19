@@ -31,14 +31,16 @@ if (Meteor.isClient) {
               });
               $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
                event.stopPropagation();
-             document.getElementById('message').value = ''; //Clear message element after insert
-              // message.value = '';
-              // $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow');
+              message.value = ''; //Clear message element after insert
               }
             }
           }
         }
-      // if (typeof Session.get('gameId') !== 'undefined'){
+     
+}//isClient
+
+// NOTES:
+ // if (typeof Session.get('gameId') !== 'undefined'){
       //   $(document).ready(function(){
       //   ChatMessages.find({gameId: (Session.get('gameId'))}).observeChanges({
       //     added: function () {
@@ -50,6 +52,3 @@ if (Meteor.isClient) {
       //     });
       // });
       //     }
-}//isClient
-// NOTES:
-// $("input[type=text]").focus(function(){$(this).css("background","#ffffff");});

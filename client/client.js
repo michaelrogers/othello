@@ -18,7 +18,6 @@ var gameOn = true;
 var notBoardReset = true;
 var playerTurn;
 var currentGameObject = {};
-// var currentGameId;
 var playerColorSelection;
 var clientUpdated = false;
 
@@ -27,18 +26,16 @@ window.onload = function (){
  }
   
 function setSession(gameId){
-  console.count("client setSession")
+  if (debugErrorMessage){console.count("client setSession")}
   if (gameId == null){
-    console.count('Session nullified');    
+     if (debugErrorMessage){console.count('Session nullified');}    
     sessionStorage.clear();
-    // currentGameId = undefined;
     Session.clear();
     
   }
   else {
   Session.set('gameId', gameId);
   sessionStorage.setItem('gameId', gameId);
-  // currentGameId = gameId;
   }
 }
 
@@ -48,7 +45,7 @@ gameInit = function init(){ //Declaring this function to be globally accessible
     gameOn = true;
     notBoardReset = true;
     document.title = "Othello";
-    console.count("gameInit");
+     if (debugErrorMessage){console.count("gameInit");}
     buttonListeners();
     getCanvasContext();
     resizingDeclarations();
@@ -66,10 +63,10 @@ gameInit = function init(){ //Declaring this function to be globally accessible
 
 function pieceObserver(){
 if (sessionStorage.getItem('gameId') !== null){
-  console.count("pieceObserver");
+   if (debugErrorMessage){console.count("pieceObserver");}
   PieceCollection.find({_id: sessionStorage.getItem('gameId')}).observeChanges({
    // added: function () {returnGameDocument(); console.log('added');},
-   changed: function () {returnGameDocument(); console.log('changed');},
+   changed: function () {returnGameDocument();  if (debugErrorMessage){console.log('changed');}},
    // removed: function () {  }
     });
 }
@@ -84,11 +81,10 @@ context = layer1.getContext("2d");
 //layer 2 = board with pieces
 layer2 = document.getElementById("canvas2");
 contextPieces = layer2.getContext("2d");
-layer2.addEventListener("click",listenMouseDown); //Event listener for mouse input and event is implicitely passed as an argument
-
+layer2.addEventListener("click", listenMouseDown); //Event listener for mouse input and event is implicitely passed as an argument
+//layer 3 = board with markers
 layer3 = document.getElementById("canvas3");
 contextMarkers = layer3.getContext("2d");
-
 }//getCanvasContext
 
 function buttonListeners() {
@@ -104,8 +100,6 @@ function buttonListeners() {
   document.getElementById('lobby').addEventListener("click", function(){setSession(null);});
   //Resign button
   document.getElementById('resignButton').addEventListener("click", function(){resignationButtonConfirmation();});
-
-
 }
 
 function resignationButtonConfirmation(){
@@ -115,19 +109,18 @@ function resignationButtonConfirmation(){
       clickInputAccepted = false;
       document.getElementById("messages").innerHTML = "You have resigned.";
       setSession(null);
-
     }
 }
 
 function whatPlayerAmI(gameId){
-  console.count("whatPlayerAmI");
-  if (Meteor.user()){ //!Meteor.user() == false
+  if (debugErrorMessage){console.count("whatPlayerAmI");}
+  if (Meteor.user()){ 
     // console.log(Meteor.user().username)
     Meteor.call('othello.whatPlayerAmI', {username: Meteor.user().username, gameId: Session.get('gameId')}, (err, res) => {
     if (err) {console.log("Error: \n" + err);}
     else {if (res !== false){
       // console.count("playerColorSelection set"); 
-      playerColorSelection = res; console.log("playerColorSelection: "+playerColorSelection); switchTurn();}
+      playerColorSelection = res; switchTurn();}
       }
     });
   }
@@ -189,22 +182,21 @@ for (var x = 0; x <= boardWidth; x += 50) {
    var x, y;
    for (y=0; y < boardPosition.length; y++) {
      for (x=0; x < boardPosition[y].length; x++){
-      
-       if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
+        if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
          boardPosition[y][x] = null;
          drawPieces(y,x, null);
          }}}
-         // document.getElementById("score").innerHTML = "";
-  }
+    }
  }
 
 function flippingLogTextAnimation(){
-  if (document.getElementById("messages").innerHTML == "Flipping.....")
-   document.getElementById("messages").innerHTML = "Flipping..";
+  var messages = document.getElementById("messages").innerHTML;
+  if (messages.innerHTML == "Flipping.....")
+   messages.innerHTML = "Flipping..";
   
   else {
-   var flippingTextValue = document.getElementById("messages").innerHTML;
-   document.getElementById("messages").innerHTML = flippingTextValue + ".";
+   var flippingTextValue = messages.innerHTML;
+   messages.innerHTML = flippingTextValue + ".";
     }
   }
 
@@ -219,7 +211,6 @@ function endGame(resignation) {
         else {
           //Do something if server returns false
         }
-
     }
   });
   } 
@@ -234,36 +225,39 @@ for (y=0; y < boardPosition.length; y++) {
     if (boardPosition[y][x] == 0){whiteScore +=1;}
     else if (boardPosition[y][x] == 1){blackScore +=1;}
     }}
+  
+  var turnText = document.getElementById("turn");
+  var scoreText = document.getElementById("score");
 
   if (whiteScore + blackScore <= 64){
-  document.getElementById("score").innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
+    scoreText.innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
   }
   if (whiteScore + blackScore == 64 && whiteScore > blackScore){
     clickInputAccepted = false;
     gameOn = false;
-    document.getElementById("turn").innerHTML = "White player wins with " + whiteScore + " pieces!";
-    document.getElementById("score").innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
+    turnText.innerHTML = "White player wins with " + whiteScore + " pieces!";
+    scoreText.innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
   }
   else if (whiteScore + blackScore == 64 && blackScore > whiteScore){
     clickInputAccepted = false;
     gameOn = false;
-    document.getElementById("turn").innerHTML = "Black player wins with " + blackScore + " pieces!";
-    document.getElementById("score").innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
+    turnText.innerHTML = "Black player wins with " + blackScore + " pieces!";
+    scoreText.innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
   }
   else if (whiteScore + blackScore == 64 && blackScore == whiteScore){
     clickInputAccepted = false;
     gameOn = false;
-    document.getElementById("turn").innerHTML = "Draw! How unusual!";
+    turnText.innerHTML = "Draw! How unusual!";
   }
   else if (blackScore == 0 && whiteScore > 2){
     clickInputAccepted = false;
     gameOn = false;
-    document.getElementById("turn").innerHTML = "White player wins with " + whiteScore + " pieces!";
+    turnText.innerHTML = "White player wins with " + whiteScore + " pieces!";
     }
   else if (whiteScore == 0 && blackScore >2){
     clickInputAccepted = false;
     gameOn = false;
-    document.getElementById("turn").innerHTML = "Black player wins with " + blackScore + " pieces!";
+    turnText.innerHTML = "Black player wins with " + blackScore + " pieces!";
     }
   
     if (gameOn == false){endGame(false)}
@@ -385,7 +379,7 @@ function validMove(cell_y,cell_x){
       addPiece(cell_y,cell_x); //Add selection piece first
       clearMarkerCanvas();
       drawMarker(cell_y, cell_x, true);
-      console.log("validMove");
+       if (debugErrorMessage){console.log("validMove");}
       intervalDelay(); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
       }
     }//End validMove
@@ -414,7 +408,7 @@ function returnFlipCoordinate(){
     flippingLogTextAnimation();
     cell_x = flipCoordinate_x.pop();
     cell_y = flipCoordinate_y.pop();
-    console.count("Flipping")
+    if (debugErrorMessage){ console.count("Flipping")}
     if (debugErrorMessage){console.log("Flip x: "+ cell_x + " y: " + cell_y);}
     addPiece(cell_y,cell_x);
     drawMarker(cell_y, cell_x, false);
@@ -426,15 +420,13 @@ function returnFlipCoordinate(){
     clientUpdated = false;
     switchTurn();
     clearInterval(intSet);
-    console.log("Flipping finished")
+     if (debugErrorMessage){console.log("Flipping finished")}
     return false;
     }
   }
 
 function drawPieces(yPosition,xPosition, pieceColor) {
-  // radius = 20;
-  // padding = 10;
-  // cellWidth = 50;
+  // radius = 20; padding = 10; cellWidth = 50;
   //implement random positioning within cell for added interest and analog feel
   //uses a random number generator to vary between a value -1 to +1
   var randomX = Math.floor((Math.random()*3))-1;
@@ -507,10 +499,7 @@ if (initialPiece){
     markerGradient.addColorStop(1, "rgba(125,0,0,0.3)");
   }
 }
-  
-  // // markerGradient.addColorStop(0, 'rgba(0,0,0,.5)');
-  // // markerGradient.addColorStop(1, 'rgba(32,45,21,.5)');
-    
+ 
   contextMarkers.clearRect(centerX-25,centerY-25,50,50);
   var bufferValue = 0;
   contextMarkers.fillStyle = markerGradient;
@@ -520,8 +509,6 @@ if (initialPiece){
 function clearMarkerCanvas(){
   contextMarkers.clearRect(0,0,410,410);
 }
-
-
 
 //Accessible through the console for debugging purposes
 function globalDebug(){
@@ -537,13 +524,13 @@ function returnGameDocument() {
   Meteor.call('othello.readGameData', { gameId: Session.get("gameId")}, (err, res) => {
   if (err) {console.log(err);}
        else {   
-        console.count("returnGameDocument");
+         if (debugErrorMessage){console.count("returnGameDocument");}
         var pastGameObject = currentGameObject;
         currentGameData = res;
-          console.log(currentGameData);
+          if (debugErrorMessage){ console.log(currentGameData);}
         currentGameObject = currentGameData['turnPieceData'];
         playerTurn = currentGameData['playerTurn'];
-          console.log('Player Turn: '+ playerTurn);
+          if (debugErrorMessage){ console.log('Player Turn: '+ playerTurn);}
         // whatPlayerAmI(Session.get("gameId"));
         diffCollections(pastGameObject, currentGameObject);
         switchTurn();
@@ -562,7 +549,7 @@ function updateGameData(currentGameId, currentGameObject) {
     changedGameData: currentGameObject,
     currentPlayerTurn: playerColorSelection},
   (err, res) => {
-  if (err) {alert(err);} else {console.count("updateGameData");}
+  if (err) {alert(err);} else { if (debugErrorMessage){console.count("updateGameData");}}
     });
   } 
   switchTurn();  
@@ -571,7 +558,7 @@ function updateGameData(currentGameId, currentGameObject) {
 
  function diffCollections(pastGameObject, currentGameObject) {
   if (Object.keys(pastGameObject).length == 0){ readCollection();}
-  else {console.count("diffCollections");
+  else { if (debugErrorMessage){console.count("diffCollections");}
     var x, y, flipIndex = 0;
     for (y=0; y < Object.keys(currentGameObject).length; y++) {
       for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
@@ -592,7 +579,7 @@ function updateGameData(currentGameId, currentGameObject) {
           }}
         }}
      if (flipCoordinate_x.length > 0){
-      console.log("Initiate flipping");
+      // console.log("Initiate flipping");
       intervalDelay();
      }
    }
@@ -600,7 +587,7 @@ function updateGameData(currentGameId, currentGameObject) {
 }
 
 function readCollection(){
-  console.count('readCollection');
+   if (debugErrorMessage){console.count('readCollection');}
   clearMarkerCanvas();
   clearArray();
   var x, y;
@@ -645,16 +632,3 @@ function readCollection(){
 // layer2 = document.getElementById("canvas2");
 // contextPieces = layer2.getContext("2d");
 // }
-
-// Template.Othello.helpers({
-//   autoRun: function () {
-//   Tracker.autorun(function(){
-//   Meteor.subscribe("piece-collection", function (){
-//   var updateAvailable = Session.get('updateAvailable');
-//   console.log(updateAvailable);
-//   console.log("Othello helper ran");
-//   returnGameDocument();
-//    });
-//   });
-//   }
-// });

@@ -1,41 +1,41 @@
 if (Meteor.isClient) {
   //TODO: Use registerHelper for universal template logic
   // Template.registerHelper('sessionId', function (){ //
-     		//Used to globally evaluate multiple templates for a single page app feel
-     		// return Session.get("gameId") !== "null";
-    		// return sessionStorage.getItem('gameId') !== null;
-     		// Session.set("gameId", sessionStorage.getItem('gameId'))
+  //    		// Used to globally evaluate multiple templates for a single page app feel
+  //    	// 	return Session.get("gameId") !== "null";
+  //   		// return sessionStorage.getItem('gameId') !== null;
+  //    	// 	Session.set("gameId", sessionStorage.getItem('gameId'))
       		
-     		// return typeof sessionStorage.getItem("gameId") == 'undefined';
-  // 				return Session.get("gameId") !== 'null' && Session.get("gameId") !== 'undefined';
+  //    		// return typeof sessionStorage.getItem("gameId") == 'undefined';
+  // 				return Session.get("gameId") !== null && Session.get("gameId") !== undefined;
   //     	      });
-
-
-  Template.sessionId.helpers({
-      	gameId: function() {
-      		// return sessionStorage.getItem('gameId') !== null;
-     		// Session.set("gameId", sessionStorage.getItem('gameId'))
-      		return Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined;
-     		// return typeof sessionStorage.getItem("gameId") == 'undefined';
+	Template.chatBoxTemplate.helpers({
+      	opponentJoined: function(){
+      		if (Meteor.user()){
+				var currentGame = PieceCollection.findOne({_id: Session.get('gameId')});
+				if (typeof currentGame !== 'undefined'){
+				if (currentGame['playerWhite'] != null && currentGame['playerBlack'] != null){return true}
+				else {return false;}
+	      		}
+      		}
       	}
-      });
+      	});
   
 
   Template.opponentUsername.helpers({
       	opponentUsername: function(){
       		if (Meteor.user()){
-      		var currentGame =  PieceCollection.findOne({_id: Session.get('gameId')});
+      		var currentGame = PieceCollection.findOne({_id: Session.get('gameId')});
       		if (typeof currentGame !== 'undefined'){
-      			if (currentGame['playerWhite'] == Meteor.user().username){return currentGame['playerBlack']};
-      			if (currentGame['playerBlack'] == Meteor.user().username){return currentGame['playerWhite']};
-      		// else {return "Waiting"}
+      			if (currentGame['playerWhite'] == Meteor.user().username){return currentGame['playerBlack']} //Returning the correct opponents username
+      			if (currentGame['playerBlack'] == Meteor.user().username){return currentGame['playerWhite']}
       		}	
       	}
       }
+      	
   	});
   Template.lobby.helpers({
-      	
-  		active: function (){
+      	active: function (){
   			if (Meteor.user()){
   			var activeCount = PieceCollection.find({$and: [{$or: [{playerBlack: Meteor.user().username}, {playerWhite: Meteor.user().username}]}, {gameEnd: null}]}).count();
   			if (activeCount > 14){document.getElementById("joinButton").disabled = true; }
@@ -45,7 +45,7 @@ if (Meteor.isClient) {
   	},
   		matchData: function(){
   			if (Meteor.user()){
-  				console.count("matchData");
+  				// console.count("Template matchData");
   				var matchScoreArray = [];
   				var allActiveGames = PieceCollection.find({$and: [{$or: [{playerBlack: Meteor.user().username}, {playerWhite: Meteor.user().username}]}, {gameEnd: null}]}, { sort: { gameStart: 1}}).fetch();
 			for (z = 0; z<Object.keys(allActiveGames).length; z++){
@@ -81,68 +81,67 @@ if (Meteor.isClient) {
 				    else {thisPlayerTurn = false;}
 
 				    matchScoreArray[z] = {_id: thisGame['_id'], whiteScore: whiteScore, blackScore: blackScore, playerWhite: thisGame['playerWhite'], playerBlack: thisGame['playerBlack'], thisPlayerTurn: thisPlayerTurn};
+					}//for loop
 
-				    
-				     
-
-						}//for loop
-					// console.log(matchScoreArray);	
   					return matchScoreArray;
   					}
   				}
-				
-
-
-  	
-      	
+			      	
       });
 //onRendered template to call the respective initialization functions for each screen
   Template.gameCanvas.onRendered(function(){
   	gameInit();
-
-
-  });
+  	});
 
   Template.lobby.onRendered(function(){
   	lobbyInit();
-
-  });
+	});
 
   Template.playerDesignation.helpers({
       	playerDesignation: function(){
-      		// var currentGame =  PieceCollection.findOne({_id: Session.get('gameId')},{playerWhite: 1, playerBlack: 1});
        		var thisSession = Session.get('gameId');
+   			var thisGame = PieceCollection.findOne({_id: Session.get('gameId')});
+   			if (thisGame !== undefined){
    			var players = {
-   				playerWhite: PieceCollection.findOne({_id: Session.get('gameId')})['playerWhite'],
-   				playerBlack: PieceCollection.findOne({_id: Session.get('gameId')})['playerBlack']
+   				playerWhite: thisGame['playerWhite'],
+   				playerBlack: thisGame['playerBlack']
    			}
-   			console.log(players);
        		return players;
       		}
+      	}
       	});
+
+  Template.sessionId.helpers({
+      	gameId: function() {
+      		// return sessionStorage.getItem('gameId') !== null;
+     		// Session.set("gameId", sessionStorage.getItem('gameId'))
+      		return Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined;
+     		// return typeof sessionStorage.getItem("gameId") == 'undefined';
+      	}
+      });
+  
+
+  
   Template.messaging.helpers({
       	gameId: function() {
       		// return Session.get("gameId") !== undefined;
       		// return typeof Session.get("gameId") == 'string';
       		return Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined;
       		// return typeof sessionStorage.getItem("gameId") == 'undefined';
-
       	}
       });
   Template.playerTurn.helpers({
       	gameId: function() {
       		return Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined;
       		// return typeof sessionStorage.getItem("gameId") == 'undefined';
-
       	}
       });
   Template.buttons.helpers({
   		gameId: function(){
       		return Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined;
       		// return typeof sessionStorage.getItem("gameId") == 'undefined';
-
   		}
-  })
+  });
 
 
 
