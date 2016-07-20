@@ -4,7 +4,7 @@
 body {
     background-image: linear-gradient(170deg, rgba(161, 157, 162, 0.68), #918e82 100%);
     font-size: 14px;
-    font-family: "Segoe UI", Tahoma, "Calibri";
+    font-family: "Segoe UI", Tahoma, Helvetica;
     /*Prevent bg gradiant repeat*/
     height: 100%;
     margin: 0;
@@ -95,7 +95,6 @@ div#login-buttons {
     text-decoration: none;
     }
 
-
 #loginPageDiv {
     margin: 30px;
     }
@@ -182,17 +181,21 @@ div#login-buttons {
     display: inline;
 }
 
-#thisPlayerTurn{
+.floatMiddle{
     padding-right: 30%;
+    margin: 0;
+    float: right;
 }
 
 .floatLeft {
     float: left;
+    margin: 0;
     /*margin-right: 150px;*/
  } 
 
 .floatRight {
     float: right;
+    margin: 0;
     padding-right: 20px;
  }
 
@@ -296,7 +299,7 @@ hr {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-    font-family: "Segoe UI", Tahoma, "Calibri";
+    font-family: "Segoe UI", Tahoma, Helvetica;
     cursor: pointer;
     margin: 4px 2px;
     padding: 8px 15px;

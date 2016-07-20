@@ -21,9 +21,7 @@ var currentGameObject = {};
 var playerColorSelection;
 var clientUpdated = false;
 
-window.onload = function (){
-  setSession(sessionStorage.getItem("gameId"));
- }
+window.onload = function (){setSession(sessionStorage.getItem("gameId"));}
   
 function setSession(gameId){
   if (debugErrorMessage){console.count("client setSession")}
@@ -42,22 +40,22 @@ function setSession(gameId){
 gameInit = function init(){ //Declaring this function to be globally accessible
   $(document).ready(function(){
     currentGameObject = {};
-    gameOn = true;
+    // gameOn = true;
     notBoardReset = true;
+    intSet = null;
     document.title = "Othello";
-     if (debugErrorMessage){console.count("gameInit");}
+    if (debugErrorMessage){console.count("gameInit");}
     buttonListeners();
     getCanvasContext();
     resizingDeclarations();
     clearArray(); //drawGrid();
     setInitialPosition();
     globalDebug();
-    // document.getElementById('messages').innerHTML = "Please select a color to play as.";
     $(window).resize(function(){resizingDeclarations});
     $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
-    pieceObserver();
     whatPlayerAmI(Session.get("gameId"));
     returnGameDocument();
+    pieceObserver();
       });
 }
 
@@ -230,6 +228,7 @@ for (y=0; y < boardPosition.length; y++) {
   var scoreText = document.getElementById("score");
 
   if (whiteScore + blackScore <= 64){
+    gameOn = true;
     scoreText.innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
   }
   if (whiteScore + blackScore == 64 && whiteScore > blackScore){
@@ -525,17 +524,20 @@ function returnGameDocument() {
   if (err) {console.log(err);}
        else {   
          if (debugErrorMessage){console.count("returnGameDocument");}
-        var pastGameObject = currentGameObject;
-        currentGameData = res;
+          var pastGameObject = currentGameObject;
+          currentGameData = res;
           if (debugErrorMessage){ console.log(currentGameData);}
-        currentGameObject = currentGameData['turnPieceData'];
-        playerTurn = currentGameData['playerTurn'];
-          if (debugErrorMessage){ console.log('Player Turn: '+ playerTurn);}
-        // whatPlayerAmI(Session.get("gameId"));
-        diffCollections(pastGameObject, currentGameObject);
-        switchTurn();
-        if (notBoardReset){calculateScore();}
-        
+          if (res != false){
+            currentGameObject = currentGameData['turnPieceData'];
+            playerTurn = currentGameData['playerTurn'];
+            if (debugErrorMessage){ console.log('Player Turn: '+ playerTurn);}
+            // whatPlayerAmI(Session.get("gameId"));
+            diffCollections(pastGameObject, currentGameObject);
+            if (notBoardReset){calculateScore();}
+            if (gameOn){switchTurn();}
+          }
+          else {console.log("No match for gameId: " + Session.get("gameId"));}
+
     }});
   }//currentGame if statement
 else {console.log('No gameId');}
@@ -553,7 +555,6 @@ function updateGameData(currentGameId, currentGameObject) {
     });
   } 
   switchTurn();  
-
 }
 
  function diffCollections(pastGameObject, currentGameObject) {
@@ -587,7 +588,7 @@ function updateGameData(currentGameId, currentGameObject) {
 }
 
 function readCollection(){
-   if (debugErrorMessage){console.count('readCollection');}
+  if (debugErrorMessage){console.count('readCollection');}
   clearMarkerCanvas();
   clearArray();
   var x, y;

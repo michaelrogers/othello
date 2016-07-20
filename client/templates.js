@@ -71,15 +71,10 @@ if (Meteor.isClient) {
 				    // matchScoreArray[z] = {score: scoreTotal, players: players};
 				    
 				    //Evaluate to determine turn
-				    var thisPlayerTurn; //Boolean
-				    if (mostRecentTurnData['playerTurn'] == 0 && Meteor.user().username == thisGame['playerWhite']){
-				    	thisPlayerTurn = true;
-				    }
-				    else if (mostRecentTurnData['playerTurn'] == 1 && Meteor.user().username == thisGame['playerBlack']){
-				    	thisPlayerTurn = true;
-				    }
+				    var thisPlayerTurn = false; //Boolean
+				    if (mostRecentTurnData['playerTurn'] == 0 && Meteor.user().username == thisGame['playerWhite']){thisPlayerTurn = true;}
+				    else if (mostRecentTurnData['playerTurn'] == 1 && Meteor.user().username == thisGame['playerBlack']){thisPlayerTurn = true;}
 				    else {thisPlayerTurn = false;}
-
 				    matchScoreArray[z] = {_id: thisGame['_id'], whiteScore: whiteScore, blackScore: blackScore, playerWhite: thisGame['playerWhite'], playerBlack: thisGame['playerBlack'], thisPlayerTurn: thisPlayerTurn};
 					}//for loop
 
@@ -100,14 +95,14 @@ if (Meteor.isClient) {
   Template.playerDesignation.helpers({
       	playerDesignation: function(){
        		var thisSession = Session.get('gameId');
-   			var thisGame = PieceCollection.findOne({_id: Session.get('gameId')});
-   			if (thisGame !== undefined){
-   			var players = {
-   				playerWhite: thisGame['playerWhite'],
-   				playerBlack: thisGame['playerBlack']
-   			}
-       		return players;
-      		}
+     			var thisGame = PieceCollection.findOne({_id: Session.get('gameId')});
+     			if (thisGame !== undefined){
+     			var players = {
+     				playerWhite: thisGame['playerWhite'],
+     				playerBlack: thisGame['playerBlack']
+     			}
+         		return players;
+        		}
       	}
       	});
 

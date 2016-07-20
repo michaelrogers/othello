@@ -1,5 +1,4 @@
 <!-- Templates on othello.html -->
-
 <!-- This template controls the lobby/game state -->
 <template name="sessionId">
   {{#if currentUser}}
@@ -40,7 +39,7 @@
  <template name="messaging">
   {{#if currentUser}}
     {{#if gameId}} <div id="informationLine">
-      <em><p id="messages">Welcome to Othello! To start, place the white piece first.</p></em>
+      <p id="messages">Welcome to Othello! To start, place the white piece first.</p>
       {{>playerDesignation}}
     </div>
     {{/if}}
@@ -59,14 +58,13 @@
 
 <template name="chatBoxTemplate">
   <div class="chatbox">
-
       <div id="chat-header">
-      {{#if Template.subscriptionsReady}}
-      {{#if opponentJoined}}Chat with {{>opponentUsername}}
-      {{else}}
-      Your opponent has not yet joined.
-      {{/if}}
-      {{/if}}
+        {{#if Template.subscriptionsReady}}
+        {{#if opponentJoined}}Chat with {{>opponentUsername}}
+        {{else}}
+        Your opponent has not yet joined.
+        {{/if}}
+        {{/if}}
       </div>
       <hr>
       <div id ="chat-message">
@@ -91,22 +89,23 @@
       <div id="matchListScroll">
         {{#each matchData}}
         <div id={{_id}} class="matchBoxItem">
-          <div class="floatLeft">
-            White: <strong><p class="inline">{{playerWhite}}</p></strong><br>
-            Black: <p class="inline">{{#if playerBlack}}<strong>{{playerBlack}}</strong>{{else}} -Open Slot- {{/if}}</p>
-          </div>
+          <p class="floatLeft">
+            <p class="inline">White: {{#if playerWhite}}<strong>{{playerWhite}} </strong>{{else}} -Open Slot- {{/if}}</p>
+            <br>
+            <p class="inline">Black: {{#if playerBlack}}<strong>{{playerBlack}}</strong>{{else}} -Open Slot- {{/if}}</p>
+          </p>
           
-          <div class="floatRight">
+          <p class="floatRight">
             Score: {{whiteScore}} <br>
             Score: {{blackScore}}
-          </div>
-          <div class="floatRight" id="thisPlayerTurn">
+          </p>
+          <p class="floatMiddle">
             {{#if thisPlayerTurn}}
-              <strong><p>Your turn!</p></strong>
+              <strong>Your turn!</strong>
             {{else}}
-              <p>Waiting on opponent.</p>
+              Waiting on opponent.
             {{/if}}
-          </div>
+          </p>
 
           </div>
       {{/each}}
@@ -138,11 +137,11 @@
     <h3>Please create an account or sign in to begin playing.</h3>
     
     <h4>History</h4>
-    <p class="loginPage">Reversi is a strategy board game for two players, played on an 8×8 uncheckered board. There are sixty-four identical game pieces called disks (often spelled "discs"), which are light on one side and dark on the other. Players take turns placing disks on the board with their assigned color facing up. During a play, any disks of the opponent's color that are in a straight line and bounded by the disk just placed and another disk of the current player's color are turned over to the current player's color.
-The object of the game is to have the majority of disks turned to display your color when the last playable empty square is filled.</p>
-  <h4>Rules</h4>
-  <p class="loginPage">Each of the disks' two sides corresponds to one player; they are referred to here as light and dark after the sides of Othello pieces, but any counters with distinctive faces are suitable. The game may for example be played with a chessboard and Scrabble pieces, with one player letters and the other backs.</p>
-  <p class="loginPage">Players take alternate turns. If one player can not make a valid move, play passes back to the other player. When neither player can move, the game ends. This occurs when the grid has filled up or when neither player can legally place a piece in any of the remaining squares. This means the game may end before the grid is completely filled. This possibility may occur because one player has no pieces remaining on the board in that player's color. In over-the-board play this is generally scored as if the board were full (64–0).</p>
+      <p class="loginPage">Reversi is a strategy board game for two players, played on an 8×8 uncheckered board. There are sixty-four identical game pieces called disks (often spelled "discs"), which are light on one side and dark on the other. Players take turns placing disks on the board with their assigned color facing up. During a play, any disks of the opponent's color that are in a straight line and bounded by the disk just placed and another disk of the current player's color are turned over to the current player's color.</p>
+      <p class="loginPage">The object of the game is to have the majority of disks turned to display your color when the last playable empty square is filled.</p>
+    <h4>Rules</h4>
+      <p class="loginPage">Each of the disks' two sides corresponds to one player; they are referred to here as light and dark after the sides of Othello pieces, but any counters with distinctive faces are suitable. The game may for example be played with a chessboard and Scrabble pieces, with one player letters and the other backs.</p>
+      <p class="loginPage">Players take alternate turns. If one player can not make a valid move, play passes back to the other player. When neither player can move, the game ends. This occurs when the grid has filled up or when neither player can legally place a piece in any of the remaining squares. This means the game may end before the grid is completely filled. This possibility may occur because one player has no pieces remaining on the board in that player's color. In over-the-board play this is generally scored as if the board were full (64–0).</p>
   <a target="_blank" href="https://en.wikipedia.org/wiki/Reversi">History and Rules provided by Wikipedia.org</a>
   </div>
 </template>

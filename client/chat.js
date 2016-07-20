@@ -29,9 +29,9 @@ if (Meteor.isClient) {
               message: message.value,
               time: Date.now()
               });
-              $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
-               event.stopPropagation();
               message.value = ''; //Clear message element after insert
+              $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
+              event.stopPropagation();
               }
             }
           }

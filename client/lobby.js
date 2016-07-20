@@ -4,9 +4,9 @@ lobbyInit = function lobbyInit(){ //Declaring this function to be globally acces
  $(document).ready(function(){
  	//Join button
  document.getElementById('joinButton').addEventListener("click", function(){joinGame(null);});
- document.title = "Othello";
+ document.title = "Lobby - Othello";
  // console.count("lobbyInit");
-  $('#matchListScroll').delegate('div', 'click', function() {
+  $('#matchListScroll').delegate('div', 'click', function() { //TODO: Research compatability of .on() method in place of .delegate()
     // console.log($(this).attr('id'));
     joinGame($(this).attr('id'));
    		});
