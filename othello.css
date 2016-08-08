@@ -75,6 +75,15 @@ a {
 a:visited {
     color: blue;
 }
+
+.footerElement {
+    float: left;
+    padding-right: 20px;
+    width: 100%
+    height: 20px;
+    background-image: linear-gradient(to bottom right, rgba(173, 204, 165, 0.75), rgba(225, 229, 240, 1));
+
+}
 /*---------------------Login page--------------------*/
 
 .loginPage {
@@ -116,7 +125,7 @@ div#login-buttons {
 }
 
 #matchList {
-    min-width: 360px;
+    min-width: 375px;
     max-width: 860px;
     margin: 30px;
     background-image: radial-gradient(ellipse at center, #e6e6e6 30%, #c6c6c6 90%);
@@ -166,12 +175,15 @@ div#login-buttons {
     /*background-image: linear-gradient(to bottom,#e6e6e6, #d9d9d9);*/
     background: rgba(255, 255, 255, 0.30);
     cursor: hand; cursor: pointer;
+    transition: all 1s;
+    transition-timing-function: ease;
 
 }
 
 .matchBoxItem:hover {
     border-color: green;
-    transition: 1s;
+
+    
     /*color: green;*/
     /*background-image: linear-gradient(to bottom, #d9d9d9, #e6e6e6);*/
     background: rgba(173, 204, 165, 0.30);
@@ -182,21 +194,29 @@ div#login-buttons {
 }
 
 .floatMiddle{
-    padding-right: 30%;
+    padding-right: 23%;
     margin: 0;
     float: right;
+    width: 26%;
+    min-width: 200px;
+    overflow: clip;
+    display: inline;
 }
 
 .floatLeft {
     float: left;
     margin: 0;
-    /*margin-right: 150px;*/
+    margin-right: 10px;
  } 
 
 .floatRight {
     float: right;
     margin: 0;
-    padding-right: 20px;
+    padding-right: 0%;
+    width: 9%;
+    min-width: 70px;
+    overflow: clip;
+
  }
 
  /*---------------Chatbox styling----------------*/
@@ -261,15 +281,19 @@ div#login-buttons {
     /*margin: 0 2em 0 2em;*/
     word-wrap: break-word;
     background: transparent;
-    border: none;    
+    /*border: none;    */
     /*box-sizing: border-box;*/
     outline: none; /*Prevent browser outline*/
+    transition: 1s ease-in-out;
+    border: 12px;
+    border-color: grey;
     }
 
 .message-input input:focus {
     /*box-shadow: inset -1px -1px 2px 0px rgba(0, 0, 0, 0.2);*/
-    transition: 1s;
-    background-image: linear-gradient(to bottom, rgba(225, 229, 240, 1), rgba(217, 217, 217, 0.6)) ;
+    transition: 0.5s ;
+    /*background-image: linear-gradient(to bottom, rgba(225, 229, 240, 1), rgba(217, 217, 217, 0.6)) ;*/
+    background-color: rgba(210, 217, 225, .6);
     outline: none;
     }
 
@@ -282,6 +306,7 @@ div#login-buttons {
     padding-left: 5%;
     padding-right: 5%;
     font-size: 1.0em;
+    
     }       
 
 hr {
@@ -327,6 +352,12 @@ div#playerDesignation {
     display: inline;
     margin-right: 26px;
 }
+/*span {
+    margin: 0;
+    padding: 0;
+    display: inline;
+    white-space: nowrap;
+}*/
 
 div#informationLine {
     padding-top: 10px;
@@ -357,6 +388,7 @@ canvas {
 	border-radius: 8px;
     width: 420px;
     height: 420px;
+    cursor: pointer;
     	}
 
 #canvas2 { /*Board with pieces*/

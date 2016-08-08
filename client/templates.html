@@ -28,6 +28,7 @@
 <template name="playerTurn">
   {{#if currentUser}}
     {{#if gameId}}
+
       <div>
       <p id="turn">Player Turn: White</p> 
       <p id="score"></p>
@@ -83,7 +84,7 @@
 
   <div id="matchList">
        <div id="matchListHeader">
-        <h4 class="lobbyHeader"> Active games: {{active}} </h4>
+        <h4 class="lobbyHeader"> Your games: {{active}} </h4>
         <!-- <hr> -->
       </div>
       <div id="matchListScroll">
@@ -105,6 +106,8 @@
             {{else}}
               Waiting on opponent.
             {{/if}}
+            <br>
+            <span style="font-size: smaller; font-weight: lighter">Last updated: {{livestamp lastUpdated}} </span>
           </p>
 
           </div>

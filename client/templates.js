@@ -59,6 +59,7 @@ if (Meteor.isClient) {
           			if (turnDataHistory[x]['date'] > maxDate){maxDate = turnDataHistory[x]['date']; turnIndex = x;}
         				}
         		var mostRecentTurnData = turnDataHistory[turnIndex];
+            // console.log(mostRecentTurnData);
         		//Start counting of score in the most Recent Turn's array to total the score	
         			var x, y; var whiteScore = 0; blackScore = 0;
 					for (y=0; y < Object.keys(mostRecentTurnData['turnPieceData']).length; y++) {
@@ -75,9 +76,9 @@ if (Meteor.isClient) {
 				    if (mostRecentTurnData['playerTurn'] == 0 && Meteor.user().username == thisGame['playerWhite']){thisPlayerTurn = true;}
 				    else if (mostRecentTurnData['playerTurn'] == 1 && Meteor.user().username == thisGame['playerBlack']){thisPlayerTurn = true;}
 				    else {thisPlayerTurn = false;}
-				    matchScoreArray[z] = {_id: thisGame['_id'], whiteScore: whiteScore, blackScore: blackScore, playerWhite: thisGame['playerWhite'], playerBlack: thisGame['playerBlack'], thisPlayerTurn: thisPlayerTurn};
+				    matchScoreArray[z] = {_id: thisGame['_id'], whiteScore: whiteScore, blackScore: blackScore, playerWhite: thisGame['playerWhite'], playerBlack: thisGame['playerBlack'], thisPlayerTurn: thisPlayerTurn, lastUpdated: mostRecentTurnData['date']};
 					}//for loop
-
+            // console.log(matchScoreArray);
   					return matchScoreArray;
   					}
   				}

@@ -12,6 +12,12 @@ lobbyInit = function lobbyInit(){ //Declaring this function to be globally acces
    		});
   
   });
+
+// jQuery(document).ready(function() {
+//   jQuery("time.timeago").timeago();
+// });
+
+
 }
 function generateGameId() {
   if (Meteor.user()){
