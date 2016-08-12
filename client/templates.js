@@ -47,7 +47,7 @@ if (Meteor.isClient) {
   			if (Meteor.user()){
   				// console.count("Template matchData");
   				var matchScoreArray = [];
-  				var allActiveGames = PieceCollection.find({$and: [{$or: [{playerBlack: Meteor.user().username}, {playerWhite: Meteor.user().username}]}, {gameEnd: null}]}, { sort: { gameStart: 1}}).fetch();
+  				var allActiveGames = PieceCollection.find({$and: [{$or: [{playerBlack: Meteor.user().username}, {playerWhite: Meteor.user().username}]}, {gameEnd: null}]}, { sort: { gameStart: -1}}).fetch();
 			for (z = 0; z<Object.keys(allActiveGames).length; z++){
 				var thisGame = allActiveGames[z];
 				// var players = {playerWhite: thisGame['playerWhite'], playerBlack: thisGame['playerBlack']} 

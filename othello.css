@@ -23,10 +23,9 @@ header {
 .container {
     max-width: 900px;
     min-width: 400px;
-    min-height: 650px;
     margin: 0 auto;
     background: rgba(255,255,255,.9);
-    padding-bottom: 5px;
+    padding-bottom: 20px;
     box-shadow: 5px 5px 8px grey;
     }
 
@@ -163,11 +162,9 @@ div#login-buttons {
 }
 
 .matchBoxItem {
-    border-top:  1px solid transparent;
-    border-bottom: 1px solid grey;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid rgba(180,180,180,.9);
     margin: 6px 8px 3px 8px;
-    /*border-width: 1px;
-    border-color: grey;*/
     padding: 12px 18px 12px 18px;
     min-height: 45px;
     max-width: 100%;
@@ -182,8 +179,6 @@ div#login-buttons {
 
 .matchBoxItem:hover {
     border-color: green;
-
-    
     /*color: green;*/
     /*background-image: linear-gradient(to bottom, #d9d9d9, #e6e6e6);*/
     background: rgba(173, 204, 165, 0.30);
@@ -207,6 +202,7 @@ div#login-buttons {
     float: left;
     margin: 0;
     margin-right: 10px;
+
  } 
 
 .floatRight {
@@ -218,20 +214,32 @@ div#login-buttons {
     overflow: clip;
 
  }
+p.floatLeft {
+    border: 0;
+    padding-left: 10px;
+    border-left: 15px solid rgba(150,150,150,0.75);
+}
+.floatLeft.highlightTurn {
+        border-left: 15px solid rgba(0,0,128,0.75);
+}
 
  /*---------------Chatbox styling----------------*/
 
+
 .chatbox {
-    max-width: 420px;
-    max-height: 420px;
-    margin: 0 auto;
+    /*max-width: 420px;*/
     min-height: 420px;
+    /*height: 420px;*/
+    /*margin: 0 auto;*/
+    min-height: 420px;
+    min-width: 250px;
     background-image: linear-gradient(to bottom, rgba(173, 204, 165, 0.75), #e1e5f0 100%);
-    float: right;
+    /*float: right;*/
     width: 100%;
     margin: 0px 20px 0px 20px;
     word-wrap: break-word;
     /*border-radius: 0 8px 8px 0;*/
+    overflow: hidden;
     }
 
  ::-webkit-scrollbar {
@@ -251,16 +259,19 @@ div#login-buttons {
 
 #chat-header {
     /*background: linear-gradient(to bottom right, rgba(175, 175, 175, .1), rgba(175, 175, 175, .80));*/
-    min-height: 0px;
+    max-height: 10%;
     text-align: center;
     margin-top: 10px;
     margin-bottom: 10px;
+    width: 100%;
+
     }
 
 #chat-message {
-    height: 90%;
-    min-height: 340px;
-    margin-left: 1em;
+    min-height: 80%;
+    width: 96%;
+    /*min-height: 330px;*/
+    margin-left: 4%;
     /*margin-right: 1em;
     margin-top: 1em;*/
     overflow-y: auto;
@@ -278,6 +289,7 @@ div#login-buttons {
 
 .message-input input {
     /*width: 90%;*/
+    max-height: 10%;
     /*margin: 0 2em 0 2em;*/
     word-wrap: break-word;
     background: transparent;
@@ -343,14 +355,15 @@ hr {
     }
 /*For error handling and turn updates*/
 p#messages {
-    margin-left: 26px;
+    margin-left: 3%;
     display: inline;
     }
 
 div#playerDesignation {
     float: right;
     display: inline;
-    margin-right: 26px;
+    margin-right: 3%;
+    /*margin-right: 26px;*/
 }
 /*span {
     margin: 0;
@@ -380,30 +393,151 @@ div#playerDesignation >  p {
 
 canvas {
     /*background: #8fcb7c;*/
+    /*display: table-cell;*/
     margin: 0px 20px 10px 20px;
     position: absolute;
     left: 0px;
     top: 0px;
+    float: left;
     /*border-radius: 8px 0 0 8px;*/
 	border-radius: 8px;
-    width: 420px;
-    height: 420px;
+    max-width: 420px;
+    max-height: 420px;
     cursor: pointer;
     	}
 
 #canvas2 { /*Board with pieces*/
     background: initial;
+    z-index: 1;
     }
 
 #canvas1 { /*Board with grid lines*/
-    background: radial-gradient(circle, #9fd38e, #56a33d,
-    #396d28);
+    /*background: radial-gradient(circle, red, purple, navy);*/
+    background: radial-gradient(circle, #9fd38e, #56a33d, #396d28);
     }
 
 #canvasesdiv {
     position: relative;
+    height: 420px;
+    /*display: table-cell;*/
+    }
+.gameView {
+    /*display: table;*/
+    width: 100%;
+    height: auto;
+    /*-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;*/
+    display: flex;
+    overflow: hidden;
+}
+/*--------------------------Screen size specific styling---------------------*/
+
+@media screen and (min-width: 700px) {
+  
+       .chatbox { 
+        margin-left: 460px; 
+       }
+}
+@media screen and (max-width: 700px) {
+    .container {
+        margin: 0;
+         }
+       
+    #canvasesdiv {
+        float: none;
+    }
+    .chatbox {
+        min-width: 30%;
+        max-width: 60%;
+        min-height: 300px;
+        max-height: 300px;
+        display: inherit;
+        margin: 0;
+        margin-right: 2px;
+        margin-left: 305px;
+        float: none;
     }
 
+    canvas {
+        width: 300px;
+        height: 300px;
+        margin: 0;
+        margin-left: 2px;
+
+    }
+    
+}
+@media screen and (max-width: 420px){
+    .gameView {
+        display: block;
+        width: 100%;
+    }
+
+    .container {
+       max-width: 100%;
+       width: 100%;
+       margin: 0;
+       padding: 0;
+       height: auto;
+    }
+    #canvasesdiv {
+        float: none;
+        width: auto;
+        display: inherit;
+
+    }
+
+    canvas {
+        margin: 0;
+
+        margin: auto; 
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+
+    }
+    .chatbox {
+        /*align-items: baseline;*/
+        float: none;
+        max-width: 420px;
+        min-height: 420px;
+        width: 100%;
+        margin: auto;
+        margin-top: 2px;
+        display: inherit;
+        /*margin-top: 460px;*/
+    }
+#chat-message {
+        min-height: 340px;
+    }
+#matchList {
+    margin: 0;
+    width: 100%;
+
+}
+#matchListScroll {
+    max-height: 400px;
+}
+p.floatRight {
+    display: none;
+}
+.floatMiddle {
+    padding-right: 1%;
+    min-width: 50%;
+
+}
+h1 {
+    margin: 0;
+}
+div#login-buttons {
+    margin: 0;
+    margin-top: -40px;
+}
+p#turn {
+    display: none;
+}
+}
 /*@media(max-width:1200px) {
     canvas {
             width: 100%;

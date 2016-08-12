@@ -49,22 +49,25 @@
 
 <!-- Subtemplates -->
 <template name="gameCanvas">
-  <div id="canvasesdiv" > 
-    <canvas id="canvas1" width="420px" height="420px" ></canvas>
-    <canvas id="canvas3" width="420px" height="420px" ></canvas>
-    <canvas id="canvas2" width="420px" height="420px" ></canvas>
+  <div class="gameView">
+    <div id="canvasesdiv"> 
+      <canvas id="canvas1" width="420px" height="420px" ></canvas>
+      <canvas id="canvas3" width="420px" height="420px" ></canvas>
+      <canvas id="canvas2" width="420px" height="420px" ></canvas>
+    </div>
+    {{>chatBoxTemplate}}
   </div>
-  {{>chatBoxTemplate}}
 </template>
+
 
 <template name="chatBoxTemplate">
   <div class="chatbox">
       <div id="chat-header">
         {{#if Template.subscriptionsReady}}
-        {{#if opponentJoined}}Chat with {{>opponentUsername}}
-        {{else}}
-        Your opponent has not yet joined.
-        {{/if}}
+          {{#if opponentJoined}}Chat with {{>opponentUsername}}
+          {{else}}
+          Your opponent has not yet joined.
+          {{/if}}
         {{/if}}
       </div>
       <hr>
@@ -90,7 +93,9 @@
       <div id="matchListScroll">
         {{#each matchData}}
         <div id={{_id}} class="matchBoxItem">
-          <p class="floatLeft">
+          <p class={{#if thisPlayerTurn}}floatLeft highlightTurn{{else}}
+              floatLeft
+            {{/if}}>
             <p class="inline">White: {{#if playerWhite}}<strong>{{playerWhite}} </strong>{{else}} -Open Slot- {{/if}}</p>
             <br>
             <p class="inline">Black: {{#if playerBlack}}<strong>{{playerBlack}}</strong>{{else}} -Open Slot- {{/if}}</p>
