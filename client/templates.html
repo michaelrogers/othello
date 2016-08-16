@@ -16,9 +16,9 @@
   {{#if currentUser}}
     {{#if gameId}}
     <button type="button" class = "button" id="lobby">Return to Lobby</button>
-    <button type="button" class = "button" id="skipTurn">Skip Turn</button>
-    <!-- <button type="button" class = "button" id="resetButton">Rematch</button> -->
-    <button type="button" class = "button" id="resignButton">Resign</button>
+    <!-- <button type="button" class = "button" id="skipTurn">Skip Turn</button>
+    <button type="button" class = "button" id="resetButton">Rematch</button>
+    <button type="button" class = "button" id="resignButton">Resign</button> -->
     {{else}}
     <button type="button" class = "button" id="joinButton">New game</button> 
     {{/if}}
@@ -37,11 +37,31 @@
   {{/if}}
 </template>
 
+<!-- <template name="playerTurn">
+  {{#if gameId}}
+      {{#with playerDesignation}}
+   
+      <div class="playerScoreCircle" id="whiteScore">1</div> <p>{{#if playerWhite}}{{playerWhite}}{{else}}-Open Slot-{{/if}}</p>
+      <div class="playerScoreCircle" id="blackScore">2</div>  <p>{{#if playerBlack}}{{playerBlack}}{{else}}-Open Slot-{{/if}}</p>
+    {{/with}}
+    {{/if}}
+</template> -->
+
  <template name="messaging">
   {{#if currentUser}}
-    {{#if gameId}} <div id="informationLine">
-      <p id="messages">Welcome to Othello! To start, place the white piece first.</p>
+    {{#if gameId}} 
+    <div id="informationLine">
       {{>playerDesignation}}
+      <p id="messages">Welcome to Othello! To start, place the white piece first.</p>
+        {{#if currentUser}}
+          {{#if gameId}}
+          <div class="inlineButtons">
+          <button type="button" class = "button" id="skipTurn">Skip Turn</button>
+          <!-- <button type="button" class = "button" id="resetButton">Rematch</button> -->
+          <button type="button" class = "button" id="resignButton">Resign</button>
+          </div>
+          {{/if}}
+        {{/if}}  
     </div>
     {{/if}}
   {{/if}}  
@@ -158,6 +178,19 @@
   {{#if Template.subscriptionsReady}}
   <div id="playerDesignation">
     {{#with playerDesignation}}
+    <div class="playerTurnWrapper" id="whitePlayerWrapper">
+    <div class="playerScoreCircle playerScoreWhite"><p class="scoreText" id="whiteScoreValue">-</p></div> <p> {{#if playerWhite}}{{playerWhite}}{{else}}-Open Slot-{{/if}}</p></div>
+    <div class="playerTurnWrapper" id="blackPlayerWrapper"> <div class="playerScoreCircle playerScoreBlack"><p id="blackScoreValue" class="scoreText">-</p></div> 
+    <p> {{#if playerBlack}}{{playerBlack}}{{else}}-Open Slot-{{/if}}</p></div>
+    {{/with}}
+    </div>
+  {{/if}}
+</template>
+
+<!-- <template name="playerDesignation">
+  {{#if Template.subscriptionsReady}}
+  <div id="playerDesignation">
+    {{#with playerDesignation}}
     White Player: <p>{{#if playerWhite}}{{playerWhite}}{{else}}-Open Slot-{{/if}}</p>
      <em>vs.</em>
     Black Player: <p>{{#if playerBlack}}{{playerBlack}}{{else}}-Open Slot-{{/if}}</p>
@@ -165,7 +198,7 @@
     </div>
   {{/if}}
 </template>
-
+ -->
 <template name="input">
   <form class="message-input" onsubmit="return false">
   <input type="text" id="message" placeholder="Type to chat here" autocomplete="off">

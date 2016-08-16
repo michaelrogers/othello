@@ -53,3 +53,4 @@ othello.sublime-workspace
 .meteor*
 *.sublime-workspace*
 othello.sublime-workspace
+node_modules/bootstrap/dist/js/bootstrap.js

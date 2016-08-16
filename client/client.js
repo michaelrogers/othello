@@ -17,9 +17,7 @@ var intSet; //Used in interval delay function
 var clickInputAccepted = false; //Used to lock the player while setInterval is repeating/flipping
 var gameOn = true;
 var notBoardReset = true;
-var playerTurn,
-    playerColorSelection;
-// var clientUpdated = false;
+var playerTurn, playerColorSelection;
 const intervalDelayValue = 500;
 
 
@@ -262,12 +260,17 @@ function switchTurn(){
   else {clickInputAccepted = false;}
   
   if (playerTurn == 0) {
-      playerText = "Player Turn: White";
+      // playerText = "Player Turn: White";
     document.title = "White's turn - Othello";
+    document.getElementById("whitePlayerWrapper").className += " currentPlayerTurn";
+    document.getElementById("blackPlayerWrapper").className = "playerTurnWrapper";
+
   } 
   else if (playerTurn == 1) {
-    playerText = "Player Turn: Black";
+    // playerText = "Player Turn: Black";
     document.title = "Black's turn - Othello";
+    document.getElementById("whitePlayerWrapper").className = "playerTurnWrapper";
+    document.getElementById("blackPlayerWrapper").className += " currentPlayerTurn";
   }
  //Deprecated
   // if (typeof playerColorSelection === "undefined"){
@@ -275,7 +278,7 @@ function switchTurn(){
   if (playerColorSelection == playerTurn){
     messages = "Your move!"
   }
-  else {messages = "Waiting on your oppnent to play.";}
+  else {messages = "Waiting on your opponent to play.";}
   //-----Write messages to DOM----
   var messagesText = document.getElementById('messages');
   if (messagesText != null){document.getElementById('messages').innerHTML = messages;}
@@ -292,51 +295,55 @@ for (y=0; y < boardPosition.length; y++) {
     if (boardPosition[y][x] == 0){whiteScore +=1;}
     else if (boardPosition[y][x] == 1){blackScore +=1;}
     }}
-  
-  var turnText = document.getElementById("turn");
-  var scoreText = document.getElementById("score");
+  // $("div#blackScoreValue").ready(function(){
+  // var turnText = document.getElementById("turn");
+  // var scoreText = document.getElementById("score");
+  // console.log(typeof document.getElementById("blackScoreValue").innerHTML);
+  // if (document.getElementById("whiteScoreValue").innerHTML !== null && document.getElementById("blackScoreValue").innerHTML !== null){
+  var whiteScoreValue = document.getElementById("whiteScoreValue");
+  var blackScoreValue = document.getElementById("blackScoreValue");
   var messagesText = document.getElementById('messages');
 
   if (whiteScore + blackScore <= 64){
     gameOn = true;
-    scoreText.innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
+    whiteScoreValue.innerHTML = whiteScore; blackScoreValue.innerHTML = blackScore;
   }
   if (whiteScore + blackScore == 64 && whiteScore > blackScore){
     clickInputAccepted = false;
     gameOn = false;
     messagesText.innerHTML = "White player wins with " + whiteScore + " pieces!";
-    scoreText.innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
-    turnText.innerHTML = "Game over!";
+    whiteScoreValue.innerHTML = whiteScore; blackScoreValue.innerHTML = blackScore;
+    // turnText.innerHTML = "Game over!";
   }
   else if (whiteScore + blackScore == 64 && blackScore > whiteScore){
     clickInputAccepted = false;
     gameOn = false;
     messagesText.innerHTML = "Black player wins with " + blackScore + " pieces!";
-    scoreText.innerHTML = "White: "+ whiteScore  + " Black: " + blackScore;
-    turnText.innerHTML = "Game over!";
+    whiteScoreValue.innerHTML = whiteScore; blackScoreValue.innerHTML = blackScore;
+    // turnText.innerHTML = "Game over!";
   }
   else if (whiteScore + blackScore == 64 && blackScore == whiteScore){
     clickInputAccepted = false;
     gameOn = false;
     messagesText.innerHTML = "Draw! How unusual!";
-    turnText.innerHTML = "Game over!";
+    // turnText.innerHTML = "Game over!";
   }
   else if (blackScore == 0 && whiteScore > 2){
     clickInputAccepted = false;
     gameOn = false;
     messagesText.innerHTML = "White player wins with " + whiteScore + " pieces!";
-    turnText.innerHTML = "Game over!";
+    // turnText.innerHTML = "Game over!";
     }
-  else if (whiteScore == 0 && blackScore >2){
+  else if (whiteScore == 0 && blackScore > 2){
     clickInputAccepted = false;
     gameOn = false;
     messagesText.innerHTML = "Black player wins with " + blackScore + " pieces!";
-    turnText.innerHTML = "Game over!";
+    // turnText.innerHTML = "Game over!";
     }
   
     if (gameOn == false){endGame(false)}
-  }
-
+  // });
+}
 function validMove(cell_y,cell_x){
   var noOppositeMatch = true;
   var flipIndex = 0;
@@ -551,9 +558,7 @@ function returnGameDocument() {
           }
           if (boardPosition[4][4] == null){readCollection(pastGameObject);} //Todo: rework as a true comprehensive comparison instead of a spot check
           currentGameData = res['currentTurnData'];
-          // console.log(boardPosition);
-          // console.log(pastGameObject);
-          // console.log(currentGameData);
+          // console.log(boardPosition); // console.log(pastGameObject); // console.log(currentGameData);
           if (debugErrorMessage){ console.log(currentGameData);}
           if (currentGameData !== undefined){
             currentGameObject = currentGameData['turnPieceData']; playerTurn = currentGameData['playerTurn'];

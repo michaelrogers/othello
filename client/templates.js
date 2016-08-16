@@ -105,6 +105,13 @@ if (Meteor.isClient) {
          		return players;
         		}
       	}
+        // thisPlayerTurn: function(){
+        //     var thisPlayerTurn = false; //Boolean
+        //     if (mostRecentTurnData['playerTurn'] == 0 && Meteor.user().username == thisGame['playerWhite']){thisPlayerTurn = true;}
+        //     else if (mostRecentTurnData['playerTurn'] == 1 && Meteor.user().username == thisGame['playerBlack']){thisPlayerTurn = true;}
+        //     else {thisPlayerTurn = false;}
+        // }
+
       	});
 
   Template.sessionId.helpers({
@@ -126,12 +133,12 @@ if (Meteor.isClient) {
       		// return typeof sessionStorage.getItem("gameId") == 'undefined';
       	}
       });
-  Template.playerTurn.helpers({
-      	gameId: function() {
-      		return Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined;
-      		// return typeof sessionStorage.getItem("gameId") == 'undefined';
-      	}
-      });
+  // Template.playerTurn.helpers({
+  //     	gameId: function() {
+  //     		return Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined;
+  //     		// return typeof sessionStorage.getItem("gameId") == 'undefined';
+  //     	}
+  //     });
   Template.buttons.helpers({
   		gameId: function(){
       		return Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined;

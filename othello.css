@@ -3,6 +3,7 @@
 
 body {
     background-image: linear-gradient(170deg, rgba(161, 157, 162, 0.68), #918e82 100%);
+
     font-size: 14px;
     font-family: "Segoe UI", Tahoma, Helvetica;
     /*Prevent bg gradiant repeat*/
@@ -15,7 +16,7 @@ body {
 header {
     background: #d2edf4;
     background-image: linear-gradient(to bottom right, rgba(173, 204, 165, 0.75), rgba(225, 229, 240, 1));
-    padding: 20px 15px 15px 15px;
+    padding: 10px 15px 2px 15px;
     position: relative;
     box-shadow: 0px 0px 5px grey;
     }
@@ -115,7 +116,10 @@ div#login-buttons {
 #login-buttons .login-close-text {
     float: right;
     }
-
+.accounts-dialog {
+    transition: 1s;
+    background: rgba(240,240,255,1);
+}
 
 /*---------------Lobby styling----------------------*/
 .lobbyHeader {
@@ -339,8 +343,9 @@ hr {
     font-family: "Segoe UI", Tahoma, Helvetica;
     cursor: pointer;
     margin: 4px 2px;
-    padding: 8px 15px;
+    padding: 6px 15px;
     border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
 .button:hover {
@@ -355,16 +360,28 @@ hr {
     }
 /*For error handling and turn updates*/
 p#messages {
-    margin-left: 3%;
+    margin-left: 2%;
+    display: inline;
+    float: left;
+/*    background: lightgrey;
+*/    }
+/*#turn {
     display: inline;
     }
 
-div#playerDesignation {
+ #playerChoice {
     float: right;
-    display: inline;
-    margin-right: 3%;
-    /*margin-right: 26px;*/
-}
+    padding-right: 45px;
+    font-size: 16px;
+
+    }*/
+ .inlineButtons {
+    margin-right: 2%;
+    float: right;
+    vertical-align: middle;
+
+ }   
+
 /*span {
     margin: 0;
     padding: 0;
@@ -373,23 +390,107 @@ div#playerDesignation {
 }*/
 
 div#informationLine {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    /*padding-top: 10px;
+    padding-bottom: 10px;*/
+    width: auto;
+    height: 47px;
 }
-div#playerDesignation >  p {
-    display: inline;
-    font-weight: bold;
+div#playerDesignation {
+    margin: .9%;
+    float: left;
+    display: inline-block;
+    margin-left: 2.5%;
+    border-radius: 8px;
+    background-image: linear-gradient(to top, rgba(40,46,46,.4), rgba(40,46,46,.2));
+    box-shadow: inset  0 0px 5px rgba(0,0,65,.3);
+    letter-spacing: .1em;
+    font-size: 130%;
+    min-width: 46%;
+    /*background: repeating-linear-gradient(
+          45deg,
+          rgba(25,25,25,.25),
+          rgba(25,25,25,.25) 10px,
+          rgba(75,75,75,.25) 10px,
+          rgba(75,75,75,.25) 20px
+        );*/
+    display: inline-flex;
+    flex-wrap: nowrap;
+    -webkit-flex-wrap: nowrap;
+}
+
+div#playerDesignation > div >  p {
+    display: inline-block;
+    font-weight: normal;
+    vertical-align: middle;
+    margin: 0;
+    text-shadow: 3px 2px 4px rgba(0,0,0, .2);
+/*    border-bottom: 2px blue solid;
+*/
+
+}
+.playerTurnWrapper {
+    display: inline-block;
+    width: 41%;
+    border-radius: 8px;
+    vertical-align: middle;
+    
+    flex-grow: 1;
+    transition: 0.5s;
+
+
+
 }    
-
-#turn {
-    display: inline;
-    }
-
- #playerChoice {
+#blackPlayerWrapper{
+    padding-left: 2.5%;
     float: right;
-    padding-right: 45px;
-    font-size: 16px;
-    }   
+    padding-right: 5%;
+
+}
+#whitePlayerWrapper{
+    padding-right: 2.5%;
+    padding-left: 5%;
+}
+
+.currentPlayerTurn{
+    transition: 0.5s;
+    background: rgba(220,220,220,1);
+    color: black;
+    box-shadow:  0 2px 8px rgba(0,0,10, .5);
+    
+/*    box-shadow: inset 0 1px 3px rgba(0,0,0,.05), 0 1px 0 rgba(255,255,255,.075); 
+*/
+  }
+.scoreText {
+    margin: auto;
+    vertical-align: middle;
+    font-size: .9em;
+    }
+.playerScoreCircle {
+    margin: 4px;
+    width: 25px;
+    height: 25px;
+    border-radius: 30px;
+    box-shadow: 3px 2px 3px grey;
+    font-weight: normal;
+    letter-spacing: 0;
+    text-align: center;
+    /*border-style: solid;*/
+    display: inline-block;
+    vertical-align: middle;
+    }
+ .playerScoreBlack {
+    /*background:#000;*/
+    background-image: radial-gradient(circle, #333333, #000000);
+    color:#fff;
+    border-color: #fff; 
+
+ }
+ .playerScoreWhite {
+    /*background:#fff;*/
+    background-image: radial-gradient(circle, #ffffff, #cccccc);
+    color:#000;
+    border-color: #000; 
+ }   
 
 canvas {
     /*background: #8fcb7c;*/
@@ -532,12 +633,23 @@ h1 {
 }
 div#login-buttons {
     margin: 0;
-    margin-top: -40px;
+    margin-top: 0px;
 }
 p#turn {
     display: none;
 }
+div#playerDesignation {
+    width: 98%;
+    margin-left: 1%;
+    margin-right: 1%;
 }
+.playerTurnWrapper {
+    width: 41.8%;
+}
+
+}
+
+
 /*@media(max-width:1200px) {
     canvas {
             width: 100%;
