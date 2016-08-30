@@ -1,15 +1,12 @@
-
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
     // serverInitialize();
-    });
+  });
 
-  function serverInitialize (){ 
-
-    }
+  // function serverInitialize (){}
      
-    } //isServer
+} //end isServer
 
 //--------------------------------------Notes-------------------------------------------
       // console.log(PieceCollection.findOne({_id: "game1"},{$inc: {'gameData'[2][1': 1 , _id: 0}}));

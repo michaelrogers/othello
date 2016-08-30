@@ -1,62 +1,56 @@
 if (Meteor.isClient){
 
-lobbyInit = function lobbyInit(){ //Declaring this function to be globally accessible
- $(document).ready(function(){
- 	//Join button
- document.getElementById('joinButton').addEventListener("click", function(){joinGame(null);});
- document.title = "Lobby - Othello";
- // console.count("lobbyInit");
-  $('#matchListScroll').delegate('div', 'click', function() { //TODO: Research compatability of .on() method in place of .delegate()
-    // console.log($(this).attr('id'));
-    joinGame($(this).attr('id'));
-   		});
-  
-  });
+  lobbyInit = function lobbyInit(){ //Declaring this function to be globally accessible
+    $(document).ready(function(){
+    //Join button
+      document.getElementById('joinButton').addEventListener('click', function(){joinGame(null);});
+      document.title = 'Lobby - Othello';
+      // console.count("lobbyInit");
+      $('#matchListScroll').delegate('div', 'click', function() { //TODO: Research compatability of .on() method in place of .delegate()
+        // console.log($(this).attr('id'));
+        joinGame($(this).attr('id'));
+      });
+    });
+  };
 
-// jQuery(document).ready(function() {
-//   jQuery("time.timeago").timeago();
-// });
-
-
-}
-function generateGameId() {
-  if (Meteor.user()){
-  Meteor.call('othello.generateGameId', { userId: Meteor.user().username } , (err, res) => {
-            if (err) {console.log("Error: \n" + err);}
-            else {
-              currentGameId = res;
-              // console.log("Generated: "+ currentGameId);
-              setSession(res);
-             }
-              
-          });
+  function generateGameId() {
+    if (Meteor.user()){
+    Meteor.call('othello.generateGameId', { userId: Meteor.user().username } , (err, res) => {
+              if (err) {console.log('Error: \n' + err);}
+              else {
+                // currentGameId = res;
+                // console.log("Generated: "+ currentGameId);
+                setSession(res);
+               }
+                
+            });
+      }
+    }
+  function joinGame(gameId) {
+    if (Meteor.user()){
+    Meteor.call('othello.joinGame', {userId: Meteor.user().username, gameId: gameId}, (err, res) => {
+      if (err) {console.log('Error: \n' + err);}
+      else {//currentGameId = res; 
+        // console.log("Joined: "+ currentGameId); 
+        setSession(res); 
+        
+        }
+      });
     }
   }
-function joinGame(gameId) {
-  if (Meteor.user()){
-  Meteor.call('othello.joinGame', {userId: Meteor.user().username, gameId: gameId}, (err, res) => {
-    if (err) {console.log("Error: \n" + err);}
-    else {currentGameId = res; 
-      // console.log("Joined: "+ currentGameId); 
-      setSession(res); 
-      
-   	}
-   });
+  function setSession(gameId){
+    // console.count("lobby setSession")
+    if (gameId == null){
+      // console.log('nullify');
+      Session.clear('gameId');
+      sessionStorage.clear('gameId');
+    }
+    else {
+    // console.count("setSession");
+    Session.set('gameId', gameId);
+    sessionStorage.setItem('gameId', gameId);
+    }
   }
-}
-function setSession(gameId){
-  // console.count("lobby setSession")
-  if (gameId == null){
-    console.log('nullify')
-    Session.clear('gameId')
-    sessionStorage.clear('gameId')
-  }
-  else {
-  // console.count("setSession");
-  Session.set('gameId', gameId);
-  sessionStorage.setItem('gameId', gameId);
-  }
-}
 
 }// end isClient
 

@@ -176,7 +176,7 @@ div#login-buttons {
     /*background-image: linear-gradient(to bottom,#e6e6e6, #d9d9d9);*/
     background: rgba(255, 255, 255, 0.30);
     cursor: hand; cursor: pointer;
-    transition: all 1s;
+    transition: all 0.5s;
     transition-timing-function: ease;
 
 }
@@ -309,7 +309,7 @@ p.floatLeft {
     /*box-shadow: inset -1px -1px 2px 0px rgba(0, 0, 0, 0.2);*/
     transition: 0.5s ;
     /*background-image: linear-gradient(to bottom, rgba(225, 229, 240, 1), rgba(217, 217, 217, 0.6)) ;*/
-    background-color: rgba(210, 217, 225, .6);
+    background-color: rgba(150, 200, 150, .2);
     outline: none;
     }
 
@@ -455,7 +455,7 @@ div#playerDesignation > div >  p {
     transition: 0.5s;
     background: rgba(220,220,220,1);
     color: black;
-    box-shadow:  0 2px 8px rgba(0,0,10, .5);
+    box-shadow:  inset 0 0 5px rgba(0,0,10, .2);
     
 /*    box-shadow: inset 0 1px 3px rgba(0,0,0,.05), 0 1px 0 rgba(255,255,255,.075); 
 */
