@@ -15,43 +15,40 @@ if (Meteor.isClient){
 
   function generateGameId() {
     if (Meteor.user()){
-    Meteor.call('othello.generateGameId', { userId: Meteor.user().username } , (err, res) => {
-              if (err) {console.log('Error: \n' + err);}
-              else {
-                // currentGameId = res;
-                // console.log("Generated: "+ currentGameId);
-                setSession(res);
-               }
+      Meteor.call('othello.generateGameId', { userId: Meteor.user().username } , (err, res) => {
+        if (err) {console.log('Error: \n' + err);}
+        else {
+          // currentGameId = res;
+          // console.log("Generated: "+ currentGameId);
+          setSession(res);
+          }
                 
-            });
-      }
+      });
     }
+  }
   function joinGame(gameId) {
     if (Meteor.user()){
-    Meteor.call('othello.joinGame', {userId: Meteor.user().username, gameId: gameId}, (err, res) => {
-      if (err) {console.log('Error: \n' + err);}
-      else {//currentGameId = res; 
-        // console.log("Joined: "+ currentGameId); 
-        setSession(res); 
+      Meteor.call('othello.joinGame', {userId: Meteor.user().username, gameId: gameId}, (err, res) => {
+        if (err) {console.log('Error: \n' + err);}
+        else {//currentGameId = res; 
+          // console.log("Joined: "+ currentGameId); 
+          setSession(res); 
         
         }
       });
     }
   }
   function setSession(gameId){
-    // console.count("lobby setSession")
     if (gameId == null){
-      // console.log('nullify');
       Session.clear('gameId');
       sessionStorage.clear('gameId');
     }
     else {
-    // console.count("setSession");
     Session.set('gameId', gameId);
     sessionStorage.setItem('gameId', gameId);
     }
   }
-export {lobbyInit}; //export lobbyInit to template.js to control session
+  export {lobbyInit}; //export lobbyInit to template.js to control session
 }// end isClient
 
 //----------------------------------------------NOTES---------------------------------------

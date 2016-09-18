@@ -1,6 +1,6 @@
 if (Meteor.isClient) {
   import {lobbyInit} from "./lobby";
-  import {init} from "./client";  
+  import {gameInit} from "./client";  
     //TODO: Use registerHelper for universal template logic
     // Template.registerHelper('sessionId', function (){ //
     //    		// Used to globally evaluate multiple templates for a single page app feel
@@ -78,7 +78,6 @@ if (Meteor.isClient) {
 			    else {thisPlayerTurn = false;}
 			    matchScoreArray[z] = {_id: thisGame['_id'], whiteScore: whiteScore, blackScore: blackScore, playerWhite: thisGame['playerWhite'], playerBlack: thisGame['playerBlack'], thisPlayerTurn: thisPlayerTurn, lastUpdated: mostRecentTurnData['date']};
 				  }//for loop
-          // console.log(matchScoreArray);
 					return matchScoreArray;
 					}
 				}

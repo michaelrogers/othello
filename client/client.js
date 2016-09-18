@@ -40,7 +40,7 @@ if (Meteor.isClient) {
     }
   }
 
-  gameInit = function init(){ //Declaring this function to be globally accessible
+  function gameInit(){ //Declaring this function to be globally accessible
     $(document).ready(function(){
       currentGameObject = {};
       notBoardReset = true;
@@ -565,13 +565,13 @@ if (Meteor.isClient) {
         if (currentGameData !== undefined){
           currentGameObject = currentGameData['turnPieceData']; playerTurn = currentGameData['playerTurn'];
           // if (playerColorSelection == playerTurn){clientUpdated = true;}
-          if (debugErrorMessage){ console.log('Player Turn: '+ playerTurn);}
+          if (debugErrorMessage){console.log('Player Turn: '+ playerTurn);}
           // whatPlayerAmI(Session.get("gameId"));
           var thisUserTurn = false;
           if (currentGameData['updatedBy'] == Meteor.user().username){thisUserTurn = true; }
           diffCollections(pastGameObject, currentGameObject, thisUserTurn);
           if (notBoardReset){calculateScore();}
-          if (gameOn){ switchTurn();} //console.count("switchTurn - returnGameDocument");
+          if (gameOn){switchTurn();} //console.count("switchTurn - returnGameDocument");
         }
         else {console.log("No match for gameId: " + Session.get("gameId"));}
 
@@ -599,7 +599,8 @@ if (Meteor.isClient) {
 
    function diffCollections(pastGameObject, currentGameObject, thisUserTurn) {
     if (Object.keys(pastGameObject).length == 0 || boardPosition == undefined){readCollection(currentGameObject);}
-    else { if (debugErrorMessage){console.count("diffCollections");}
+    else {
+      if (debugErrorMessage){console.count("diffCollections");}
     // if (!clientUpdated){
       var x, y, flipIndex = 0;
       for (y=0; y < Object.keys(currentGameObject).length; y++) {
@@ -650,7 +651,7 @@ if (Meteor.isClient) {
         }}
      }
 
-export {init}; //Export the init function to be called by templates.js to control single page session
+export {gameInit}; //Export the init function to be called by templates.js to control single page session
 
 } //End isClient
 
