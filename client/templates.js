@@ -1,13 +1,16 @@
 if (Meteor.isClient) {
-  //TODO: Use registerHelper for universal template logic
-  // Template.registerHelper('sessionId', function (){ //
-  //    		// Used to globally evaluate multiple templates for a single page app feel
-  //    	// 	return Session.get("gameId") !== "null";
-  //   		// return sessionStorage.getItem('gameId') !== null;
-  //    	// 	Session.set("gameId", sessionStorage.getItem('gameId'))
-  //    		// return typeof sessionStorage.getItem("gameId") == 'undefined';
-  // 				return Session.get("gameId") !== null && Session.get("gameId") !== undefined;
-  //     	      });
+  import {lobbyInit} from "./lobby";
+  import {init} from "./client";  
+    //TODO: Use registerHelper for universal template logic
+    // Template.registerHelper('sessionId', function (){ //
+    //    		// Used to globally evaluate multiple templates for a single page app feel
+    //    	// 	return Session.get("gameId") !== "null";
+    //   		// return sessionStorage.getItem('gameId') !== null;
+    //    	// 	Session.set("gameId", sessionStorage.getItem('gameId'))
+    //    		// return typeof sessionStorage.getItem("gameId") == 'undefined';
+    // 				return Session.get("gameId") !== null && Session.get("gameId") !== undefined;
+    //  });
+
 	Template.chatBoxTemplate.helpers({
     opponentJoined: function(){
 		  if (Meteor.user()){

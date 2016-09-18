@@ -1,6 +1,6 @@
 if (Meteor.isClient){
 
-  lobbyInit = function lobbyInit(){ //Declaring this function to be globally accessible
+  function lobbyInit(){ //Declaring this function to be globally accessible
     $(document).ready(function(){
     //Join button
       document.getElementById('joinButton').addEventListener('click', function(){joinGame(null);});
@@ -51,7 +51,7 @@ if (Meteor.isClient){
     sessionStorage.setItem('gameId', gameId);
     }
   }
-
+export {lobbyInit}; //export lobbyInit to template.js to control session
 }// end isClient
 
 //----------------------------------------------NOTES---------------------------------------

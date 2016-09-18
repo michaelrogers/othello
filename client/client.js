@@ -650,7 +650,7 @@ if (Meteor.isClient) {
         }}
      }
 
-
+export {init}; //Export the init function to be called by templates.js to control single page session
 
 } //End isClient
 

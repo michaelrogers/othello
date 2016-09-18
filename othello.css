@@ -43,6 +43,10 @@ h1 {
         -webkit-background-clip: text; 
         -webkit-text-fill-color: transparent;  */
      }
+ h1:hover {
+    transition: 1s;
+    font-: green;
+ }
 
 @-moz-document url-prefix(){ 
  h1 { /*Firefox specific fix to prevent failure of background-clip*/
@@ -118,7 +122,7 @@ div#login-buttons {
     }
 .accounts-dialog {
     transition: 1s;
-    background: rgba(240,240,255,1);
+    background-image: linear-gradient(to top, #e6e6e6 , #ffffff);
 }
 
 /*---------------Lobby styling----------------------*/
@@ -133,7 +137,7 @@ div#login-buttons {
     margin: 30px;
     background-image: radial-gradient(ellipse at center, #e6e6e6 30%, #c6c6c6 90%);
     /*background-image: radial-gradient(ellipse at center top, #e6e6e6 60%, #d9d9d9 80%);*/
-    /*border-radius: 3px;*/
+    border-radius: 3px 3px 0 0;
 
 }
 
@@ -157,7 +161,7 @@ div#login-buttons {
     /*background-image: linear-gradient(to bottom right, rgba(173, 204, 165, 0.75), rgba(225, 229, 240, 1));*/
     background-image: linear-gradient(to bottom right, rgba(164, 173, 203, 0.8), rgba(225, 229, 240, 0.8));
     box-shadow: 0px 1px 1px grey;
-    /*border-radius: 3px 3px 0px 0px;*/
+    border-radius: 3px 3px 0px 0px;
 
 
 }
@@ -351,6 +355,9 @@ hr {
 .button:hover {
     background-image: linear-gradient(to top, #cfcfcf, #ffffff);
     }
+.button:active {
+    background-image: linear-gradient(to top, #ffffff , #e6e6e6);
+}
 
 #score {
     float: left;
@@ -477,6 +484,7 @@ div#playerDesignation > div >  p {
     /*border-style: solid;*/
     display: inline-block;
     vertical-align: middle;
+    line-height: 1.4;
     }
  .playerScoreBlack {
     /*background:#000;*/
@@ -510,6 +518,7 @@ canvas {
 #canvas2 { /*Board with pieces*/
     background: initial;
     z-index: 1;
+    /*box-shadow: 0px 0px 10px black;*/
     }
 
 #canvas1 { /*Board with grid lines*/
@@ -642,6 +651,7 @@ div#playerDesignation {
     width: 98%;
     margin-left: 1%;
     margin-right: 1%;
+    line-height: 1;
 }
 .playerTurnWrapper {
     width: 41.8%;
