@@ -22,12 +22,18 @@ if (Meteor.isClient) {
         if (message.value != '') {
           var gameId = Session.get('gameId');
           if (gameId == undefined){return false;}
-          ChatMessages.insert({
-            gameId: gameId,
-            username: name,
-            message: message.value,
-            time: Date.now()
-          });
+            if (Meteor.user()){
+              Meteor.call('othello.chatMessageInsert', {gameId: gameId, username: Meteor.user().username, message: message.value} , (err, res) => {
+                if (err) {console.log('Error: \n' + err);}
+                else {}
+                });
+            }
+          // ChatMessages.insert({
+          //   gameId: gameId,
+          //   username: name,
+          //   message: message.value,
+          //   time: Date.now()
+          // });
             message.value = ''; //Clear message element after insert
             $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Ascending order; newest messages on bottom
             event.stopPropagation();

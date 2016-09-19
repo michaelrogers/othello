@@ -261,19 +261,20 @@ if (Meteor.isClient) {
     var messages = "";
     if (playerTurn == playerColorSelection){clickInputAccepted = true;}
     else {clickInputAccepted = false;}
-    
-    if (playerTurn == 0) {
-        // playerText = "Player Turn: White";
-      document.title = "White's turn - Othello";
-      document.getElementById("whitePlayerWrapper").className += " currentPlayerTurn";
-      document.getElementById("blackPlayerWrapper").className = "playerTurnWrapper";
+    if (document.getElementById("whitePlayerWrapper") !== null && document.getElementById("blackPlayerWrapper")){
+      if (playerTurn == 0) {
+          // playerText = "Player Turn: White";
+        document.title = "White's turn - Othello";
+        document.getElementById("whitePlayerWrapper").className += " currentPlayerTurn";
+        document.getElementById("blackPlayerWrapper").className = "playerTurnWrapper";
 
-    } 
-    else if (playerTurn == 1) {
-      // playerText = "Player Turn: Black";
-      document.title = "Black's turn - Othello";
-      document.getElementById("whitePlayerWrapper").className = "playerTurnWrapper";
-      document.getElementById("blackPlayerWrapper").className += " currentPlayerTurn";
+      } 
+      else if (playerTurn == 1) {
+        // playerText = "Player Turn: Black";
+        document.title = "Black's turn - Othello";
+        document.getElementById("whitePlayerWrapper").className = "playerTurnWrapper";
+        document.getElementById("blackPlayerWrapper").className += " currentPlayerTurn";
+      }
     }
    //Deprecated
     // if (typeof playerColorSelection === "undefined"){
@@ -306,46 +307,47 @@ if (Meteor.isClient) {
     var whiteScoreValue = document.getElementById("whiteScoreValue");
     var blackScoreValue = document.getElementById("blackScoreValue");
     var messagesText = document.getElementById('messages');
-
-    if (whiteScore + blackScore <= 64){
-      gameOn = true;
-      whiteScoreValue.innerHTML = whiteScore; blackScoreValue.innerHTML = blackScore;
-    }
-    if (whiteScore + blackScore == 64 && whiteScore > blackScore){
-      clickInputAccepted = false;
-      gameOn = false;
-      messagesText.innerHTML = "White player wins with " + whiteScore + " pieces!";
-      whiteScoreValue.innerHTML = whiteScore; blackScoreValue.innerHTML = blackScore;
-      // turnText.innerHTML = "Game over!";
-    }
-    else if (whiteScore + blackScore == 64 && blackScore > whiteScore){
-      clickInputAccepted = false;
-      gameOn = false;
-      messagesText.innerHTML = "Black player wins with " + blackScore + " pieces!";
-      whiteScoreValue.innerHTML = whiteScore; blackScoreValue.innerHTML = blackScore;
-      // turnText.innerHTML = "Game over!";
-    }
-    else if (whiteScore + blackScore == 64 && blackScore == whiteScore){
-      clickInputAccepted = false;
-      gameOn = false;
-      messagesText.innerHTML = "Draw! How unusual!";
-      // turnText.innerHTML = "Game over!";
-    }
-    else if (blackScore == 0 && whiteScore > 2){
-      clickInputAccepted = false;
-      gameOn = false;
-      messagesText.innerHTML = "White player wins with " + whiteScore + " pieces!";
-      // turnText.innerHTML = "Game over!";
+    if (whiteScoreValue !== null && blackScoreValue !== null){
+      if (whiteScore + blackScore <= 64){
+        gameOn = true;
+        whiteScoreValue.innerHTML = whiteScore; blackScoreValue.innerHTML = blackScore;
       }
-    else if (whiteScore == 0 && blackScore > 2){
-      clickInputAccepted = false;
-      gameOn = false;
-      messagesText.innerHTML = "Black player wins with " + blackScore + " pieces!";
-      // turnText.innerHTML = "Game over!";
+      if (whiteScore + blackScore == 64 && whiteScore > blackScore){
+        clickInputAccepted = false;
+        gameOn = false;
+        messagesText.innerHTML = "White player wins with " + whiteScore + " pieces!";
+        whiteScoreValue.innerHTML = whiteScore; blackScoreValue.innerHTML = blackScore;
+        // turnText.innerHTML = "Game over!";
       }
-    
-      if (gameOn == false){endGame(false);}
-    // });
+      else if (whiteScore + blackScore == 64 && blackScore > whiteScore){
+        clickInputAccepted = false;
+        gameOn = false;
+        messagesText.innerHTML = "Black player wins with " + blackScore + " pieces!";
+        whiteScoreValue.innerHTML = whiteScore; blackScoreValue.innerHTML = blackScore;
+        // turnText.innerHTML = "Game over!";
+      }
+      else if (whiteScore + blackScore == 64 && blackScore == whiteScore){
+        clickInputAccepted = false;
+        gameOn = false;
+        messagesText.innerHTML = "Draw! How unusual!";
+        // turnText.innerHTML = "Game over!";
+      }
+      else if (blackScore == 0 && whiteScore > 2){
+        clickInputAccepted = false;
+        gameOn = false;
+        messagesText.innerHTML = "White player wins with " + whiteScore + " pieces!";
+        // turnText.innerHTML = "Game over!";
+        }
+      else if (whiteScore == 0 && blackScore > 2){
+        clickInputAccepted = false;
+        gameOn = false;
+        messagesText.innerHTML = "Black player wins with " + blackScore + " pieces!";
+        // turnText.innerHTML = "Game over!";
+        }
+      
+        if (gameOn == false){endGame(false);}
+      // });
+    }
   }
   function validMove(cell_y,cell_x){
     var noOppositeMatch = true;

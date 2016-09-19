@@ -11,7 +11,7 @@ body {
     margin: 0;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    }
+}
 
 header {
     background: #d2edf4;
@@ -19,7 +19,7 @@ header {
     padding: 10px 15px 2px 15px;
     position: relative;
     box-shadow: 0px 0px 5px grey;
-    }
+}
 
 .container {
     max-width: 900px;
@@ -28,7 +28,7 @@ header {
     background: rgba(255,255,255,.9);
     padding-bottom: 20px;
     box-shadow: 5px 5px 8px grey;
-    }
+}
 
 h1 {
     font-size: 4.0em;
@@ -42,7 +42,8 @@ h1 {
        /* background: linear-gradient(#000000, #383838, #000000);
         -webkit-background-clip: text; 
         -webkit-text-fill-color: transparent;  */
-     }
+}
+
  h1:hover {
     transition: 1s;
     font-: green;
@@ -56,6 +57,7 @@ h1 {
     -webkit-text-fill-color: none;
     }
 }
+
 h2 {
     font-weight: lighter;
     font-size: 2.0em;
@@ -65,9 +67,10 @@ h2 {
 h3 {
     margin: 0 0 6px 10px;
     font-weight: lighter;
-    }
+}
+
 h4 {
-    font-size: 1.4em;
+    font-size: 1.5em;
     font-weight: lighter;
     margin: 22px 0px 8px 0px;
 }
@@ -134,7 +137,7 @@ div#login-buttons {
 #matchList {
     min-width: 375px;
     max-width: 860px;
-    margin: 30px;
+    margin: 20px;
     background-image: radial-gradient(ellipse at center, #e6e6e6 30%, #c6c6c6 90%);
     /*background-image: radial-gradient(ellipse at center top, #e6e6e6 60%, #d9d9d9 80%);*/
     border-radius: 3px 3px 0 0;
@@ -149,7 +152,7 @@ div#login-buttons {
 
 #matchListHeader {
     border-style: none;
-    margin: 6px 0px 0px 0px;
+    margin: 0;
     border-width: 1px;
     border-color: grey;
     padding: 10px 10px 0px 10px;
@@ -196,6 +199,11 @@ div#login-buttons {
     display: inline;
 }
 
+.lastUpdated {
+    font-size: smaller;
+    font-weight: lighter;
+}
+
 .floatMiddle{
     padding-right: 23%;
     margin: 0;
@@ -210,8 +218,7 @@ div#login-buttons {
     float: left;
     margin: 0;
     margin-right: 10px;
-
- } 
+} 
 
 .floatRight {
     float: right;
@@ -220,13 +227,14 @@ div#login-buttons {
     width: 9%;
     min-width: 70px;
     overflow: clip;
+}
 
- }
 p.floatLeft {
     border: 0;
     padding-left: 10px;
     border-left: 15px solid rgba(150,150,150,0.75);
 }
+
 .floatLeft.highlightTurn {
         border-left: 15px solid rgba(0,0,128,0.75);
 }
@@ -241,7 +249,6 @@ p.floatLeft {
     /*min-height: 420px;*/
     min-width: 250px;
     background-image: linear-gradient(to bottom, rgba(173, 204, 165, 0.75), #e1e5f0 100%);
-    /*float: right;*/
     width: 100%;
     margin: 0px 20px 0px 20px;
     word-wrap: break-word;
@@ -272,7 +279,7 @@ p.floatLeft {
     margin-bottom: 10px;
     width: 100%;
 
-    }
+}
 
 #chat-message {
     min-height: 80%;
@@ -283,7 +290,7 @@ p.floatLeft {
     margin-top: 1em;*/
     overflow-y: auto;
     max-height: 330px;
-    }
+}
 
 #chat-end {
     /*height: 3px;*/
@@ -306,7 +313,14 @@ p.floatLeft {
     transition: 1s ease-in-out;
     border: 12px;
     border-color: grey;
-    }
+}
+.message-input input:hover {
+    /*box-shadow: inset -1px -1px 2px 0px rgba(0, 0, 0, 0.2);*/
+    transition: 0.5s ;
+    /*background-image: linear-gradient(to bottom, rgba(225, 229, 240, 1), rgba(217, 217, 217, 0.6)) ;*/
+    background-color: rgba(150, 200, 150, .2);
+    outline: none;
+}
 
 .message-input input:focus {
     /*box-shadow: inset -1px -1px 2px 0px rgba(0, 0, 0, 0.2);*/
@@ -314,7 +328,7 @@ p.floatLeft {
     /*background-image: linear-gradient(to bottom, rgba(225, 229, 240, 1), rgba(217, 217, 217, 0.6)) ;*/
     background-color: rgba(150, 200, 150, .2);
     outline: none;
-    }
+}
 
  input#message {
     /*background: transparent !important;*/
@@ -326,14 +340,14 @@ p.floatLeft {
     padding-right: 5%;
     font-size: 1.0em;
     
-    }       
+}       
 
 hr {
     border: 0;
     height: 1px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, .35), rgba(0, 0, 0, 0));
     margin: 0;
-    }
+}
 /*--------------------------Game styling---------------------*/
 .button {
     float: right;
@@ -353,7 +367,7 @@ hr {
 
 .button:hover {
     background-image: linear-gradient(to top, #cfcfcf, #ffffff);
-    }
+}
 .button:active {
     background-image: linear-gradient(to top, #ffffff , #e6e6e6);
 }
@@ -363,14 +377,14 @@ hr {
     width: 35%;
     margin: 0px 0px 8px 0px;
     display: inline
-    }
+}
 /*For error handling and turn updates*/
 p#messages {
     margin-left: 2%;
     display: inline;
     float: left;
-/*    background: lightgrey;
-*/    }
+/*    background: lightgrey; */
+}
 /*#turn {
     display: inline;
     }
@@ -385,8 +399,7 @@ p#messages {
     margin-right: 2%;
     float: right;
     vertical-align: middle;
-
- }   
+}   
 
 /*span {
     margin: 0;
@@ -432,8 +445,8 @@ div#playerDesignation > div >  p {
     text-shadow: 3px 2px 4px rgba(0,0,0, .2);
 /*    border-bottom: 2px blue solid;
 */
-
 }
+
 .playerTurnWrapper {
     display: inline-block;
     width: 41%;
@@ -442,16 +455,14 @@ div#playerDesignation > div >  p {
     
     flex-grow: 1;
     transition: 0.5s;
+}
 
-
-
-}    
 #blackPlayerWrapper{
     padding-left: 2.5%;
     float: right;
     padding-right: 5%;
-
 }
+
 #whitePlayerWrapper{
     padding-right: 2.5%;
     padding-left: 5%;
@@ -462,15 +473,15 @@ div#playerDesignation > div >  p {
     background: rgba(220,220,220,1);
     color: black;
     /*box-shadow:  inset 0 0 5px rgba(0,0,10, .2);*/
-    
-/*    box-shadow: inset 0 1px 3px rgba(0,0,0,.05), 0 1px 0 rgba(255,255,255,.075); 
-*/
-  }
+    /*box-shadow: inset 0 1px 3px rgba(0,0,0,.05), 0 1px 0 rgba(255,255,255,.075); */
+}
+
 .scoreText {
     margin: auto;
     vertical-align: middle;
     font-size: .9em;
-    }
+}
+
 .playerScoreCircle {
     margin: 4px;
     width: 25px;
@@ -484,20 +495,22 @@ div#playerDesignation > div >  p {
     display: inline-block;
     vertical-align: middle;
     line-height: 1.4;
-    }
+}
+
  .playerScoreBlack {
     /*background:#000;*/
     background-image: radial-gradient(circle, #333333, #000000);
     color:#fff;
     border-color: #fff; 
 
- }
- .playerScoreWhite {
+}
+
+.playerScoreWhite {
     /*background:#fff;*/
     background-image: radial-gradient(circle, #ffffff, #cccccc);
     color:#000;
     border-color: #000; 
- }   
+}   
 
 canvas {
     /*background: #8fcb7c;*/
@@ -512,24 +525,25 @@ canvas {
     max-width: 420px;
     max-height: 420px;
     cursor: pointer;
-    	}
+}
 
 #canvas2 { /*Board with pieces*/
     background: initial;
     z-index: 1;
     /*box-shadow: 0px 0px 10px black;*/
-    }
+}
 
 #canvas1 { /*Board with grid lines*/
     /*background: radial-gradient(circle, red, purple, navy);*/
     background: radial-gradient(circle, #9fd38e, #56a33d, #396d28);
-    }
+}
 
 #canvasesdiv {
     position: relative;
     height: 420px;
     /*display: table-cell;*/
-    }
+}
+
 .gameView {
     /*display: table;*/
     width: 100%;
@@ -543,19 +557,20 @@ canvas {
 /*--------------------------Screen size specific styling---------------------*/
 
 @media screen and (min-width: 700px) {
-  
-       .chatbox { 
+    .chatbox { 
         margin-left: 460px; 
-       }
+    }
 }
+
 @media screen and (max-width: 700px) {
     .container {
         margin: 0;
-         }
+    }
        
     #canvasesdiv {
         float: none;
     }
+
     .chatbox {
         min-width: 30%;
         max-width: 60%;
@@ -573,10 +588,9 @@ canvas {
         height: 300px;
         margin: 0;
         margin-left: 2px;
-
     }
-    
 }
+
 @media screen and (max-width: 420px){
     .gameView {
         display: block;
@@ -590,6 +604,7 @@ canvas {
        padding: 0;
        height: auto;
     }
+
     #canvasesdiv {
         float: none;
         width: auto;
@@ -604,8 +619,8 @@ canvas {
         width: 100%;
         height: 100%;
         border-radius: 0;
-
     }
+
     .chatbox {
         /*align-items: baseline;*/
         float: none;
@@ -617,45 +632,52 @@ canvas {
         display: inherit;
         /*margin-top: 460px;*/
     }
-#chat-message {
-        min-height: 340px;
+
+    #chat-message {
+            min-height: 340px;
     }
-#matchList {
-    margin: 0;
-    width: 100%;
 
-}
-#matchListScroll {
-    max-height: 400px;
-}
-p.floatRight {
-    display: none;
-}
-.floatMiddle {
-    padding-right: 1%;
-    min-width: 50%;
+    #matchList {
+        margin: 0;
+        width: 100%;
+    }
 
-}
-h1 {
-    margin: 0;
-}
-div#login-buttons {
-    margin: 0;
-    margin-top: 0px;
-}
-p#turn {
-    display: none;
-}
-div#playerDesignation {
-    width: 98%;
-    margin-left: 1%;
-    margin-right: 1%;
-    line-height: 1;
-}
-.playerTurnWrapper {
-    width: 41.8%;
-}
+    #matchListScroll {
+        max-height: 400px;
+    }
 
+    p.floatRight {
+        display: none;
+    }
+
+    .floatMiddle {
+        padding-right: 1%;
+        min-width: 50%;
+    }
+
+    h1 {
+        margin: 0;
+    }
+
+    div#login-buttons {
+        margin: 0;
+        margin-top: 0px;
+    }
+
+    p#turn {
+        display: none;
+    }
+
+    div#playerDesignation {
+        width: 98%;
+        margin-left: 1%;
+        margin-right: 1%;
+        line-height: 1;
+    }
+
+    .playerTurnWrapper {
+        width: 41.8%;
+    }
 }
 
 

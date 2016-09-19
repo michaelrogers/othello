@@ -81,8 +81,8 @@ if (Meteor.isClient) {
 					return matchScoreArray;
 					}
 				}
-			      	
-      });
+			});
+
 //onRendered template to call the respective initialization functions for each screen
   Template.gameCanvas.onRendered(function(){
     gameInit();
@@ -121,9 +121,7 @@ if (Meteor.isClient) {
   		// return typeof sessionStorage.getItem("gameId") == 'undefined';
   	 }
   });
-  
-
-  
+    
   Template.messaging.helpers({
   	gameId: function() {
   		// return Session.get("gameId") !== undefined;
@@ -138,14 +136,12 @@ if (Meteor.isClient) {
   //     		// return typeof sessionStorage.getItem("gameId") == 'undefined';
   //     	}
   //     });
+
   Template.buttons.helpers({
   	gameId: function(){
     		return Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined;
     		// return typeof sessionStorage.getItem("gameId") == 'undefined';
   	}
   });
-
-
-
       
 }//end isClient

@@ -40,8 +40,7 @@
 <!-- <template name="playerTurn">
   {{#if gameId}}
       {{#with playerDesignation}}
-   
-      <div class="playerScoreCircle" id="whiteScore">1</div> <p>{{#if playerWhite}}{{playerWhite}}{{else}}-Open Slot-{{/if}}</p>
+       <div class="playerScoreCircle" id="whiteScore">1</div> <p>{{#if playerWhite}}{{playerWhite}}{{else}}-Open Slot-{{/if}}</p>
       <div class="playerScoreCircle" id="blackScore">2</div>  <p>{{#if playerBlack}}{{playerBlack}}{{else}}-Open Slot-{{/if}}</p>
     {{/with}}
     {{/if}}
@@ -79,7 +78,6 @@
   </div>
 </template>
 
-
 <template name="chatBoxTemplate">
   <div class="chatbox">
       <div id="chat-header">
@@ -106,39 +104,36 @@
   {{#if Template.subscriptionsReady}}
 
   <div id="matchList">
-       <div id="matchListHeader">
-        <h4 class="lobbyHeader"> Your games: {{active}} </h4>
+    <div id="matchListHeader">
+      <h4 class="lobbyHeader"> Your games: {{active}} </h4>
         <!-- <hr> -->
-      </div>
-      <div id="matchListScroll">
-        {{#each matchData}}
-        <div id={{_id}} class="matchBoxItem">
-          <p class={{#if thisPlayerTurn}}floatLeft highlightTurn{{else}}
-              floatLeft
-            {{/if}}>
-            <p class="inline">White: {{#if playerWhite}}<strong>{{playerWhite}} </strong>{{else}} -Open Slot- {{/if}}</p>
-            <br>
-            <p class="inline">Black: {{#if playerBlack}}<strong>{{playerBlack}}</strong>{{else}} -Open Slot- {{/if}}</p>
-          </p>
-          
-          <p class="floatRight">
-            Score: {{whiteScore}} <br>
-            Score: {{blackScore}}
-          </p>
-          <p class="floatMiddle">
-            {{#if thisPlayerTurn}}
-              <strong>Your turn!</strong>
-            {{else}}
-              Waiting on opponent.
-            {{/if}}
-            <br>
-            <span style="font-size: smaller; font-weight: lighter">Last updated: {{livestamp lastUpdated}} </span>
-          </p>
-
-          </div>
-      {{/each}}
-      </div>
     </div>
+    <div id="matchListScroll">
+      {{#each matchData}}
+      <div id={{_id}} class="matchBoxItem">
+        <p class={{#if thisPlayerTurn}}floatLeft highlightTurn{{else}}
+            floatLeft{{/if}}>
+          <p class="inline">White: {{#if playerWhite}}<strong>{{playerWhite}} </strong>{{else}} -Open Slot- {{/if}}</p>
+          <br>
+          <p class="inline">Black: {{#if playerBlack}}<strong>{{playerBlack}}</strong>{{else}} -Open Slot- {{/if}}</p>
+        </p>
+        <p class="floatRight">
+          Score: {{whiteScore}} <br>
+          Score: {{blackScore}}
+        </p>
+        <p class="floatMiddle">
+          {{#if thisPlayerTurn}}
+            <strong>Your turn!</strong>
+          {{else}}
+            Waiting on opponent.
+          {{/if}}
+          <br>
+          <span class="lastUpdated">Last updated: {{livestamp lastUpdated}} </span>
+        </p>
+      </div>
+      {{/each}}
+    </div>
+  </div>
     {{else}}
         {{>loading}}
     {{/if}}
@@ -163,26 +158,41 @@
   <div id="loginPageDiv">
     <h2>Welcome to Othello!</h2>
     <h3>Please create an account or sign in to begin playing.</h3>
-    
     <h4>History</h4>
-      <p class="loginPage">Reversi is a strategy board game for two players, played on an 8×8 uncheckered board. There are sixty-four identical game pieces called disks (often spelled "discs"), which are light on one side and dark on the other. Players take turns placing disks on the board with their assigned color facing up. During a play, any disks of the opponent's color that are in a straight line and bounded by the disk just placed and another disk of the current player's color are turned over to the current player's color.</p>
-      <p class="loginPage">The object of the game is to have the majority of disks turned to display your color when the last playable empty square is filled.</p>
+    <p class="loginPage">
+      Reversi is a strategy board game for two players, played on an 8×8 uncheckered board. There are sixty-four identical game pieces called disks (often spelled "discs"), which are light on one side and dark on the other. Players take turns placing disks on the board with their assigned color facing up. During a play, any disks of the opponent's color that are in a straight line and bounded by the disk just placed and another disk of the current player's color are turned over to the current player's color.
+    </p>
+    <p class="loginPage">
+      The object of the game is to have the majority of disks turned to display your color when the last playable empty square is filled.
+    </p>
     <h4>Rules</h4>
-      <p class="loginPage">Each of the disks' two sides corresponds to one player; they are referred to here as light and dark after the sides of Othello pieces, but any counters with distinctive faces are suitable. The game may for example be played with a chessboard and Scrabble pieces, with one player letters and the other backs.</p>
-      <p class="loginPage">Players take alternate turns. If one player can not make a valid move, play passes back to the other player. When neither player can move, the game ends. This occurs when the grid has filled up or when neither player can legally place a piece in any of the remaining squares. This means the game may end before the grid is completely filled. This possibility may occur because one player has no pieces remaining on the board in that player's color. In over-the-board play this is generally scored as if the board were full (64–0).</p>
+    <p class="loginPage">
+      Each of the disks' two sides corresponds to one player; they are referred to here as light and dark after the sides of Othello pieces, but any counters with distinctive faces are suitable. The game may for example be played with a chessboard and Scrabble pieces, with one player letters and the other backs.
+    </p>
+    <p class="loginPage">
+      Players take alternate turns. If one player can not make a valid move, play passes back to the other player. When neither player can move, the game ends. This occurs when the grid has filled up or when neither player can legally place a piece in any of the remaining squares. This means the game may end before the grid is completely filled. This possibility may occur because one player has no pieces remaining on the board in that player's color. In over-the-board play this is generally scored as if the board were full (64–0).
+    </p>
   <a target="_blank" href="https://en.wikipedia.org/wiki/Reversi">History and Rules provided by Wikipedia.org</a>
   </div>
 </template>
 
 <template name="playerDesignation">
   {{#if Template.subscriptionsReady}}
-  <div id="playerDesignation">
-    {{#with playerDesignation}}
-    <div class="playerTurnWrapper" id="whitePlayerWrapper">
-    <div class="playerScoreCircle playerScoreWhite"><p class="scoreText" id="whiteScoreValue">-</p></div> <p> {{#if playerWhite}}{{playerWhite}}{{else}}-Open Slot-{{/if}}</p></div>
-    <div class="playerTurnWrapper" id="blackPlayerWrapper"> <div class="playerScoreCircle playerScoreBlack"><p id="blackScoreValue" class="scoreText">-</p></div> 
-    <p> {{#if playerBlack}}{{playerBlack}}{{else}}-Open Slot-{{/if}}</p></div>
-    {{/with}}
+    <div id="playerDesignation">
+      {{#with playerDesignation}}
+        <div class="playerTurnWrapper" id="whitePlayerWrapper">
+          <div class="playerScoreCircle playerScoreWhite">
+            <p class="scoreText" id="whiteScoreValue">-</p>
+          </div> 
+          <p>{{#if playerWhite}}{{playerWhite}}{{else}}-Open Slot-{{/if}}</p>
+        </div>
+        <div class="playerTurnWrapper" id="blackPlayerWrapper">
+          <div class="playerScoreCircle playerScoreBlack">
+            <p id="blackScoreValue" class="scoreText">-</p>
+          </div> 
+          <p>{{#if playerBlack}}{{playerBlack}}{{else}}-Open Slot-{{/if}}</p>
+        </div>
+      {{/with}}
     </div>
   {{/if}}
 </template>

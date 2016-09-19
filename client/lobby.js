@@ -18,7 +18,6 @@ if (Meteor.isClient){
       Meteor.call('othello.generateGameId', { userId: Meteor.user().username } , (err, res) => {
         if (err) {console.log('Error: \n' + err);}
         else {
-          // currentGameId = res;
           // console.log("Generated: "+ currentGameId);
           setSession(res);
           }
@@ -26,18 +25,19 @@ if (Meteor.isClient){
       });
     }
   }
+
   function joinGame(gameId) {
     if (Meteor.user()){
       Meteor.call('othello.joinGame', {userId: Meteor.user().username, gameId: gameId}, (err, res) => {
         if (err) {console.log('Error: \n' + err);}
-        else {//currentGameId = res; 
-          // console.log("Joined: "+ currentGameId); 
+        else {
           setSession(res); 
         
         }
       });
     }
   }
+  
   function setSession(gameId){
     if (gameId == null){
       Session.clear('gameId');
