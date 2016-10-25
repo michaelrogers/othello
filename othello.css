@@ -6,8 +6,7 @@ body {
 
     font-size: 14px;
     font-family: "Segoe UI", Tahoma, Helvetica;
-    /*Prevent bg gradiant repeat*/
-    height: 100%;
+    height: 100%; /*Prevent bg gradiant repeat*/
     margin: 0;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -38,19 +37,15 @@ h1 {
     margin-right: 1em;
     font-weight: lighter;
     text-shadow: 3px 2px 4px rgba(0,0,0,.2);
-    /*No support for firefox*/
-       /* background: linear-gradient(#000000, #383838, #000000);
-        -webkit-background-clip: text; 
-        -webkit-text-fill-color: transparent;  */
 }
 
- h1:hover {
+h1:hover {
     transition: 1s;
     font-: green;
- }
+}
 
 @-moz-document url-prefix(){ 
- h1 { /*Firefox specific fix to prevent failure of background-clip*/
+   h1 { /*Firefox specific fix to prevent failure of background-clip*/
     color: black;
     background: none;
     -webkit-background-clip: none; 
@@ -75,10 +70,10 @@ h4 {
     margin: 22px 0px 8px 0px;
 }
 
-
 a {
     text-decoration: none
 }
+
 a:visited {
     color: blue;
 }
@@ -89,8 +84,8 @@ a:visited {
     width: 100%
     height: 20px;
     background-image: linear-gradient(to bottom right, rgba(173, 204, 165, 0.75), rgba(225, 229, 240, 1));
-
 }
+
 /*---------------------Login page--------------------*/
 
 .loginPage {
@@ -99,30 +94,29 @@ a:visited {
 }
 
 /*-------------Meteor Login related styling-----------*/
-
-
 div#login-buttons {
     float: right;
     font-size: 18px;
     margin-right: 4px;
-   }
+}
 
 #login-buttons a {
     text-decoration: none;
-    }
+}
 
 #loginPageDiv {
     margin: 30px;
-    }
+}
 
 #login-dropdown-list {
     right: 1px;
     left: initial;
-    }
+}
 
 #login-buttons .login-close-text {
     float: right;
-    }
+}
+
 .accounts-dialog {
     transition: 1s;
     background-image: linear-gradient(to top, #e6e6e6 , #ffffff);
@@ -141,7 +135,6 @@ div#login-buttons {
     background-image: radial-gradient(ellipse at center, #e6e6e6 30%, #c6c6c6 90%);
     /*background-image: radial-gradient(ellipse at center top, #e6e6e6 60%, #d9d9d9 80%);*/
     border-radius: 3px 3px 0 0;
-
 }
 
 #matchListScroll {
@@ -165,9 +158,8 @@ div#login-buttons {
     background-image: linear-gradient(to bottom right, rgba(164, 173, 203, 0.8), rgba(225, 229, 240, 0.8));
     box-shadow: 0px 1px 1px grey;
     border-radius: 3px 3px 0px 0px;
-
-
 }
+
 #matchListHeader hr {
     margin-bottom: 0px;
 }
@@ -185,7 +177,6 @@ div#login-buttons {
     cursor: hand; cursor: pointer;
     transition: all 0.5s;
     transition-timing-function: ease;
-
 }
 
 .matchBoxItem:hover {
@@ -236,10 +227,10 @@ p.floatLeft {
 }
 
 .floatLeft.highlightTurn {
-        border-left: 15px solid rgba(0,0,128,0.75);
+    border-left: 15px solid rgba(0,0,128,0.75);
 }
 
- /*---------------Chatbox styling----------------*/
+/*---------------Chatbox styling----------------*/
 
 
 .chatbox {
@@ -254,22 +245,22 @@ p.floatLeft {
     word-wrap: break-word;
     /*border-radius: 0 8px 8px 0;*/
     overflow: hidden;
-    }
+}
 
- ::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 10px;   /*for vertical scrollbars */
   /*height: 12px;  for horizontal scrollbars*/ 
-    }
+}
 
 ::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.1);
   border-radius: 4px;
-    }
+}
 
 ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 4px;
-    }   
+}   
 
 #chat-header {
     /*background: linear-gradient(to bottom right, rgba(175, 175, 175, .1), rgba(175, 175, 175, .80));*/
@@ -278,7 +269,6 @@ p.floatLeft {
     margin-top: 10px;
     margin-bottom: 10px;
     width: 100%;
-
 }
 
 #chat-message {
@@ -314,6 +304,7 @@ p.floatLeft {
     border: 12px;
     border-color: grey;
 }
+
 .message-input input:hover {
     /*box-shadow: inset -1px -1px 2px 0px rgba(0, 0, 0, 0.2);*/
     transition: 0.5s ;
@@ -330,7 +321,7 @@ p.floatLeft {
     outline: none;
 }
 
- input#message {
+input#message {
     /*background: transparent !important;*/
     height: 40px;
     width: 90%;
@@ -339,7 +330,6 @@ p.floatLeft {
     padding-left: 5%;
     padding-right: 5%;
     font-size: 1.0em;
-    
 }       
 
 hr {
@@ -348,6 +338,7 @@ hr {
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, .35), rgba(0, 0, 0, 0));
     margin: 0;
 }
+
 /*--------------------------Game styling---------------------*/
 .button {
     float: right;
@@ -363,11 +354,12 @@ hr {
     padding: 6px 15px;
     border-radius: 3px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
+}
 
 .button:hover {
     background-image: linear-gradient(to top, #cfcfcf, #ffffff);
 }
+
 .button:active {
     background-image: linear-gradient(to top, #ffffff , #e6e6e6);
 }
@@ -378,13 +370,21 @@ hr {
     margin: 0px 0px 8px 0px;
     display: inline
 }
+
 /*For error handling and turn updates*/
 p#messages {
     margin-left: 2%;
     display: inline;
     float: left;
-/*    background: lightgrey; */
+    /*    background: lightgrey; */
 }
+
+.inlineButtons {
+        margin-right: 2%;
+        float: right;
+        vertical-align: middle;
+}   
+
 /*#turn {
     display: inline;
     }
@@ -395,25 +395,20 @@ p#messages {
     font-size: 16px;
 
     }*/
- .inlineButtons {
-    margin-right: 2%;
-    float: right;
-    vertical-align: middle;
-}   
+
 
 /*span {
     margin: 0;
     padding: 0;
     display: inline;
     white-space: nowrap;
-}*/
+    }*/
 
 div#informationLine {
-    /*padding-top: 10px;
-    padding-bottom: 10px;*/
     width: auto;
     height: 47px;
 }
+
 div#playerDesignation {
     margin: .9%;
     float: left;
@@ -425,13 +420,6 @@ div#playerDesignation {
     letter-spacing: .1em;
     font-size: 130%;
     min-width: 46%;
-    /*background: repeating-linear-gradient(
-          45deg,
-          rgba(25,25,25,.25),
-          rgba(25,25,25,.25) 10px,
-          rgba(75,75,75,.25) 10px,
-          rgba(75,75,75,.25) 20px
-        );*/
     display: inline-flex;
     flex-wrap: nowrap;
     -webkit-flex-wrap: nowrap;
@@ -443,8 +431,6 @@ div#playerDesignation > div >  p {
     vertical-align: middle;
     margin: 0;
     text-shadow: 3px 2px 4px rgba(0,0,0, .2);
-/*    border-bottom: 2px blue solid;
-*/
 }
 
 .playerTurnWrapper {
@@ -452,7 +438,6 @@ div#playerDesignation > div >  p {
     width: 41%;
     border-radius: 8px;
     vertical-align: middle;
-    
     flex-grow: 1;
     transition: 0.5s;
 }
@@ -472,8 +457,6 @@ div#playerDesignation > div >  p {
     transition: 0.5s;
     background: rgba(220,220,220,1);
     color: black;
-    /*box-shadow:  inset 0 0 5px rgba(0,0,10, .2);*/
-    /*box-shadow: inset 0 1px 3px rgba(0,0,0,.05), 0 1px 0 rgba(255,255,255,.075); */
 }
 
 .scoreText {
@@ -491,14 +474,12 @@ div#playerDesignation > div >  p {
     font-weight: normal;
     letter-spacing: 0;
     text-align: center;
-    /*border-style: solid;*/
     display: inline-block;
     vertical-align: middle;
     line-height: 1.4;
 }
 
- .playerScoreBlack {
-    /*background:#000;*/
+.playerScoreBlack {
     background-image: radial-gradient(circle, #333333, #000000);
     color:#fff;
     border-color: #fff; 
@@ -506,22 +487,18 @@ div#playerDesignation > div >  p {
 }
 
 .playerScoreWhite {
-    /*background:#fff;*/
     background-image: radial-gradient(circle, #ffffff, #cccccc);
     color:#000;
     border-color: #000; 
 }   
 
 canvas {
-    /*background: #8fcb7c;*/
-    /*display: table-cell;*/
     margin: 0px 20px 10px 20px;
     position: absolute;
     left: 0px;
     top: 0px;
     float: left;
-    /*border-radius: 8px 0 0 8px;*/
-	border-radius: 8px;
+    border-radius: 8px;
     max-width: 420px;
     max-height: 420px;
     cursor: pointer;
@@ -530,22 +507,19 @@ canvas {
 #canvas2 { /*Board with pieces*/
     background: initial;
     z-index: 1;
-    /*box-shadow: 0px 0px 10px black;*/
+    
 }
 
 #canvas1 { /*Board with grid lines*/
-    /*background: radial-gradient(circle, red, purple, navy);*/
     background: radial-gradient(circle, #9fd38e, #56a33d, #396d28);
 }
 
 #canvasesdiv {
     position: relative;
     height: 420px;
-    /*display: table-cell;*/
 }
 
 .gameView {
-    /*display: table;*/
     width: 100%;
     height: auto;
     /*-webkit-box-sizing: border-box;
@@ -566,7 +540,7 @@ canvas {
     .container {
         margin: 0;
     }
-       
+
     #canvasesdiv {
         float: none;
     }
@@ -598,23 +572,21 @@ canvas {
     }
 
     .container {
-       max-width: 100%;
-       width: 100%;
-       margin: 0;
-       padding: 0;
-       height: auto;
+     margin: 0 auto;
+     width: auto;
+     padding: 0;
+     height: auto;
+     box-shadow: none;
     }
 
-    #canvasesdiv {
+     #canvasesdiv {
         float: none;
         width: auto;
         display: inherit;
-
     }
 
     canvas {
         margin: 0;
-
         margin: auto; 
         width: 100%;
         height: 100%;
@@ -634,7 +606,7 @@ canvas {
     }
 
     #chat-message {
-            min-height: 340px;
+        min-height: 340px;
     }
 
     #matchList {
@@ -695,4 +667,4 @@ canvas {
 /* FOR USE WITH CHART
 #barChart {
      background: radial-gradient(circle, #9fd38e, #56a33d,
-    #396d28);}*/
+     #396d28);}*/

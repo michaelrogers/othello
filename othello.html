@@ -1,23 +1,26 @@
 <head>
   <title>Othello</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 </head>
 
 <body>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <div class="container">
-  <header>
-    <h1>Othello</h1>
-      <div id="login-buttons">{{> loginButtons}} <br>
-      <p>
-      {{>buttons}}
-     </p>
-  
-    </div>
-    {{>playerTurn}}
-  </header>
-    {{>messaging}}
-    {{>sessionId}}
-   <!--  <div class="footerElement">Created by <a href="http://github.com/michaelrogers" target="_blank">Michael Rogers</a></div> -->
+    <header>
+      <h1>Othello</h1>
+      <div id="login-buttons">
+        <div>{{> loginButtons}}</div>
+        <p>
+          {{>buttons}}
+        </p>
+      </div>
+      {{>playerTurn}}
+    </header>
+    <section>
+      {{>messaging}}
+      {{>sessionId}}
+      <!--  <div class="footerElement">Created by <a href="http://github.com/michaelrogers" target="_blank">Michael Rogers</a></div> -->
+    </section>
   </div>
 </body>
 

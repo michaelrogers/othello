@@ -2,12 +2,11 @@ if (Meteor.isClient) {
   //Require username for players
   Accounts.ui.config({  passwordSignupFields: "USERNAME_ONLY"  });
 
-  //Global for access from console
-  var debugErrorMessage = false;
-  //defining layers for canvas
-  var layer1, layer2, layer3;
-  //Canvas variables for window resizing
-  var radius, padding, cellWidth, linePadding;
+ 
+  var debugErrorMessage = false;  //Global for access from console
+  var layer1, layer2, layer3; //defining layers for canvas
+
+  var radius, padding, cellWidth, linePadding; //Canvas variables for window resizing
   //-----Local gamePiece Data -----
   var boardPosition = []; //Holds 2d array of piece data
   var flipCoordinate_x = [], flipCoordinate_y = []; //Temporary coordinate array for holding pieces that need to be flipped
@@ -24,9 +23,7 @@ if (Meteor.isClient) {
   var playerTurn, playerColorSelection;
   const intervalDelayValue = 500;
 
-
-  window.onload = function (){setSession(sessionStorage.getItem("gameId"));}
-    
+      
   function setSession(gameId){
     if (debugErrorMessage){console.count("client setSession")}
     if (gameId == null){
@@ -76,16 +73,16 @@ if (Meteor.isClient) {
 
    
   function getCanvasContext() {
-   //layer 1 = board with lines
-  layer1 = document.getElementById("canvas1");
-  context = layer1.getContext("2d");
-  //layer 2 = board with pieces
-  layer2 = document.getElementById("canvas2");
-  contextPieces = layer2.getContext("2d");
-  layer2.addEventListener("click", listenMouseDown); //Event listener for mouse input and event is implicitely passed as an argument
-  //layer 3 = board with markers
-  layer3 = document.getElementById("canvas3");
-  contextMarkers = layer3.getContext("2d");
+     //layer 1 = board with lines
+    layer1 = document.getElementById("canvas1");
+    context = layer1.getContext("2d");
+    //layer 2 = board with pieces
+    layer2 = document.getElementById("canvas2");
+    contextPieces = layer2.getContext("2d");
+    layer2.addEventListener("click", listenMouseDown); //Event listener for mouse input and event is implicitely passed as an argument
+    //layer 3 = board with markers
+    layer3 = document.getElementById("canvas3");
+    contextMarkers = layer3.getContext("2d");
   }//getCanvasContext
 
   function buttonListeners() {
@@ -169,16 +166,7 @@ if (Meteor.isClient) {
       context.lineWidth = 1;
       context.stroke();
     }
-   // function readArray(){
-   // //Reads the initialized array and draws the start position
-   // var x, y;
-   // for (y=0; y < boardPosition.length; y++) {
-   //   for (x=0; x < boardPosition[y].length; x++){
-   //     if (boardPosition[y][x] !== null) {
-   //         drawPieces(y,x);
-   //     }}}
-   //   }
-
+ 
   function clearArray(){
    if (typeof boardPosition !== 'undefined'){
    var x, y;
@@ -654,6 +642,7 @@ if (Meteor.isClient) {
      }
 
 export {gameInit}; //Export the init function to be called by templates.js to control single page session
+document.addEventListener('DOMContentLoaded',() => {setSession(sessionStorage.getItem("gameId"));});
 
 } //End isClient
 
