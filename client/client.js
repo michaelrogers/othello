@@ -14,7 +14,6 @@ if (Meteor.isClient) {
   //-----Canvas-------------
   var contextPieces, contextMarkers;
 
-
   //-----------States ------
   var intSet; //Used in interval delay function
   var clickInputAccepted = false; //Used to lock the player while setInterval is repeating/flipping
@@ -24,30 +23,29 @@ if (Meteor.isClient) {
   const intervalDelayValue = 500;
 
       
-  function setSession(gameId){
+  function setSession(gameId) {
     if (debugErrorMessage){console.count("client setSession")}
     if (gameId == null){
-       if (debugErrorMessage){console.count('Session nullified');}    
+      if (debugErrorMessage){console.count('Session nullified');}    
       sessionStorage.clear();
       Session.clear();
-      }
+    }
     else {
-    Session.set('gameId', gameId);
-    sessionStorage.setItem('gameId', gameId);
+      Session.set('gameId', gameId);
+      sessionStorage.setItem('gameId', gameId);
     }
   }
 
   function gameInit(){ //Declaring this function to be globally accessible
-    $(document).ready(function(){
+    // document.addEventListener("DOMContentLoaded", () => {
+      $(document).ready(() => {
       currentGameObject = {};
-      notBoardReset = true;
-      intSet = null;
+      notBoardReset = true; intSet = null;
       document.title = "Othello";
       if (debugErrorMessage){console.count("gameInit");}
       buttonListeners();
       getCanvasContext();
       resizingDeclarations();
-      // clearArray(); //drawGrid();
       setInitialPosition();
       globalDebug();
       $(window).resize(function(){resizingDeclarations});
@@ -56,24 +54,21 @@ if (Meteor.isClient) {
       whatPlayerAmI(Session.get("gameId"));
       returnGameDocument();
       pieceObserver();
-        });
+    });
   }
 
   function pieceObserver(){
-  if (sessionStorage.getItem('gameId') !== null){
-     if (debugErrorMessage){console.count("pieceObserver");}
-    PieceCollection.find({_id: sessionStorage.getItem('gameId')}).observeChanges({
-     // added: function () {returnGameDocument(); console.log('added');},
-     changed: function () {returnGameDocument();  if (debugErrorMessage){console.log('changed');}},
-     // removed: function () {  }
+    if (sessionStorage.getItem('gameId') !== null){
+      if (debugErrorMessage){console.count("pieceObserver");}
+      PieceCollection.find({_id: sessionStorage.getItem('gameId')}).observeChanges({
+        changed: function () {returnGameDocument();  if (debugErrorMessage){console.log('changed');}},
       });
+    }
+    else {console.log("gameId undefined")}
   }
-  else {console.log("gameId undefined")}
-  }
-
    
   function getCanvasContext() {
-     //layer 1 = board with lines
+    //layer 1 = board with lines
     layer1 = document.getElementById("canvas1");
     context = layer1.getContext("2d");
     //layer 2 = board with pieces
@@ -83,12 +78,10 @@ if (Meteor.isClient) {
     //layer 3 = board with markers
     layer3 = document.getElementById("canvas3");
     contextMarkers = layer3.getContext("2d");
-  }//getCanvasContext
+  }
 
   function buttonListeners() {
-    //DEPRECATED Color selection radio
-    // document.getElementById('playerChoice').addEventListener("click", function(){playerColorSelection = $('input[name="playerChoice"]:checked').val(); switchTurn(); console.log("Player Color: "+playerColorSelection);  });
-    //Reset button
+     //Reset button
     // document.getElementById("resetButton").addEventListener("click", function(){notBoardReset = false; init()}); 
     //Skip turn button
     document.getElementById("skipTurn").addEventListener("click", function(){if(clickInputAccepted) {updateGameData(Session.get("gameId"), currentGameObject);}});
@@ -102,32 +95,28 @@ if (Meteor.isClient) {
 
   function resignationButtonConfirmation(){
     var resignationConfirmation = confirm("Are you sure you want to resign? This will be counted as a loss.");
-      if (resignationConfirmation){
-        clickInputAccepted = false;
-        endGame(true);
-        document.getElementById("messages").innerHTML = "You have resigned.";
-        setSession(null);
-      }
+    if (resignationConfirmation){
+      clickInputAccepted = false;
+      endGame(true);
+      document.getElementById("messages").innerHTML = "You have resigned.";
+      setSession(null);
+    }
   }
 
   function whatPlayerAmI(gameId){
     if (debugErrorMessage){console.count("whatPlayerAmI");}
     if (Meteor.user()){ 
-      // console.log(Meteor.user().username)
       Meteor.call('othello.whatPlayerAmI', {username: Meteor.user().username, gameId: Session.get('gameId')}, (err, res) => {
-      if (err) {console.log("Error: \n" + err);}
-      else {if (res !== false){
-        // console.count("playerColorSelection set"); 
-        playerColorSelection = res; switchTurn();} //console.count("switchTurn - whatPlayerAmI"); 
-      else {setSession(null);} //Kick the player to the lobby if they are not matched to the game
-      }
+        if (err) {console.log("Error: \n" + err);}
+        else if (res !== false){playerColorSelection = res; switchTurn();}
+        else {setSession(null);} //Kick the player to the lobby if they are not matched to the game
       });
     }
   }
 
   function resizingDeclarations(){
-  radius = 20, padding = 10, cellWidth = 50; //Used for drawing the pieces
-  drawGrid();
+    radius = 20, padding = 10, cellWidth = 50; //Used for drawing the pieces
+    drawGrid();
   }
 
   function setInitialPosition(){
@@ -141,7 +130,7 @@ if (Meteor.isClient) {
         row5 = [null,null,null,null,null,null,null,null],
         row6 = [null,null,null,null,null,null,null,null],
         row7 = [null,null,null,null,null,null,null,null];
-    //Define 2d array
+    //Define 2d array/matrix
     boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
   }
 
@@ -154,40 +143,50 @@ if (Meteor.isClient) {
     linePadding = 0.5;
     context.beginPath();
     for (var x = 0; x <= boardWidth; x += 50) {
-        context.moveTo(linePadding + x + padding, padding);
-        context.lineTo(linePadding + x + padding, boardHeight + padding);
-      }
+      context.moveTo(linePadding + x + padding, padding);
+      context.lineTo(linePadding + x + padding, boardHeight + padding);
+    }
     //draw horizontal lines of grid
-      for (var x = 0; x <= boardHeight; x += 50) {
-        context.moveTo(padding, linePadding + x + padding);
-        context.lineTo(boardWidth + padding, linePadding + x + padding);
-       }
-      context.strokeStyle = "#323232";
-      context.lineWidth = 1;
-      context.stroke();
+    for (var x = 0; x <= boardHeight; x += 50) {
+      context.moveTo(padding, linePadding + x + padding);
+      context.lineTo(boardWidth + padding, linePadding + x + padding);
     }
+    context.strokeStyle = "#323232";
+    context.lineWidth = 1;
+    context.stroke();
+  }
  
-  function clearArray(){
-   if (typeof boardPosition !== 'undefined'){
-   var x, y;
-   for (y=0; y < boardPosition.length; y++) {
-     for (x=0; x < boardPosition[y].length; x++){
-        if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
-         boardPosition[y][x] = null;
-         drawPieces(y,x, null);
-         }}}
+  function clearArray() {
+   if (typeof boardPosition !== 'undefined') {
+      boardPosition.map((y,j) => {
+        boardPosition[j].map((x,i) => {
+          if (x == 1 || x == 0) {
+            x = null;
+            drawPieces(y, x, null);
+          }
+        });
+      
+      });
     }
-   }
+  }
+     // var x, y;
+     // for (y=0; y < boardPosition.length; y++) {
+     //   for (x=0; x < boardPosition[y].length; x++){
+     //      if (boardPosition[y][x] == 1 | boardPosition[y][x] == 0) {
+     //       boardPosition[y][x] = null;
+   //     }
+  //   }
+  // }
 
   function flippingLogTextAnimation(){
     var messages = document.getElementById("messages").innerHTML;
-    if (messages.innerHTML == "Flipping.....")
-     messages.innerHTML = "Flipping..";
-    else {
-     var flippingTextValue = messages.innerHTML;
-     messages.innerHTML = flippingTextValue + ".";
+    if (messages.innerHTML == "Flipping.....") {
+      messages.innerHTML = "Flipping..";
+    } else {
+      var flippingTextValue = messages.innerHTML;
+      messages.innerHTML = flippingTextValue + ".";
       }
-    }
+  }
 
   function endGame(resignation) {
     Meteor.call("othello.endGame", {gameId: Session.get("gameId"), resignation: resignation, userId: Meteor.user().username}, (err, res) => {
@@ -195,9 +194,9 @@ if (Meteor.isClient) {
       else {
           if(res){//Do something if game is ended
             clickInputAccepted = false; //To catch resignation
-          }
-          else {//Do something if server returns false
-          }
+          } else {//Do something if server returns false
+            }
+          
         }
       });
     } 
@@ -214,27 +213,26 @@ if (Meteor.isClient) {
       canvas_y = Math.round(event.pageY - offset_y);
       //console.log ("Mouse Click" + "\n" + "X: "+canvas_x+" Y: "+canvas_y);
       translateCoordinate(canvas_y,canvas_x);
-    }
-    else if (Meteor.user() == null){document.getElementById("messages").innerHTML = "Please login to play.";}
-    else {
-      var opponent;
-      if (playerColorSelection == 0){opponent = "Black";}
-      else if (playerColorSelection == 1){opponent = "White";}
-
-      document.getElementById("messages").innerHTML = "Waiting on " + opponent + " to finish playing!";
-    }
-      // if (debugErrorMessage){console.log("Mouse input locked!");}
+    
+    } else if (Meteor.user() == null) {
+        document.getElementById("messages").innerHTML = "Please login to play.";
+      } else {
+          var opponent;
+          if (playerColorSelection == 0) {opponent = "Black";}
+          else if (playerColorSelection == 1) {opponent = "White";}
+          document.getElementById("messages").innerHTML = "Waiting on " + opponent + " to finish playing!";
+        }
   }
 
-  function translateCoordinate(canvas_y,canvas_x){
+  function translateCoordinate(canvas_y, canvas_x) {
     //Determines which cell the coordinate from mouse listener belongs to
-    cell_x = Math.floor((canvas_x-padding)/cellWidth);
-    cell_y = Math.floor((canvas_y-padding)/cellWidth);
+    cell_x = Math.floor((canvas_x - padding) / cellWidth);
+    cell_y = Math.floor((canvas_y - padding) / cellWidth);
     if (debugErrorMessage){console.log ("Mouse x: " + canvas_x  + " y: " + canvas_y + "\n" + "Map x: "+cell_x+" y: "+cell_y);}
     //console.log ("Mouse Click" + "\n" + "X: "+canvas_x+" Y: "+canvas_y);
     //Remove erroneous coordinates like outside the grid in the padding
-    if (0 <= cell_x && cell_x < 8 && 0 <= cell_y && cell_y < 8){
-      validMove(cell_y,cell_x);
+    if (0 <= cell_x && cell_x < 8 && 0 <= cell_y && cell_y < 8) {
+      validMove(cell_y, cell_x);
     }
     else {
       if (debugErrorMessage){console.log("Out of bounds");}
@@ -242,7 +240,7 @@ if (Meteor.isClient) {
       }
   }
 
-  function switchTurn(){
+  function switchTurn() {
     //switches the player turn and then updates h3 with id="turn"
     // console.count("switchTurn");
     var playerText = "";
@@ -264,37 +262,30 @@ if (Meteor.isClient) {
         document.getElementById("blackPlayerWrapper").className += " currentPlayerTurn";
       }
     }
-   //Deprecated
-    // if (typeof playerColorSelection === "undefined"){
-    //   messages = "Please select a piece color to play with.";}
-    if (playerColorSelection == playerTurn){
-      messages = "Your move!"
-    }
-    else {messages = "Waiting on your opponent to play.";}
+    if (playerColorSelection == playerTurn) messages = "Your move!"
+      else messages = "Waiting on your opponent to play.";
+    
     //-----Write messages to DOM----
     var messagesText = document.getElementById('messages');
-    if (messagesText != null){document.getElementById('messages').innerHTML = messages;}
+    if (messagesText != null) document.getElementById('messages').innerHTML = messages;
     var turnText = document.getElementById("turn");
-    if (turnText != null){turnText.innerHTML = playerText;}
+    if (turnText != null) turnText.innerHTML = playerText;
   }
 
 
-  function calculateScore(){
-  var x, y;
-  var whiteScore = 0,  blackScore = 0;
-  for (y=0; y < boardPosition.length; y++) {
-    for (x=0; x < boardPosition[y].length; x++){
-      if (boardPosition[y][x] == 0){whiteScore +=1;}
-      else if (boardPosition[y][x] == 1){blackScore +=1;}
-      }}
-    // $("div#blackScoreValue").ready(function(){
-    // var turnText = document.getElementById("turn");
-    // var scoreText = document.getElementById("score");
-    // console.log(typeof document.getElementById("blackScoreValue").innerHTML);
-    // if (document.getElementById("whiteScoreValue").innerHTML !== null && document.getElementById("blackScoreValue").innerHTML !== null){
+  function calculateScore() {
+    var x, y;
+    var whiteScore = 0,  blackScore = 0;
+    for (y = 0; y < boardPosition.length; y++) {
+      for (x = 0; x < boardPosition[y].length; x++){
+        if (boardPosition[y][x] == 0){whiteScore += 1;}
+        else if (boardPosition[y][x] == 1){blackScore += 1;}
+      }
+    }
     var whiteScoreValue = document.getElementById("whiteScoreValue");
     var blackScoreValue = document.getElementById("blackScoreValue");
     var messagesText = document.getElementById('messages');
+
     if (whiteScoreValue !== null && blackScoreValue !== null){
       if (whiteScore + blackScore <= 64){
         gameOn = true;
@@ -337,12 +328,10 @@ if (Meteor.isClient) {
       // });
     }
   }
-  function validMove(cell_y,cell_x){
+  function validMove(cell_y, cell_x) {
     var noOppositeMatch = true;
-    // var flipIndex = 0;
     //Comment this out to prevent manual piece flipping
     // if (boardPosition[cell_y][cell_x] == 1 | boardPosition[cell_y][cell_x] == 0){addPiece(cell_y,cell_x);return false;} //Bypass move validation when there is already a piece in the square
-    
     var validMoveGameObject = currentGameObject;
     if (validMoveGameObject[cell_y][cell_x] == null){ 
       clickInputAccepted = false;
@@ -350,63 +339,58 @@ if (Meteor.isClient) {
       for (let dx = -1; dx <= 1; dx++){ //Iterate horizontally
           for (let dy = -1; dy <=1; dy++){ //Iterate vertically
             if (typeof validMoveGameObject[cell_y+dy] !== 'undefined' && typeof validMoveGameObject[cell_y+dy][cell_x+dx] !== 'undefined'){ //Prevent attempting to scan outside of the array
-             if (dx == 0 && dy == 0) {continue;} //prevent boardPosition[cell_y][cell_x] from being processed
+              if (dx == 0 && dy == 0) {continue;} //prevent boardPosition[cell_y][cell_x] from being processed
               var adjacentCellValue = validMoveGameObject[cell_y+dy][cell_x+dx];
               //Evaluating for the opposite of playerTurn value
               if (adjacentCellValue != playerTurn && typeof adjacentCellValue !== 'undefined' && adjacentCellValue != null){
                  if (debugErrorMessage){console.log("Adj x: " + (cell_x+dx) + " y: " + (cell_y+dy));} //Log the coordinates of the adjacent cell being checked to the console for debugging purposes
                 //Evaluating the piece(s) beyond the adjacent tile to ensure that a flip is possible
-               for (let multFactor = 2; (cell_y+(dy*multFactor)) >= 0 && (cell_x+(dx*multFactor)) >= 0 && (cell_y+(dy*multFactor)) <= 7 && (cell_x+(dx*multFactor)) <= 7; multFactor++){
-                 if (debugErrorMessage){console.log("Mult: " + multFactor + " x: "+ (cell_x+(dx*multFactor)) +" y: "+ (cell_y+(dy*multFactor)));}
-                 if (validMoveGameObject[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] == playerTurn){ //If the end piece is the same as the player's color, write to a temporary array
-                  multFactor -= 1; //To account for not flipping the end piece because the end piece has the max multFactor
-                  while (multFactor >= 1){ //Write the coordinates of pieces that need to be flipped to two arrays with an index
-                    // flipCoordinate_y[flipIndex] = cell_y+(dy*multFactor);
-                    // flipCoordinate_x[flipIndex] = cell_x+(dx*multFactor);
-                    currentGameObject[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] = playerTurn;
-                    // flipIndex += 1;
-                    multFactor -= 1;
+                for (let multFactor = 2; (cell_y+(dy*multFactor)) >= 0 && (cell_x+(dx*multFactor)) >= 0  && (cell_y+(dy*multFactor)) <= 7 && (cell_x+(dx*multFactor)) <= 7; multFactor++){
+                  if (debugErrorMessage){console.log("Mult: " + multFactor + " x: "+ (cell_x+(dx*multFactor)) +" y: "+ (cell_y+(dy*multFactor)));}
+                  if (validMoveGameObject[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] == playerTurn){ //If the end piece is the same as the player's color, write to a temporary array
+                    multFactor -= 1; //To account for not flipping the end piece because the end piece has the max multFactor
+                    while (multFactor >= 1){ //Write the coordinates of pieces that need to be flipped to two arrays with an index
+                      // flipCoordinate_y[flipIndex] = cell_y+(dy*multFactor); // flipCoordinate_x[flipIndex] = cell_x+(dx*multFactor);
+                      currentGameObject[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] = playerTurn;
+                      // flipIndex += 1;
+                      multFactor -= 1;
                     }
-                  noOppositeMatch = false; //Indicated a match has been found
-                  currentGameObject[cell_y][cell_x] = playerTurn;
-                  break;
+                    noOppositeMatch = false; //Indicated a match has been found
+                    currentGameObject[cell_y][cell_x] = playerTurn;
+                    break;
                   }
                   else if (validMoveGameObject[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] == null){break;} //Break the loop if it encounters an empty tile
                   else if (validMoveGameObject[cell_y+(dy*multFactor)][cell_x+(dx*multFactor)] != playerTurn){continue;} //If the piece beyond the adjacent is the same as the playerTurn, continue the for loop and increase the multFactor
                 }
-               }
               }
-            }      
-          }                  
-        }
+            }
+        }      
+      }                  
+    }
         
-      if (noOppositeMatch) {
-        document.getElementById("messages").innerHTML = "Invalid Move: Can't let you do that, Star Fox!";
-        if (debugErrorMessage){console.log("Invalid move");}
-        clickInputAccepted = true;
-      }
-      else if (noOppositeMatch == false){
-        if (debugErrorMessage){console.log("validMove");}
-        // clientUpdated = true;
-        // console.count('intervalDelay - validMove');
-        updateGameData(Session.get("gameId"), currentGameObject);
-        // addPiece(cell_y,cell_x); //Add selection piece first
-        // clearMarkerCanvas();
-        // drawMarker(cell_y, cell_x, true, true);
-        
-        // intervalDelay(intervalDelayValue); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
-        }
-      }//End validMove
+    if (noOppositeMatch) {
+      document.getElementById("messages").innerHTML = "Invalid Move: Can't let you do that, Star Fox!";
+      if (debugErrorMessage){console.log("Invalid move");}
+      clickInputAccepted = true;
+    }
+    else if (noOppositeMatch == false){
+      if (debugErrorMessage){console.log("validMove");}
+      updateGameData(Session.get("gameId"), currentGameObject);
+      // intervalDelay(intervalDelayValue); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
+    }
+  }//End validMove
 
-  function intervalDelay(intervalDelayValue){intSet = setInterval(returnFlipCoordinate, intervalDelayValue);} 
+  function intervalDelay(intervalDelayValue) {
+    intSet = setInterval(returnFlipCoordinate, intervalDelayValue);
+  }
+
   function returnFlipCoordinate(){
      if (flipCoordinate_x.length > 0){
       flippingLogTextAnimation();
       cell_x = flipCoordinate_x.pop();
       cell_y = flipCoordinate_y.pop();
-      if (debugErrorMessage){console.count("Flipping");}
       if (debugErrorMessage){console.log("Flip x: "+ cell_x + " y: " + cell_y);}
-      addPiece(cell_y,cell_x);
+      addPiece(cell_y, cell_x);
       drawMarker(cell_y, cell_x, false, playerColorSelection !== playerTurn);
     }
     else {
@@ -415,35 +399,30 @@ if (Meteor.isClient) {
       // if(clientUpdated){ updateGameData(Session.get("gameId"), currentGameObject);}
       // clientUpdated = false;
       clearInterval(intSet);
-      // console.count("switchTurn - clearInterval");
-      
-      // switchTurn();
-      
       if (debugErrorMessage){console.log("Flipping finished");}
-      // return;
-      }
     }
+  }
 
-  function addPiece(cell_y,cell_x) {
+  function addPiece(cell_y, cell_x) {
     var thisCell = boardPosition[cell_y][cell_x];
-    if (thisCell == null){
+    if (thisCell == null) {
       boardPosition[cell_y][cell_x] = playerTurn;
       // currentGameObject[cell_y][cell_x] = playerTurn;
-      }
-      //-----Called to flip the piece data
-    else if (thisCell == 0){ //Used by returnFlipCoordinate function for flipping pieces
+    }
+    //-----Called to flip the piece data
+    else if (thisCell == 0) { //Used by returnFlipCoordinate function for flipping pieces
       boardPosition[cell_y][cell_x] = 1;
       // currentGameObject[cell_y][cell_x] = 1;
-      }
-    else if (thisCell == 1){  //Used by returnFlipCoordinate function for flipping pieces
+    }
+    else if (thisCell == 1) {  //Used by returnFlipCoordinate function for flipping pieces
       boardPosition[cell_y][cell_x] = 0;
       // currentGameObject[cell_y][cell_x] = 0;
-      }
+    }
     drawPieces(cell_y,cell_x, currentGameObject[cell_y][cell_x]);
-    if (notBoardReset){calculateScore();}
+    if (notBoardReset) calculateScore();
   }//End addPiece
 
-  function drawPieces(yPosition,xPosition, pieceColor) {
+  function drawPieces(yPosition, xPosition, pieceColor) {
     // radius = 20; padding = 10; cellWidth = 50;
     //implement random positioning within cell for added interest and analog feel
     //uses a random number generator to vary between a value -1 to +1
@@ -452,52 +431,65 @@ if (Meteor.isClient) {
 
     var centerX = cellWidth/2+padding+randomX+cellWidth*xPosition;
     var centerY = cellWidth/2+padding+randomY+cellWidth*yPosition;
-    var pieceGradient = contextPieces.createRadialGradient(centerX, centerY, radius/1.5, centerX, centerY, radius);
+    var pieceGradient = contextPieces.createRadialGradient(
+      centerX,
+      centerY,
+      radius/1.5,
+      centerX,
+      centerY,
+      radius
+    );
     
     if (pieceColor == 0) {
-    //White piece gradient
-    pieceGradient.addColorStop(0, "white");
-    pieceGradient.addColorStop(1, "#cfcfcf");
-    contextPieces.strokeStyle = '#404040';  //Old value #585858
-      }
+      //White piece gradient
+      pieceGradient.addColorStop(0, "white");
+      pieceGradient.addColorStop(1, "#cfcfcf");
+      contextPieces.strokeStyle = '#404040';  //Old value #585858
       
-    else if (pieceColor == 1){
-    //Black piece gradient
-    pieceGradient.addColorStop(0, "#202020");
-    pieceGradient.addColorStop(1, "black");
-    contextPieces.strokeStyle = '#b3b3b3'; //'#E0E0E0'
-       }
-
-    else if (pieceColor == null){
+    } else if (pieceColor == 1){
+      //Black piece gradient
+      pieceGradient.addColorStop(0, "#202020");
+      pieceGradient.addColorStop(1, "black");
+      contextPieces.strokeStyle = '#b3b3b3'; //'#E0E0E0'
+    
+    } else if (pieceColor == null){
       //Clear existing piece and exit function
-      contextPieces.clearRect(centerX-25,centerY-25,50,50);
+      contextPieces.clearRect(centerX-25, centerY-25, 50, 50);
       return false;
-      }
+    }
 
     //draw circle with gradient fill
-    contextPieces.clearRect(centerX-25,centerY-25,50,50);
+    contextPieces.clearRect(centerX-25, centerY-25, 50, 50);
     contextPieces.beginPath();
     contextPieces.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
     contextPieces.fillStyle = pieceGradient;
     contextPieces.lineWidth = 0.5;
-    
-    if (debugErrorMessage){console.log("Draw x: " + xPosition + " y: " + yPosition);}
+    contextPieces.imageSmoothingEnabled = false;
+    if (debugErrorMessage) console.log("Draw x: " + xPosition + " y: " + yPosition);
     contextPieces.fill();
     contextPieces.stroke();
-      }
+  }
 
-  function drawMarker(y, x, initialPiece, thisUserTurn){ //initialPiece is a boolean value representing the piece played by the player
-    var yCoordinate = padding+cellWidth*y;
-    var xCoordinate = padding+cellWidth*x;
-    var centerY = yCoordinate + cellWidth/2;
-    var centerX = xCoordinate + cellWidth/2;
+  function drawMarker(y, x, initialPiece, thisUserTurn) { //initialPiece is a boolean value representing the piece played by the player
+    var yCoordinate = padding + cellWidth * y;
+    var xCoordinate = padding + cellWidth * x;
+    var centerY = yCoordinate + cellWidth / 2;
+    var centerX = xCoordinate + cellWidth / 2;
     
-    var markerGradient = contextMarkers.createRadialGradient(centerX, centerY, radius*0.9, centerX, centerY, radius*1.8);
+    var markerGradient = contextMarkers.createRadialGradient(
+      centerX,
+      centerY,
+      radius * 0.9,
+      centerX,
+      centerY,
+      radius * 1.8
+    );
+
     if (thisUserTurn){
       if (initialPiece){
-      // var markerGradient = 'rgba(0,0,125,0.4)';
-      markerGradient.addColorStop(0, "rgba(0,0,125,0.4)");
-      markerGradient.addColorStop(1, "rgba(0,0,125,0.5)");
+        // var markerGradient = 'rgba(0,0,125,0.4)';
+        markerGradient.addColorStop(0, "rgba(0,0,125,0.4)");
+        markerGradient.addColorStop(1, "rgba(0,0,125,0.5)");
       }
       else {
         // var markerGradient = 'rgba(0,0,125,0.2)';
@@ -506,10 +498,10 @@ if (Meteor.isClient) {
       }
     }
     else {
-    if (initialPiece){
-      // var markerGradient = 'rgba(0,0,125,0.4)';
-      markerGradient.addColorStop(0, "rgba(125,0,0,0.4)");
-      markerGradient.addColorStop(1, "rgba(125,0,0,0.5)");
+      if (initialPiece){
+        // var markerGradient = 'rgba(0,0,125,0.4)';
+        markerGradient.addColorStop(0, "rgba(125,0,0,0.4)");
+        markerGradient.addColorStop(1, "rgba(125,0,0,0.5)");
       }
       else {
         // var markerGradient = 'rgba(0,0,125,0.2)';
@@ -517,22 +509,25 @@ if (Meteor.isClient) {
         markerGradient.addColorStop(1, "rgba(125,0,0,0.3)");
       }
     }
-     
-      contextMarkers.clearRect(centerX-25,centerY-25,50,50);
-      var bufferValue = 0;
-      contextMarkers.fillStyle = markerGradient;
-      contextMarkers.fillRect(centerX-25+bufferValue+linePadding,centerY-25+bufferValue+linePadding,50-(bufferValue*2),50-(bufferValue*2));
+    contextMarkers.clearRect(centerX - 25, centerY - 25, 50, 50);
+    var bufferValue = 0;
+    contextMarkers.fillStyle = markerGradient;
+    contextMarkers.imageSmoothingEnabled = false;
+    contextMarkers.fillRect(
+      centerX - 25 + bufferValue + linePadding,
+      centerY - 25 + bufferValue + linePadding,
+      50 - (bufferValue * 2),
+      50 - (bufferValue * 2)
+    );
   }
 
-  function clearMarkerCanvas(){
-    contextMarkers.clearRect(0,0,410,410);
-  }
-
+  function clearMarkerCanvas() { contextMarkers.clearRect(0,0,410,410); }
+  
   //Accessible through the console for debugging purposes
   function globalDebug(){
-  window.debugMode = debugMode; //Assign function to global window property
-  function debugMode(){debugErrorMessage = true; console.log("Debug mode on!");return true;} 
-    }
+    window.debugMode = debugMode; //Assign function to global window property
+    function debugMode(){debugErrorMessage = true; console.log("Debug mode on!"); return true;} 
+  }
 
   function returnGameDocument() {
   // if (!clientUpdated){
@@ -567,82 +562,79 @@ if (Meteor.isClient) {
 
       }});
     }//currentGame if statement
-  else {console.log('No gameId');}
-  // }
-  // clientUpdated=false;
+    else {console.log('No gameId');}
   }
 
   function updateGameData(currentGameId, currentGameObject) {
-    // if (playerTurn == playerColorSelection){ 
     Meteor.call('othello.updateGameData', {
       gameId: currentGameId,
       changedGameData: currentGameObject,
       currentPlayerTurn: playerColorSelection,
       updatedBy: Meteor.user().username
-      },
+    },
     (err, res) => {
-    if (err) {alert(err);} else { if (debugErrorMessage){console.count("updateGameData");}}
-      });
-    // } 
-    // switchTurn();  
+      if (err) alert(err);
+      else if (debugErrorMessage){console.count("updateGameData");}
+    });
   }
 
-   function diffCollections(pastGameObject, currentGameObject, thisUserTurn) {
-    if (Object.keys(pastGameObject).length == 0 || boardPosition == undefined){readCollection(currentGameObject);}
-    else {
-      if (debugErrorMessage){console.count("diffCollections");}
-    // if (!clientUpdated){
-      var x, y, flipIndex = 0;
-      for (y=0; y < Object.keys(currentGameObject).length; y++) {
-        for (x=0; x < Object.keys(currentGameObject[y]).length; x++){
-            // boardPosition[y][x] = currentGameObject[y][x]
-          if (currentGameObject[y][x] !== null && currentGameObject[y][x] != pastGameObject[y][x] ) {
+  function diffCollections(pastGameObject, currentGameObject, thisUserTurn) {
+    if (Object.keys(pastGameObject).length == 0 || boardPosition == undefined) {
+      readCollection(currentGameObject);
+    } else {
+      if (debugErrorMessage) console.count("diffCollections");}
+      var flipIndex = 0;
+      for (var y = 0; y < Object.keys(currentGameObject).length; y++) {
+        for (var x = 0; x < Object.keys(currentGameObject[y]).length; x++){
+          if (
+              currentGameObject[y][x] !== null 
+              && currentGameObject[y][x] != pastGameObject[y][x]
+              ) {
             //Identify the opponents piece that they placed
             if (pastGameObject[y][x] == null){
               boardPosition[y][x] = currentGameObject[y][x];
-              drawPieces(y,x,currentGameObject[y][x]); //Add opponents selection first
+              drawPieces(y, x, currentGameObject[y][x]); //Add opponents selection first
               clearMarkerCanvas();
-              drawMarker(y,x,true, thisUserTurn);
-              }
-            else {
-              flipCoordinate_y[flipIndex] = y;
-              flipCoordinate_x[flipIndex] = x;
-              flipIndex += 1;
-            // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
-          }}
-        }}
+              drawMarker(y, x, true, thisUserTurn);
+            } else {
+                flipCoordinate_y[flipIndex] = y;
+                flipCoordinate_x[flipIndex] = x;
+                flipIndex += 1;
+            }
+          }
+        }
+      }
+      if (flipCoordinate_x.length > 0) intervalDelay(intervalDelayValue);
+      notBoardReset = true;
+    }
+  
 
-       if (flipCoordinate_x.length > 0){
-        // console.log("Initiate flipping");
-        // var thisDelayValue;
-        // if (thisUserTurn){thisDelayValue = 0;}
-        // else {thisDelayValue = intervalDelayValue}
-        // console.count("intervalDelay - diffCollections")
-        intervalDelay(intervalDelayValue);
-       }
-     // }
-     notBoardReset = true;
-     // clientUpdated = false;
-   }
+  function readCollection(gameObject) {
+    if (debugErrorMessage) console.count('readCollection');
+    clearMarkerCanvas();
+    console.log(boardPosition);
+    clearArray();
+    Object.keys(gameObject).map((y, j) => {
+      Object.keys(gameObject[j]).map((x, i) => {
+        boardPosition[j][i] = x[i];
+        if (x !== null) drawPieces (j, i, x);
+      // console.log("x: "+ i + " y: " + j + " value: " + currentGameObject[j][i]);
+
+      });
+    });
+    // for (var y = 0; y < Object.keys(gameObject).length; y++) {
+    //   for (var x = 0; x < Object.keys(gameObject[y]).length; x++){
+    //     boardPosition[y][x] = gameObject[y][x];
+    //     if (gameObject[y][x] !== null) {
+    //       drawPieces(y, x, gameObject[y][x]);
+    //       // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
+    //     }
+    //   }
+    // }
   }
 
-  function readCollection(gameObject){
-    if (debugErrorMessage){console.count('readCollection');}
-    clearMarkerCanvas();
-    clearArray();
-    var x, y;
-    for (y=0; y < Object.keys(gameObject).length; y++) {
-      for (x=0; x < Object.keys(gameObject[y]).length; x++){
-          boardPosition[y][x] = gameObject[y][x];
-          if (gameObject[y][x] !== null) {
-            drawPieces(y,x,gameObject[y][x]);
-            // console.log("x: "+ x + " y: " + y + " value: " + currentGameObject[y][x]);
-            }
-        }}
-     }
-
-export {gameInit}; //Export the init function to be called by templates.js to control single page session
-document.addEventListener('DOMContentLoaded',() => {setSession(sessionStorage.getItem("gameId"));});
+  export {gameInit}; //Export the init function to be called by templates.js to control single page session
+  document.addEventListener('DOMContentLoaded', () => {setSession(sessionStorage.getItem("gameId"));});
 
 } //End isClient
 

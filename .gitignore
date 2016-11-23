@@ -54,3 +54,5 @@ othello.sublime-workspace
 node_modules/*
 *.sublime-project
 .eslintrc.js
+.meteor/*
+.meteor/packages
