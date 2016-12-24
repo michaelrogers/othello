@@ -84,7 +84,7 @@ if (Meteor.isClient) {
 			});
 
 //onRendered template to call the respective initialization functions for each screen
-  Template.gameCanvas.onRendered(function(){
+  Template.othelloGameTemplate.onRendered(function(){
     gameInit();
   	});
 

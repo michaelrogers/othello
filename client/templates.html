@@ -3,7 +3,7 @@
 <template name="sessionId">
   {{#if currentUser}}
     {{#if gameId}}
-      {{> gameCanvas}}
+      {{> othelloGameTemplate}}
     {{else}}
       {{> lobby}}
     {{/if}}
@@ -16,9 +16,6 @@
   {{#if currentUser}}
     {{#if gameId}}
     <button type="button" class = "button" id="lobby">Return to Lobby</button>
-    <!-- <button type="button" class = "button" id="skipTurn">Skip Turn</button>
-    <button type="button" class = "button" id="resetButton">Rematch</button>
-    <button type="button" class = "button" id="resignButton">Resign</button> -->
     {{else}}
     <button type="button" class = "button" id="joinButton">New game</button> 
     {{/if}}
@@ -28,23 +25,13 @@
 <template name="playerTurn">
   {{#if currentUser}}
     {{#if gameId}}
-
       <div>
-      <p id="turn">Player Turn: White</p> 
-      <p id="score"></p>
+        <p id="turn">Player Turn: White</p> 
+        <p id="score"></p>
       </div>
     {{/if}}
   {{/if}}
 </template>
-
-<!-- <template name="playerTurn">
-  {{#if gameId}}
-      {{#with playerDesignation}}
-       <div class="playerScoreCircle" id="whiteScore">1</div> <p>{{#if playerWhite}}{{playerWhite}}{{else}}-Open Slot-{{/if}}</p>
-      <div class="playerScoreCircle" id="blackScore">2</div>  <p>{{#if playerBlack}}{{playerBlack}}{{else}}-Open Slot-{{/if}}</p>
-    {{/with}}
-    {{/if}}
-</template> -->
 
  <template name="messaging">
   {{#if currentUser}}
@@ -55,9 +42,8 @@
         {{#if currentUser}}
           {{#if gameId}}
           <div class="inlineButtons">
-          <button type="button" class = "button" id="skipTurn">Skip Turn</button>
-          <!-- <button type="button" class = "button" id="resetButton">Rematch</button> -->
-          <button type="button" class = "button" id="resignButton">Resign</button>
+            <button type="button" class = "button" id="skipTurn">Skip Turn</button>
+            <button type="button" class = "button" id="resignButton">Resign</button>
           </div>
           {{/if}}
         {{/if}}  
@@ -67,14 +53,18 @@
 </template>
 
 <!-- Subtemplates -->
-<template name="gameCanvas">
+<template name="othelloGameTemplate">
   <div class="gameView">
-    <div id="canvasesdiv"> 
-      <canvas id="canvas1" width="420px" height="420px" ></canvas>
-      <canvas id="canvas3" width="420px" height="420px" ></canvas>
-      <canvas id="canvas2" width="420px" height="420px" ></canvas>
-    </div>
+    {{>gameCanvasTemplate}}
     {{>chatBoxTemplate}}
+  </div>
+</template>
+
+<template name="gameCanvasTemplate">
+  <div id="canvasesdiv"> 
+    <canvas id="canvas1" width="420px" height="420px" ></canvas>
+    <canvas id="canvas3" width="420px" height="420px" ></canvas>
+    <canvas id="canvas2" width="420px" height="420px" ></canvas>
   </div>
 </template>
 
@@ -106,16 +96,19 @@
   <div id="matchList">
     <div id="matchListHeader">
       <h4 class="lobbyHeader"> Your games: {{active}} </h4>
-        <!-- <hr> -->
     </div>
     <div id="matchListScroll">
       {{#each matchData}}
       <div id={{_id}} class="matchBoxItem">
         <p class={{#if thisPlayerTurn}}floatLeft highlightTurn{{else}}
             floatLeft{{/if}}>
-          <p class="inline">White: {{#if playerWhite}}<strong>{{playerWhite}} </strong>{{else}} -Open Slot- {{/if}}</p>
+          <p class="inline">
+            White: {{#if playerWhite}}<strong>{{playerWhite}} </strong>{{else}} -Open Slot- {{/if}}
+          </p>
           <br>
-          <p class="inline">Black: {{#if playerBlack}}<strong>{{playerBlack}}</strong>{{else}} -Open Slot- {{/if}}</p>
+          <p class="inline">
+            Black: {{#if playerBlack}}<strong>{{playerBlack}}</strong>{{else}} -Open Slot- {{/if}}
+          </p>
         </p>
         <p class="floatRight">
           Score: {{whiteScore}} <br>
@@ -128,14 +121,16 @@
             Waiting on opponent.
           {{/if}}
           <br>
-          <span class="lastUpdated">Last updated: {{livestamp lastUpdated}} </span>
+          <span class="lastUpdated">
+            Last updated: {{livestamp lastUpdated}}
+          </span>
         </p>
       </div>
       {{/each}}
     </div>
   </div>
     {{else}}
-        {{>loading}}
+      {{>loading}}
     {{/if}}
 </template>
 
@@ -158,21 +153,21 @@
   <div id="loginPageDiv">
     <h2>Welcome to Othello!</h2>
     <h3>Please create an account or sign in to begin playing.</h3>
+    <br>
+    <hr>
     <h4>History</h4>
     <p class="loginPage">
       Reversi is a strategy board game for two players, played on an 8×8 uncheckered board. There are sixty-four identical game pieces called disks (often spelled "discs"), which are light on one side and dark on the other. Players take turns placing disks on the board with their assigned color facing up. During a play, any disks of the opponent's color that are in a straight line and bounded by the disk just placed and another disk of the current player's color are turned over to the current player's color.
-    </p>
-    <p class="loginPage">
+      <br><br>
       The object of the game is to have the majority of disks turned to display your color when the last playable empty square is filled.
     </p>
     <h4>Rules</h4>
     <p class="loginPage">
       Each of the disks' two sides corresponds to one player; they are referred to here as light and dark after the sides of Othello pieces, but any counters with distinctive faces are suitable. The game may for example be played with a chessboard and Scrabble pieces, with one player letters and the other backs.
-    </p>
-    <p class="loginPage">
+      <br><br>
       Players take alternate turns. If one player can not make a valid move, play passes back to the other player. When neither player can move, the game ends. This occurs when the grid has filled up or when neither player can legally place a piece in any of the remaining squares. This means the game may end before the grid is completely filled. This possibility may occur because one player has no pieces remaining on the board in that player's color. In over-the-board play this is generally scored as if the board were full (64–0).
     </p>
-  <a target="_blank" href="https://en.wikipedia.org/wiki/Reversi">History and Rules provided by Wikipedia.org</a>
+    <a target="_blank" href="https://en.wikipedia.org/wiki/Reversi">History and Rules provided by Wikipedia.org</a>
   </div>
 </template>
 
@@ -197,21 +192,9 @@
   {{/if}}
 </template>
 
-<!-- <template name="playerDesignation">
-  {{#if Template.subscriptionsReady}}
-  <div id="playerDesignation">
-    {{#with playerDesignation}}
-    White Player: <p>{{#if playerWhite}}{{playerWhite}}{{else}}-Open Slot-{{/if}}</p>
-     <em>vs.</em>
-    Black Player: <p>{{#if playerBlack}}{{playerBlack}}{{else}}-Open Slot-{{/if}}</p>
-    {{/with}}
-    </div>
-  {{/if}}
-</template>
- -->
 <template name="input">
   <form class="message-input" onsubmit="return false">
-  <input type="text" id="message" placeholder="Type to chat here" autocomplete="off">
+  <input type="text" id="message" placeholder="Chat with your opponent" autocomplete="off">
   </form>
 </template>
 

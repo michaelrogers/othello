@@ -1,8 +1,9 @@
 
 /*-------------------General------------------*/
 * {
-    border-spacing: border-box;
+    /*box-sizing: border-box;*/
 }
+
 body {
     background-image: linear-gradient(170deg, rgba(161, 157, 162, 0.68), #918e82 100%);
 
@@ -129,6 +130,11 @@ div#login-buttons {
     padding-bottom: 12px;
     margin: 0;
 }
+
+#lobby.button, #joinButton.button {
+    margin-top: 15px;
+}
+
 
 #matchList {
     min-width: 375px;
@@ -352,7 +358,7 @@ hr {
     font-size: 16px;
     font-family: "Segoe UI", Tahoma, Helvetica;
     cursor: pointer;
-    margin: 4px 2px;
+    margin: 12px 2px;
     padding: 6px 15px;
     border-radius: 3px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -378,7 +384,7 @@ p#messages {
     margin-left: 2%;
     display: inline;
     float: left;
-    /*    background: lightgrey; */
+    max-width: 235px;
 }
 
 .inlineButtons {
@@ -387,32 +393,13 @@ p#messages {
         vertical-align: middle;
 }   
 
-/*#turn {
-    display: inline;
-    }
-
- #playerChoice {
-    float: right;
-    padding-right: 45px;
-    font-size: 16px;
-
-    }*/
-
-
-/*span {
-    margin: 0;
-    padding: 0;
-    display: inline;
-    white-space: nowrap;
-    }*/
-
 div#informationLine {
     width: auto;
     height: 47px;
 }
 
 div#playerDesignation {
-    margin: .9%;
+    margin: 1.3%;
     float: left;
     display: inline-block;
     margin-left: 2.5%;
