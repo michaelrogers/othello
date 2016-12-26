@@ -34,11 +34,11 @@ if (Meteor.isClient) {
     }
   }
 
-  function gameInit(){ //Declaring this function to be globally accessible
+  function gameInit(){ //Function is exported as a module
     // document.addEventListener("DOMContentLoaded", () => {
-    $(document).ready(() => {
+    $(document).ready(() => { //DOMContentLoaded will not fire if already loaded
       if (debug) console.count("gameInit");
-      messageElement = document.getElementById('messages');
+      messageElement = document.getElementById('messages');``
       document.title = "Othello";
       currentGameObject = {};
       notBoardReset = true;
@@ -161,7 +161,6 @@ if (Meteor.isClient) {
   }
  
   function clearArray () {
-    console.log(boardPosition)
     if (boardPosition) {
       boardPosition.map((_, yCoordinate) => {
         boardPosition[yCoordinate].map((value, xCoordinate) => {
@@ -175,7 +174,7 @@ if (Meteor.isClient) {
   }
 
   function flippingLogTextAnimation () { 
-    var messages = messageElement.innerHTML;
+    var messages = messageElement;
     if (messages.innerHTML == "Flipping.....") messages.innerHTML = "Flipping..";
     else {
       var flippingTextValue = messages.innerHTML;
@@ -257,10 +256,9 @@ if (Meteor.isClient) {
       }
     }
     if (playerColorSelection == playerTurn) messages = "Your move!";
-      else messages = "Waiting on your opponent to play.";
+    else messages = "Waiting on your opponent to play.";
     
     //-----Write messages to DOM----
-    var messageElement = messageElement;
     if (messageElement != null) messageElement.innerHTML = messages;
     var turnText = document.getElementById("turn");
     if (turnText != null) turnText.innerHTML = playerText;
@@ -284,41 +282,32 @@ if (Meteor.isClient) {
     var blackScoreValue = document.getElementById("blackScoreValue");
 
     if (whiteScoreValue !== null && blackScoreValue !== null){
+      
       if (whiteScore + blackScore <= 64){
         gameOn = true;
         whiteScoreValue.innerHTML = whiteScore;
         blackScoreValue.innerHTML = blackScore;
       }
-      if (whiteScore + blackScore == 64 && whiteScore > blackScore) {
+      if (whiteScore + blackScore == 64) {
+          clickInputAccepted = false;
+          gameOn = false;
+          whiteScoreValue.innerHTML = whiteScore;
+          blackScoreValue.innerHTML = blackScore;
+//Switch for messaging
+        if (whiteScore > blackScore) {         
+          messageElement.innerHTML = `White player wins with ${whiteScore} pieces!`;
+        } else if (blackScore > whiteScore) {
+          messageElement.innerHTML = `Black player wins with ${blackScore} pieces!`;
+        } else if (blackScore == whiteScore) {
+          messageElement.innerHTML = "Draw! How unusual!";
+        }
+      } else if ((blackScore == 0 || whiteScore == 0) && (whiteScore > 2 || blackScore > 2)) {
         clickInputAccepted = false;
         gameOn = false;
-        messageElement.innerHTML = `White player wins with ${whiteScore} pieces!`;
-        whiteScoreValue.innerHTML = whiteScore;
-        blackScoreValue.innerHTML = blackScore;
-      } else if (whiteScore + blackScore == 64 && blackScore > whiteScore) {
-        clickInputAccepted = false;
-        gameOn = false;
-        messageElement.innerHTML = `Black player wins with ${blackScore} pieces!`;
-        whiteScoreValue.innerHTML = whiteScore;
-        blackScoreValue.innerHTML = blackScore;
-      } else if (whiteScore + blackScore == 64 && blackScore == whiteScore) {
-        clickInputAccepted = false;
-        gameOn = false;
-        messageElement.innerHTML = "Draw! How unusual!";
-        // turnText.innerHTML = "Game over!";
-      } else if (blackScore == 0 && whiteScore > 2) {
-        clickInputAccepted = false;
-        gameOn = false;
-        messageElement.innerHTML = `White player wins with ${whiteScore} pieces!`;
-        // turnText.innerHTML = "Game over!";
-      } else if (whiteScore == 0 && blackScore > 2) {
-        clickInputAccepted = false;
-        gameOn = false;
-        messageElement.innerHTML = `Black player wins with ${blackScore} pieces!`;
-        // turnText.innerHTML = "Game over!";
+        messageElement.innerHTML = whiteScore > 0 ? `White player wins with ${whiteScore} pieces!` : `Black player wins with ${blackScore} pieces!`;
       }
-      
-        if (gameOn == false) endGame(false);
+
+      if (gameOn == false) endGame(false);
     }
   }
 
@@ -523,7 +512,7 @@ if (Meteor.isClient) {
         if (pastGameData['turnPieceData'] !== undefined) {
           pastGameObject = pastGameData['turnPieceData'];
         }
-        // if (boardPosition[4][4] == null) readCollection(pastGameObject); //Todo: rework as a true comprehensive comparison instead of a spot check
+        if (boardPosition[4][4] == null) readCollection(pastGameObject); //Todo: rework as a true comprehensive comparison instead of a spot check
         currentGameData = res['currentTurnData'];
         if (debug) console.log(currentGameData);
         if (currentGameData !== undefined) {
@@ -543,17 +532,7 @@ if (Meteor.isClient) {
     else console.log('No gameId');
   }
 
-  function updateGameData (currentGameId, currentGameObject) {
-    Meteor.call('othello.updateGameData', {
-      gameId: currentGameId,
-      changedGameData: currentGameObject,
-      currentPlayerTurn: playerColorSelection,
-      updatedBy: Meteor.user().username
-    }, (err, res) => {
-      if (err) alert(err);
-      else if (debug) console.count("updateGameData");
-    });
-  }
+ 
 
   function diffCollections (pastGameObject, currentGameObject, thisUserTurn) {
     console.log('diffCollections', pastGameObject, currentGameObject);
@@ -603,6 +582,18 @@ if (Meteor.isClient) {
     }
   }
 
+   function updateGameData (currentGameId, currentGameObject) {
+    Meteor.call('othello.updateGameData', {
+      gameId: currentGameId,
+      changedGameData: currentGameObject,
+      currentPlayerTurn: playerColorSelection,
+      updatedBy: Meteor.user().username
+    }, (err, res) => {
+      if (err) alert(err);
+      else if (debug) console.count("updateGameData");
+    });
+  }
+
  document.addEventListener('DOMContentLoaded', () => setSession(sessionStorage.getItem("gameId")));
 
 
@@ -610,32 +601,3 @@ if (Meteor.isClient) {
   export {gameInit}; //Export the init function to be called by templates.js to control single page session
 } //End isClient
 
-
-
-//FOR USE LATER FOR CANVAS CHART
-//Code to createCanvasChart for eventual graphing of playerPieceCount
-// function createCanvasChart () {
-// //grid width and height
-// var bw = 400;
-// var bh = 40;
-// //padding around grid
-// //var p = 10;
-// //size of canvas
-// var cw = bw + (p * 2);
-// var ch = bh;
-
-// var canvas = $('<canvas/>').attr({
-//   width: cw,
-//   height: ch,
-//   id: "barChart"
-// }).appendTo("#boardChart");
-// }
-
-// function respondCanvas (){
-// //layer 1 = board with lines
-// layer1 = document.getElementById("canvas1");
-// context = layer1.getContext("2d");
-// //layer 2 = pieces
-// layer2 = document.getElementById("canvas2");
-// contextPieces = layer2.getContext("2d");
-// }
