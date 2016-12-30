@@ -1,25 +1,45 @@
 <head>
   <title>Othello</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400" rel="stylesheet">
+
 </head>
 
 <body>
-  <div class="container">
+  <nav class="loginHeader">
+    <div class="container">{{> loginButtons}}</div>
+  </nav>
+  <div class="container pageWrapper">
     <header>
       <h1>Othello</h1>
-      <div id="login-buttons">
-        <div>{{> loginButtons}}</div>
+       <div id="login-buttons">
         <p>
           {{>buttons}}
         </p>
       </div>
+      
       {{>playerTurn}}
     </header>
     <section>
       {{>messaging}}
       {{>sessionId}}
-      <!--  <div class="footerElement">Created by <a href="http://github.com/michaelrogers" target="_blank">Michael Rogers</a></div> -->
+      <!--  <div class="footerElement"</div> -->
     </section>
+     <footer class="footer">
+        <div class="footerTop">
+          <div class="container">
+            Copyright &copy; Othello 2016. All rights reserved.
+          </div>
+        </div>
+        <div class="footerBottom">
+          <div class="container">
+            <span class="floatRight">
+              Created by <a href="http://github.com/michaelrogers" target="_blank">Michael Rogers</a>
+            </span>
+          </div>
+        </div>
+    </footer>
+  
   </div>
 </body>
 

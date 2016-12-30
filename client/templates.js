@@ -19,7 +19,16 @@ if (Meteor.isClient) {
   				return currentGame['playerWhite'] !== null && currentGame['playerBlack'] !== null;
 		    }
   	   }
-      }
+      },
+		
+	});
+
+	Template.chatMessagesTemplate.helpers({
+		isThisUser: (username) => {
+			console.log(username, Meteor.user().username)
+			return username == Meteor.user().username
+
+		}
 	});
   
   Template.opponentUsername.helpers({
@@ -84,13 +93,9 @@ if (Meteor.isClient) {
 			});
 
 //onRendered template to call the respective initialization functions for each screen
-  Template.othelloGameTemplate.onRendered(function(){
-    gameInit();
-  	});
+  Template.othelloGameTemplate.onRendered(gameInit);
 
-  Template.lobby.onRendered(function(){
-  	lobbyInit();
-	});
+  Template.lobby.onRendered(lobbyInit);
 
   Template.playerDesignation.helpers({
   	playerDesignation: function(){

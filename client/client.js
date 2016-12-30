@@ -20,6 +20,7 @@ if (Meteor.isClient) {
   var playerTurn, playerColorSelection;
   const intervalDelayValue = 500;
   let messageElement;
+  let timeoutResize;
       
   function setSession(gameId) {
     if (debug) console.count("client setSession");
@@ -34,31 +35,6 @@ if (Meteor.isClient) {
     }
   }
 
-  function gameInit(){ //Function is exported as a module
-    // document.addEventListener("DOMContentLoaded", () => {
-    $(document).ready(() => { //DOMContentLoaded will not fire if already loaded
-      if (debug) console.count("gameInit");
-      messageElement = document.getElementById('messages');``
-      document.title = "Othello";
-      currentGameObject = {};
-      notBoardReset = true;
-      intSet = null;
-      buttonListeners();
-      getCanvasContext();
-      resizingDeclarations();
-      setInitialPosition();
-      globalDebug();
-      // $(window).resize(function(){resizingDeclarations});
-      document.addEventListener('keypress', () => {
-        let message = document.getElementById("message");
-        if (message) message.focus();
-      });
-      $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
-      whatPlayerAmI(Session.get("gameId"));
-      pieceObserver();
-      returnGameDocument();
-    });
-  }
 
   function pieceObserver(){
     if (sessionStorage.getItem('gameId') !== null){
@@ -118,10 +94,21 @@ if (Meteor.isClient) {
   }
 
   function resizingDeclarations(){
-    radius = 20;
-    padding = 10;
-    cellWidth = 50; //Used for drawing the pieces
-    drawGrid();
+    console.count('resize');
+    var canvasArray = Array.from(document.querySelectorAll('canvas'));
+    var canvasWidth = 620; //canvasArray[0].width;
+    canvasArray.map((x) => {
+      x.width = canvasWidth;
+      x.height = canvasWidth;
+    });
+    document.getElementById('canvasesdiv').style.height = `${canvasWidth}px`;
+    padding = canvasWidth * (10/420);
+    var boardWidth = parseInt(canvasWidth) - padding * 2;
+    cellWidth = boardWidth / 8 ; //Used for drawing the pieces
+    radius = cellWidth * 0.4;
+    console.log(boardWidth, cellWidth)
+    drawGrid(boardWidth, boardWidth, padding);
+    readCollection (currentGameObject);
   }
 
   function setInitialPosition (){
@@ -138,20 +125,19 @@ if (Meteor.isClient) {
     boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
   }
 
-  function drawGrid () {
+  function drawGrid (boardWidth, boardHeight, padding) {
     //grid width and height
-    var boardWidth = 400;
-    var boardHeight = 400;
-    padding = 10; //padding around grid
+ 
+    // padding = 10; //padding around grid
     //draw vertical lines of grid
     linePadding = 0.5;
     context.beginPath();
-    for (var x = 0; x <= boardWidth; x += 50) {
+    for (var x = 0; x <= boardWidth; x += boardWidth/8) {
       context.moveTo(linePadding + x + padding, padding);
       context.lineTo(linePadding + x + padding, boardHeight + padding);
     }
     //draw horizontal lines of grid
-    for (var x = 0; x <= boardHeight; x += 50) {
+    for (var x = 0; x <= boardHeight; x += boardHeight/8) {
       context.moveTo(padding, linePadding + x + padding);
       context.lineTo(boardWidth + padding, linePadding + x + padding);
     }
@@ -293,7 +279,6 @@ if (Meteor.isClient) {
           gameOn = false;
           whiteScoreValue.innerHTML = whiteScore;
           blackScoreValue.innerHTML = blackScore;
-//Switch for messaging
         if (whiteScore > blackScore) {         
           messageElement.innerHTML = `White player wins with ${whiteScore} pieces!`;
         } else if (blackScore > whiteScore) {
@@ -423,12 +408,12 @@ if (Meteor.isClient) {
       contextPieces.strokeStyle = '#b3b3b3'; //'#E0E0E0'
     
     } else if (pieceColor == null) { //Clear existing piece and exit function
-      contextPieces.clearRect(centerX - 25, centerY - 25, 50, 50);
+      contextPieces.clearRect(centerX - cellWidth/2, centerY - cellWidth/2, cellWidth, cellWidth);
       return false;
     }
 
     //draw circle with gradient fill
-    contextPieces.clearRect(centerX - 25, centerY - 25, 50, 50);
+    contextPieces.clearRect(centerX - cellWidth/2, centerY - cellWidth/2, cellWidth, cellWidth);
     contextPieces.beginPath();
     contextPieces.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
     contextPieces.fillStyle = pieceGradient;
@@ -475,19 +460,19 @@ if (Meteor.isClient) {
           markerGradient.addColorStop(1, "rgba(125,0,0,0.3)");
         }
     }
-    contextMarkers.clearRect(centerX - 25, centerY - 25, 50, 50);
+    contextMarkers.clearRect(centerX - cellWidth/2, centerY - cellWidth/2, cellWidth, cellWidth);
     var bufferValue = 0;
     contextMarkers.fillStyle = markerGradient;
     contextMarkers.imageSmoothingEnabled = false;
     contextMarkers.fillRect(
-      centerX - 25 + bufferValue + linePadding,
-      centerY - 25 + bufferValue + linePadding,
-      50 - (bufferValue * 2),
-      50 - (bufferValue * 2)
+      centerX - cellWidth/2 + bufferValue + linePadding,
+      centerY - cellWidth/2 + bufferValue + linePadding,
+      cellWidth - (bufferValue * 2),
+      cellWidth - (bufferValue * 2)
     );
   }
 
-  function clearMarkerCanvas () { contextMarkers.clearRect(0, 0, 410, 410);}
+  function clearMarkerCanvas () { contextMarkers.clearRect(0, 0, cellWidth*8+padding*2, cellWidth*8+padding*2);}
   
   function globalDebug () {  //Accessible through the console for debugging purposes
     function debugMode () {
@@ -591,6 +576,40 @@ if (Meteor.isClient) {
     }, (err, res) => {
       if (err) alert(err);
       else if (debug) console.count("updateGameData");
+    });
+  }
+
+  const timeoutResizeEvent = () => {
+		clearTimeout(timeoutResize);
+		timeoutResize = setTimeout(resizingDeclarations, 200);
+	}
+
+
+  function gameInit(){ //Function is exported as a module
+      // document.addEventListener("DOMContentLoaded", () => {
+      $(document).ready(() => { //DOMContentLoaded will not fire if already loaded
+      getCanvasContext();
+      window.addEventListener('resize', timeoutResizeEvent);
+      
+      if (debug) console.count("gameInit");
+      messageElement = document.getElementById('messages');``
+      document.title = "Othello";
+      currentGameObject = {};
+      notBoardReset = true;
+      intSet = null;
+      buttonListeners();
+      resizingDeclarations();
+      setInitialPosition();
+      globalDebug();
+    
+      document.addEventListener('keypress', () => {
+        let message = document.getElementById("message");
+        if (message) message.focus();
+      });
+      $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
+      whatPlayerAmI(Session.get("gameId"));
+      pieceObserver();
+      returnGameDocument();
     });
   }
 
