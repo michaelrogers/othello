@@ -10,7 +10,7 @@ if (Meteor.isClient) {
   var flipCoordinate_x = [], flipCoordinate_y = []; //Temporary coordinate array for holding pieces that need to be flipped
   var currentGameObject = {};
   //-----Canvas-------------
-  var contextPieces, contextMarkers;
+  var context, contextPieces, contextMarkers;
 
   //-----------States ------
   var intSet; //Used in interval delay function
@@ -93,21 +93,23 @@ if (Meteor.isClient) {
     }
   }
 
-  function resizingDeclarations(){
-    console.count('resize');
+  function resizingDeclarations() {
+    var canvasesdiv = document.querySelector('#canvasesdiv');
     var canvasArray = Array.from(document.querySelectorAll('canvas'));
-    var canvasWidth = 620; //canvasArray[0].width;
+    var canvasWidth = canvasesdiv.offsetWidth;
+    console.log(canvasesdiv.offsetWidth, canvasWidth)
     canvasArray.map((x) => {
       x.width = canvasWidth;
       x.height = canvasWidth;
     });
-    document.getElementById('canvasesdiv').style.height = `${canvasWidth}px`;
+    canvasesdiv.style.height = `${canvasWidth}px`;
+    document.getElementById('playerDesignation').style.width = `${canvasWidth}px`;
     padding = canvasWidth * (10/420);
-    var boardWidth = parseInt(canvasWidth) - padding * 2;
+    var boardWidth = canvasWidth - padding * 2;
     cellWidth = boardWidth / 8 ; //Used for drawing the pieces
     radius = cellWidth * 0.4;
-    console.log(boardWidth, cellWidth)
-    drawGrid(boardWidth, boardWidth, padding);
+    console.log('boardWidth', boardWidth, 'cellWidth', cellWidth);
+    drawGrid(Math.round(boardWidth), Math.round(boardWidth), Math.round(padding));
     readCollection (currentGameObject);
   }
 
@@ -125,25 +127,38 @@ if (Meteor.isClient) {
     boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
   }
 
-  function drawGrid (boardWidth, boardHeight, padding) {
+  function drawGrid (boardWidth, boardHeight, boardPadding) {
     //grid width and height
- 
+    console.count('drawGrid')
+    // Array.from(arguments).map((x) => {
+    //   console.log(x);
+    //   Math.round(x);
+    //   console.log(x)
+    // });
+    // var boardWidth = Math.Round(boardWidth);
+    // var boardWidth = Math.Round(boardWidth);
+    
+    console.log({boardWidth, boardHeight, boardPadding})
+    if (boardWidth > 0 && boardHeight > 0) {
     // padding = 10; //padding around grid
     //draw vertical lines of grid
+    context.clearRect(0, 0, layer1.width, layer1.height);
+    
     linePadding = 0.5;
     context.beginPath();
-    for (var x = 0; x <= boardWidth; x += boardWidth/8) {
-      context.moveTo(linePadding + x + padding, padding);
-      context.lineTo(linePadding + x + padding, boardHeight + padding);
+    for (var x = 0; x <= boardWidth; x += (boardWidth/8)) {
+      context.moveTo(linePadding + x + boardPadding, boardPadding);
+      context.lineTo(linePadding + x + boardPadding, boardHeight + boardPadding);
     }
     //draw horizontal lines of grid
-    for (var x = 0; x <= boardHeight; x += boardHeight/8) {
-      context.moveTo(padding, linePadding + x + padding);
-      context.lineTo(boardWidth + padding, linePadding + x + padding);
+    for (var x = 0; x <= boardHeight; x += (boardHeight/8)) {
+      context.moveTo(boardPadding, linePadding + x + boardPadding);
+      context.lineTo(boardWidth + boardPadding, linePadding + x + boardPadding);
     }
     context.strokeStyle = "#323232";
     context.lineWidth = 1;
     context.stroke();
+    }
   }
  
   function clearArray () {
