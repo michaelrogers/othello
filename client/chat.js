@@ -20,7 +20,7 @@ if (Meteor.isClient) {
         if (message.value.trim() != '') {
           var gameId = Session.get('gameId');
           if (gameId == undefined){return false;}
-            if (Meteor.user()){
+            if (Meteor.user()) {
               Meteor.call('othello.chatMessageInsert', {gameId: gameId, username: Meteor.user().username, message: message.value.trim()} , (err, res) => {
                 if (err) {console.log(err); sessionStorage.clear(); Session.clear();}
                 else {
