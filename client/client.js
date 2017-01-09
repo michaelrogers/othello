@@ -8,9 +8,9 @@ if (Meteor.isClient) {
   //-----Local gamePiece Data -----
   var boardPosition = []; //Holds 2d array of piece data
   var flipCoordinate_x = [], flipCoordinate_y = []; //Temporary coordinate array for holding pieces that need to be flipped
-  var currentGameObject = {};
+  var currentGameArray = [];
   //-----Canvas-------------
-  var contextPieces, contextMarkers;
+  var context, contextPieces, contextMarkers;
 
   //-----------States ------
   var intSet; //Used in interval delay function
@@ -20,6 +20,7 @@ if (Meteor.isClient) {
   var playerTurn, playerColorSelection;
   const intervalDelayValue = 500;
   let messageElement;
+  let timeoutResize;
       
   function setSession(gameId) {
     if (debug) console.count("client setSession");
@@ -34,31 +35,6 @@ if (Meteor.isClient) {
     }
   }
 
-  function gameInit(){ //Function is exported as a module
-    // document.addEventListener("DOMContentLoaded", () => {
-    $(document).ready(() => { //DOMContentLoaded will not fire if already loaded
-      if (debug) console.count("gameInit");
-      messageElement = document.getElementById('messages');``
-      document.title = "Othello";
-      currentGameObject = {};
-      notBoardReset = true;
-      intSet = null;
-      buttonListeners();
-      getCanvasContext();
-      resizingDeclarations();
-      setInitialPosition();
-      globalDebug();
-      // $(window).resize(function(){resizingDeclarations});
-      document.addEventListener('keypress', () => {
-        let message = document.getElementById("message");
-        if (message) message.focus();
-      });
-      $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
-      whatPlayerAmI(Session.get("gameId"));
-      pieceObserver();
-      returnGameDocument();
-    });
-  }
 
   function pieceObserver(){
     if (sessionStorage.getItem('gameId') !== null){
@@ -85,7 +61,7 @@ if (Meteor.isClient) {
 
   function buttonListeners () {
     document.getElementById("skipTurn").addEventListener("click", () => {
-      if (clickInputAccepted) updateGameData(Session.get("gameId"), currentGameObject);
+      if (clickInputAccepted) updateGameData(Session.get("gameId"), currentGameArray);
     });
     document.getElementById('lobby').addEventListener("click", () => setSession(null));
     document.getElementById('resignButton').addEventListener("click", resignationButtonConfirmation);
@@ -117,11 +93,24 @@ if (Meteor.isClient) {
     }
   }
 
-  function resizingDeclarations(){
-    radius = 20;
-    padding = 10;
-    cellWidth = 50; //Used for drawing the pieces
-    drawGrid();
+  function resizingDeclarations() {
+    var canvasesdiv = document.querySelector('#canvasesdiv');
+    var canvasArray = Array.from(document.querySelectorAll('canvas'));
+    var canvasWidth = canvasesdiv.offsetWidth;
+    console.log(canvasesdiv.offsetWidth, canvasWidth)
+    canvasArray.map((x) => {
+      x.width = canvasWidth;
+      x.height = canvasWidth;
+    });
+    canvasesdiv.style.height = `${canvasWidth}px`;
+    document.getElementById('playerDesignation').style.width = `${canvasWidth}px`;
+    padding = canvasWidth * (10/420);
+    var boardWidth = canvasWidth - padding * 2;
+    cellWidth = boardWidth / 8 ; //Used for drawing the pieces
+    radius = cellWidth * 0.4;
+    console.log('boardWidth', boardWidth, 'cellWidth', cellWidth);
+    drawGrid(Math.round(boardWidth), Math.round(boardWidth), Math.round(padding));
+    readCollection (currentGameArray);
   }
 
   function setInitialPosition (){
@@ -138,26 +127,63 @@ if (Meteor.isClient) {
     boardPosition = [row0,row1,row2,row3,row4,row5,row6,row7];
   }
 
-  function drawGrid () {
+  function drawGrid (boardWidth, boardHeight, boardPadding) {
     //grid width and height
-    var boardWidth = 400;
-    var boardHeight = 400;
-    padding = 10; //padding around grid
+    console.count('drawGrid')
+    // Array.from(arguments).map((x) => {
+    //   console.log(x);
+    //   Math.round(x);
+    //   console.log(x)
+    // });
+    // var boardWidth = Math.Round(boardWidth);
+    // var boardWidth = Math.Round(boardWidth);
+    
+
+    console.log({boardWidth, boardHeight, boardPadding})
+    if (boardWidth > 0 && boardHeight > 0) {
+    // padding = 10; //padding around grid
     //draw vertical lines of grid
+    context.clearRect(0, 0, layer1.width, layer1.height);
+    
     linePadding = 0.5;
     context.beginPath();
-    for (var x = 0; x <= boardWidth; x += 50) {
-      context.moveTo(linePadding + x + padding, padding);
-      context.lineTo(linePadding + x + padding, boardHeight + padding);
+    for (var x = 0; x <= boardWidth; x += (boardWidth/8)) {
+      context.moveTo(linePadding + x + boardPadding, boardPadding);
+      context.lineTo(linePadding + x + boardPadding, boardHeight + boardPadding);
     }
     //draw horizontal lines of grid
-    for (var x = 0; x <= boardHeight; x += 50) {
-      context.moveTo(padding, linePadding + x + padding);
-      context.lineTo(boardWidth + padding, linePadding + x + padding);
+    for (var x = 0; x <= boardHeight; x += (boardHeight/8)) {
+      context.moveTo(boardPadding, linePadding + x + boardPadding);
+      context.lineTo(boardWidth + boardPadding, linePadding + x + boardPadding);
     }
+
+    // var dotMarkerArray = [
+    //   {x: 2, y:2},
+    //   {x: 6, y:2},
+    //   {x: 2, y:6},
+    //   {x: 6, y:6},
+    // ];
+
+    // dotMarkerArray.map((c) => {
+    //   context.moveTo(
+    //     c.x * (boardWidth/8) + boardPadding,
+    //     c.y * (boardWidth/8) + boardPadding,
+    //     )
+    //   context.arc(
+    //     c.x * (boardWidth/8) + boardPadding,
+    //     c.y * (boardWidth/8) + boardPadding,
+    //     2,
+    //     0,
+    //     2 * Math.PI,
+    //     false)
+    //   context.fillStyle = "#323232";
+    // });
     context.strokeStyle = "#323232";
     context.lineWidth = 1;
+    contextPieces.fill();
+
     context.stroke();
+    }
   }
  
   function clearArray () {
@@ -293,7 +319,6 @@ if (Meteor.isClient) {
           gameOn = false;
           whiteScoreValue.innerHTML = whiteScore;
           blackScoreValue.innerHTML = blackScore;
-//Switch for messaging
         if (whiteScore > blackScore) {         
           messageElement.innerHTML = `White player wins with ${whiteScore} pieces!`;
         } else if (blackScore > whiteScore) {
@@ -315,7 +340,7 @@ if (Meteor.isClient) {
     var noOppositeMatch = true;
     //Comment this out to prevent manual piece flipping
     // if (boardPosition[cell_y][cell_x] == 1 | boardPosition[cell_y][cell_x] == 0){addPiece(cell_y,cell_x);return false;} //Bypass move validation when there is already a piece in the square
-    var validMoveGameObject = currentGameObject;
+    var validMoveGameObject = currentGameArray;
     if (validMoveGameObject[cell_y][cell_x] == null) { 
       clickInputAccepted = false;
       messageElement.innerHTML = "Flipping..";
@@ -335,11 +360,11 @@ if (Meteor.isClient) {
                 if (validMoveGameObject[cell_y + (dy * multFactor)][cell_x + (dx * multFactor)] == playerTurn){ //If the end piece is the same as the player's color, write to a temporary array
                   multFactor -= 1; //To account for not flipping the end piece because the end piece has the max multFactor
                   while (multFactor >= 1) { //Write the coordinates of pieces that need to be flipped to two arrays with an index
-                    currentGameObject[cell_y + (dy * multFactor)][cell_x + (dx * multFactor)] = playerTurn;
+                    currentGameArray[cell_y + (dy * multFactor)][cell_x + (dx * multFactor)] = playerTurn;
                     multFactor -= 1;
                   }
                   noOppositeMatch = false; //Indicated a match has been found
-                  currentGameObject[cell_y][cell_x] = playerTurn;
+                  currentGameArray[cell_y][cell_x] = playerTurn;
                   break;
                 }
                 else if (validMoveGameObject[cell_y + (dy * multFactor)][cell_x + (dx * multFactor)] == null) break; //Break the loop if it encounters an empty tile
@@ -358,7 +383,7 @@ if (Meteor.isClient) {
     }
     else if (noOppositeMatch == false){
       if (debug) console.log("validMove");
-      updateGameData(Session.get("gameId"), currentGameObject);
+      updateGameData(Session.get("gameId"), currentGameArray);
       // intervalDelay(intervalDelayValue); //Call the intervalDelay to start flipping the remaining pieces through the returnFlipCoordinate function
     }
   }//End validMove
@@ -377,8 +402,8 @@ if (Meteor.isClient) {
         drawMarker(cell_y, cell_x, false, playerColorSelection !== playerTurn);
     } else {
     // if(gameOn){clickInputAccepted = true;}
-    //Update Collection after all pieces are flipped and the currentGameObject has reflected all of the changes
-      // if(clientUpdated){ updateGameData(Session.get("gameId"), currentGameObject);}
+    //Update Collection after all pieces are flipped and the currentGameArray has reflected all of the changes
+      // if(clientUpdated){ updateGameData(Session.get("gameId"), currentGameArray);}
       // clientUpdated = false;
       clearInterval(intSet);
     }
@@ -388,9 +413,8 @@ if (Meteor.isClient) {
     var thisCell = boardPosition[cell_y][cell_x];
     if (thisCell == null) boardPosition[cell_y][cell_x] = playerTurn;
     //-----Called to flip the piece data-----------
-    else if (thisCell == 0)  boardPosition[cell_y][cell_x] = 1; //Used by returnFlipCoordinate function for flipping pieces
-    else if (thisCell == 1) boardPosition[cell_y][cell_x] = 0;//Used by returnFlipCoordinate function for flipping pieces
-    drawPieces(cell_y, cell_x, currentGameObject[cell_y][cell_x]);
+    else if (thisCell == 0 || thisCell == 1) boardPosition[cell_y][cell_x] = thisCell; //Used by returnFlipCoordinate function for flipping pieces
+    drawPieces(cell_y, cell_x, currentGameArray[cell_y][cell_x]);
     if (notBoardReset) calculateScore();
   }//End addPiece
 
@@ -423,27 +447,42 @@ if (Meteor.isClient) {
       contextPieces.strokeStyle = '#b3b3b3'; //'#E0E0E0'
     
     } else if (pieceColor == null) { //Clear existing piece and exit function
-      contextPieces.clearRect(centerX - 25, centerY - 25, 50, 50);
+      contextPieces.clearRect(
+        centerX - cellWidth/2,
+        centerY - cellWidth/2,
+        cellWidth,
+        cellWidth
+      );
       return false;
     }
 
     //draw circle with gradient fill
-    contextPieces.clearRect(centerX - 25, centerY - 25, 50, 50);
+    contextPieces.clearRect(
+      centerX - cellWidth/2,
+      centerY - cellWidth/2,
+      cellWidth, cellWidth
+    );
     contextPieces.beginPath();
-    contextPieces.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+    contextPieces.arc(
+      centerX,
+      centerY,
+      radius,
+      0,
+      2 * Math.PI,
+      false
+    );
     contextPieces.fillStyle = pieceGradient;
     contextPieces.lineWidth = 0.5;
     contextPieces.imageSmoothingEnabled = false;
-    if (debug) console.log("Draw x: " + xPosition + " y: " + yPosition);
     contextPieces.fill();
     contextPieces.stroke();
   }
 //initialPiece is a boolean value representing the piece played by the player
   function drawMarker (y, x, initialPiece, thisUserTurn) { 
-    var yCoordinate = padding + cellWidth * y;
-    var xCoordinate = padding + cellWidth * x;
-    var centerY = yCoordinate + cellWidth / 2;
-    var centerX = xCoordinate + cellWidth / 2;
+    var yCoordinate = Math.round(padding) + cellWidth * y;
+    var xCoordinate = Math.round(padding) + cellWidth * x;
+    var centerY = Math.round(yCoordinate + cellWidth / 2);
+    var centerX = Math.round(xCoordinate + cellWidth / 2);
     
     var markerGradient = contextMarkers.createRadialGradient(
       centerX,
@@ -456,38 +495,35 @@ if (Meteor.isClient) {
 
     if (thisUserTurn){
       if (initialPiece){
-        // var markerGradient = 'rgba(0,0,125,0.4)';
         markerGradient.addColorStop(0, "rgba(0,0,125,0.4)");
         markerGradient.addColorStop(1, "rgba(0,0,125,0.5)");
       } else {
-        // var markerGradient = 'rgba(0,0,125,0.2)';
         markerGradient.addColorStop(0, "rgba(0,0,125,0.2)");
         markerGradient.addColorStop(1, "rgba(0,0,125,0.3)");
       }
     } else {
         if (initialPiece){
-          // var markerGradient = 'rgba(0,0,125,0.4)';
           markerGradient.addColorStop(0, "rgba(125,0,0,0.4)");
           markerGradient.addColorStop(1, "rgba(125,0,0,0.5)");
         } else {
-          // var markerGradient = 'rgba(0,0,125,0.2)';
           markerGradient.addColorStop(0, "rgba(125,0,0,0.2)");
           markerGradient.addColorStop(1, "rgba(125,0,0,0.3)");
         }
     }
-    contextMarkers.clearRect(centerX - 25, centerY - 25, 50, 50);
+    contextMarkers.clearRect(centerX - cellWidth/2, centerY - cellWidth/2, cellWidth, cellWidth);
     var bufferValue = 0;
     contextMarkers.fillStyle = markerGradient;
     contextMarkers.imageSmoothingEnabled = false;
+    
     contextMarkers.fillRect(
-      centerX - 25 + bufferValue + linePadding,
-      centerY - 25 + bufferValue + linePadding,
-      50 - (bufferValue * 2),
-      50 - (bufferValue * 2)
+      centerX - cellWidth/2 + bufferValue + linePadding,
+      centerY - cellWidth/2 + bufferValue + linePadding,
+      cellWidth - (bufferValue * 2),
+      cellWidth - (bufferValue * 2)
     );
   }
 
-  function clearMarkerCanvas () { contextMarkers.clearRect(0, 0, 410, 410);}
+  function clearMarkerCanvas () { contextMarkers.clearRect(0, 0, cellWidth*8+padding*2, cellWidth*8+padding*2);}
   
   function globalDebug () {  //Accessible through the console for debugging purposes
     function debugMode () {
@@ -501,32 +537,28 @@ if (Meteor.isClient) {
   function returnGameDocument() {
     var currentGameData = {};
     if (Session.get("gameId") !== 'null' && Session.get("gameId") !== undefined) {
-      Meteor.call('othello.readGameData',
-       { gameId: Session.get("gameId")},
-       (err, res) => {
-    if (err) console.log(err);
-    else { 
-        console.log(res)
-        var pastGameData = res['pastTurnData'];
-        var pastGameObject = [];
-        if (pastGameData['turnPieceData'] !== undefined) {
-          pastGameObject = pastGameData['turnPieceData'];
-        }
-        if (boardPosition[4][4] == null) readCollection(pastGameObject); //Todo: rework as a true comprehensive comparison instead of a spot check
-        currentGameData = res['currentTurnData'];
-        if (debug) console.log(currentGameData);
-        if (currentGameData !== undefined) {
-          currentGameObject = currentGameData['turnPieceData'];
-          playerTurn = currentGameData['playerTurn'];
-          if (debug) console.log('Player Turn: '+ playerTurn);
-          var thisUserTurn = false;
-          if (currentGameData['updatedBy'] == Meteor.user().username) thisUserTurn = true;
-          diffCollections(pastGameObject, currentGameObject, thisUserTurn);
-          if (notBoardReset) calculateScore();
-          if (gameOn) switchTurn(); //console.count("switchTurn - returnGameDocument");
-        }
-        else console.log(`No match for gameId: ${Session.get("gameId")}`);
-        }
+      Meteor.call(
+        'othello.readGameData',
+        { gameId: Session.get("gameId")},
+        (err, res) => {
+          if (err) console.log(err);
+          else if (res) {
+              currentGameData = res['currentTurnData'];
+              var pastGameData = res['pastTurnData'];
+              var pastGameArray = [];
+              if (pastGameData['turnPieceData'] !== undefined) {
+                pastGameArray = pastGameData['turnPieceData'];
+              }
+              if (boardPosition[4][4] == null) readCollection(pastGameArray); //Todo: rework as a true comprehensive comparison instead of a spot check
+              if (currentGameData !== undefined) {
+                var thisUserTurn = currentGameData['updatedBy'] == Meteor.user().username ? true : false;
+                currentGameArray = currentGameData['turnPieceData'];
+                playerTurn = currentGameData['playerTurn'];
+                diffCollections(pastGameArray, currentGameArray, thisUserTurn);
+                if (notBoardReset) calculateScore();
+                if (gameOn) switchTurn();
+              } else console.log(`No match for gameId: ${Session.get("gameId")}`);
+          }
       });
     }//currentGame if statement
     else console.log('No gameId');
@@ -534,20 +566,20 @@ if (Meteor.isClient) {
 
  
 
-  function diffCollections (pastGameObject, currentGameObject, thisUserTurn) {
-    console.log('diffCollections', pastGameObject, currentGameObject);
+  function diffCollections (pastGameArray, currentGameArray, thisUserTurn) {
+    console.log('diffCollections', pastGameArray, currentGameArray);
 
-    if (pastGameObject.length < 1 || boardPosition == undefined) {
-      readCollection(currentGameObject);
+    if (pastGameArray.length < 1 || boardPosition == undefined) {
+      readCollection(currentGameArray);
     } else {
-      for (var y = 0; y < (currentGameObject).length; y++) {
-        for (var x = 0; x < (currentGameObject[y]).length; x++){
-          if (currentGameObject[y][x] !== null
-              && pastGameObject[y]
-              && currentGameObject[y][x] !== pastGameObject[y][x]) {
-              if (pastGameObject[y][x] == null) { //Identify the opponents piece that they placed
-                boardPosition[y][x] = currentGameObject[y][x];
-                drawPieces(y, x, currentGameObject[y][x]); //Add opponents selection first
+      for (var y = 0; y < (currentGameArray).length; y++) {
+        for (var x = 0; x < (currentGameArray[y]).length; x++){
+          if (currentGameArray[y][x] !== null
+              && pastGameArray[y]
+              && currentGameArray[y][x] !== pastGameArray[y][x]) {
+              if (pastGameArray[y][x] == null) { //Identify the opponents piece that they placed
+                boardPosition[y][x] = currentGameArray[y][x];
+                drawPieces(y, x, currentGameArray[y][x]); //Add opponents selection first
                 clearMarkerCanvas();
                 drawMarker(y, x, true, thisUserTurn);
               } else {
@@ -563,34 +595,70 @@ if (Meteor.isClient) {
     }
   }
 
-  function readCollection (gameObject) {
+  function readCollection (gameArray) {
     console.count('readCollection')
     clearMarkerCanvas();
     clearArray();
-
-    // Object.keys(gameObject).map((y, j) => {
-    //   Object.keys(gameObject[j]).map((x, i) => {
-    //     boardPosition[j][i] = x[i];
-    //     if (x !== null) drawPieces (j, i, x);
-    //   });
-    // });
-    for (var y = 0; y < (gameObject).length; y++) {
-      for (var x = 0; x < (gameObject[y]).length; x++) {
-        boardPosition[y][x] = gameObject[y][x];
-        if (x !== null) drawPieces (y, x, gameObject[y][x]);
-      }
+    console.log(gameArray)
+    if (gameArray) {
+      Array.from(gameArray).map((yArray, y) => {
+        yArray.map((cellValue, x) => {
+          boardPosition[y][x] = cellValue;
+          if (cellValue !== null) drawPieces (y, x, cellValue);
+        });
+      });
     }
+    // for (var y = 0; y < (gameArray).length; y++) {
+    //   for (var x = 0; x < (gameArray[y]).length; x++) {
+    //     boardPosition[y][x] = gameArray[y][x];
+    //     if (x !== null) drawPieces (y, x, gameArray[y][x]);
+    //   }
+    // }
   }
 
-   function updateGameData (currentGameId, currentGameObject) {
+   function updateGameData (currentGameId, currentGameArray) {
     Meteor.call('othello.updateGameData', {
       gameId: currentGameId,
-      changedGameData: currentGameObject,
+      changedGameData: currentGameArray,
       currentPlayerTurn: playerColorSelection,
       updatedBy: Meteor.user().username
     }, (err, res) => {
       if (err) alert(err);
       else if (debug) console.count("updateGameData");
+    });
+  }
+
+  const timeoutResizeEvent = () => {
+		clearTimeout(timeoutResize);
+		timeoutResize = setTimeout(resizingDeclarations, 200);
+	}
+
+
+  function gameInit(){ //Function is exported as a module
+      // document.addEventListener("DOMContentLoaded", () => {
+      $(document).ready(() => { //DOMContentLoaded will not fire if already loaded
+      getCanvasContext();
+      window.addEventListener('resize', timeoutResizeEvent);
+      
+      if (debug) console.count("gameInit");
+      messageElement = document.getElementById('messages');``
+      document.title = "Othello";
+      currentGameArray = {};
+      notBoardReset = true;
+      intSet = null;
+      buttonListeners();
+      resizingDeclarations();
+      setInitialPosition();
+      globalDebug();
+    
+      document.addEventListener('keypress', () => {
+        let message = document.getElementById("message");
+        if (message) message.focus();
+      });
+      $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'slow'); //Scroll to the chat end div on page load
+      whatPlayerAmI(Session.get("gameId"));
+      pieceObserver();
+      returnGameDocument();
     });
   }
 

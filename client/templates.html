@@ -11,13 +11,13 @@
     {{> loginPage}}
   {{/if}}  
 </template>
-
+<!-- Deprecated -->
 <template name="buttons">
   {{#if currentUser}}
     {{#if gameId}}
-    <button type="button" class = "button" id="lobby">Return to Lobby</button>
+    <!--was return to lobby button-->
     {{else}}
-    <button type="button" class = "button" id="joinButton">New game</button> 
+     <!--was new game button-->
     {{/if}}
   {{/if}}  
 </template>
@@ -38,10 +38,10 @@
     {{#if gameId}} 
     <div id="informationLine">
       {{>playerDesignation}}
-      <p id="messages">Welcome to Othello! To start, place the white piece first.</p>
         {{#if currentUser}}
           {{#if gameId}}
           <div class="inlineButtons">
+            <button type="button" class = "button" id="lobby">Return to Lobby</button>
             <button type="button" class = "button" id="skipTurn">Skip Turn</button>
             <button type="button" class = "button" id="resignButton">Resign</button>
           </div>
@@ -58,13 +58,20 @@
     {{>gameCanvasTemplate}}
     {{>chatBoxTemplate}}
   </div>
+  <div class="container">
+    <span id="messages">
+      Welcome to Othello! To start, place the white piece first.
+    </span>
+  </div>
+  
 </template>
 
 <template name="gameCanvasTemplate">
   <div id="canvasesdiv"> 
-    <canvas id="canvas1" width="420px" height="420px" ></canvas>
-    <canvas id="canvas3" width="420px" height="420px" ></canvas>
-    <canvas id="canvas2" width="420px" height="420px" ></canvas>
+    <canvas id="canvas1"></canvas>
+    <canvas id="canvas3"></canvas>
+    <canvas id="canvas2"></canvas>
+    <!--<div id="canvasPlaceholder"></div>-->
   </div>
 </template>
 
@@ -83,7 +90,7 @@
         {{>chatMessagesTemplate}}
         <div id ="chat-end"></div>
       </div>
-     <hr>
+      <hr>
       <div id ="chat-input">
         {{>input}}
       </div>
@@ -92,10 +99,12 @@
 
 <template name="lobby">
   {{#if Template.subscriptionsReady}}
-
   <div id="matchList">
     <div id="matchListHeader">
       <h4 class="lobbyHeader"> Your games: {{active}} </h4>
+      <button type="button" class="button floatRight" id="joinButton">
+        New game
+      </button>
     </div>
     <div id="matchListScroll">
       {{#each matchData}}
@@ -110,7 +119,7 @@
             Black: {{#if playerBlack}}<strong>{{playerBlack}}</strong>{{else}} -Open Slot- {{/if}}
           </p>
         </p>
-        <p class="floatRight">
+        <p class="floatRight lobbyRight">
           Score: {{whiteScore}} <br>
           Score: {{blackScore}}
         </p>
@@ -137,8 +146,11 @@
 <template name="chatMessagesTemplate">
   {{#if Template.subscriptionsReady}}
     {{#each messages}}
-      <strong>{{username}}:</strong> {{message}}
-      <br/>
+      <span class="{{#if isThisUser username}}inlineChatMessage text-align-right{{else}}inlineChatMessage{{/if}}">
+        <span class='{{#if isThisUser username}}messageBubble blueFill{{else}}messageBubble{{/if}}'>
+          {{message}}
+        </span>
+      </span>
     {{/each}}
   {{else}}
       {{>loading}}
@@ -161,12 +173,16 @@
       <br><br>
       The object of the game is to have the majority of disks turned to display your color when the last playable empty square is filled.
     </p>
+
     <h4>Rules</h4>
     <p class="loginPage">
       Each of the disks' two sides corresponds to one player; they are referred to here as light and dark after the sides of Othello pieces, but any counters with distinctive faces are suitable. The game may for example be played with a chessboard and Scrabble pieces, with one player letters and the other backs.
       <br><br>
       Players take alternate turns. If one player can not make a valid move, play passes back to the other player. When neither player can move, the game ends. This occurs when the grid has filled up or when neither player can legally place a piece in any of the remaining squares. This means the game may end before the grid is completely filled. This possibility may occur because one player has no pieces remaining on the board in that player's color. In over-the-board play this is generally scored as if the board were full (64–0).
     </p>
+    <br>
+    <hr>
+    <br>
     <a target="_blank" href="https://en.wikipedia.org/wiki/Reversi">History and Rules provided by Wikipedia.org</a>
   </div>
 </template>
@@ -199,6 +215,6 @@
 </template>
 
 <template name="loading">
-<p>Loading...</p>
+  <p>Loading...</p>
 </template>
 

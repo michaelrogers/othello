@@ -3,8 +3,6 @@ if (Meteor.isClient) {
     messages: function() {
         var gameId = Session.get('gameId');
         if (gameId !== undefined && gameId !== null){
-        // console.log('Chat gameId: '+ gameId);
-        // $('#chat-message').animate({ scrollTop: $('#chat-end').offset().top }, 'fast'); //Ascending order; newest messages on bottom
           return ChatMessages.find({gameId: gameId}, { sort: { time: 1}});
         }
         else { return [{username: "", message: "You are not connected to a game."}];}
@@ -19,11 +17,11 @@ if (Meteor.isClient) {
         else {return false;}
           // var name = 'Guest'; //Comment out after testing
         var message = document.getElementById('message');
-        if (message.value != '') {
+        if (message.value.trim() != '') {
           var gameId = Session.get('gameId');
           if (gameId == undefined){return false;}
-            if (Meteor.user()){
-              Meteor.call('othello.chatMessageInsert', {gameId: gameId, username: Meteor.user().username, message: message.value} , (err, res) => {
+            if (Meteor.user()) {
+              Meteor.call('othello.chatMessageInsert', {gameId: gameId, username: Meteor.user().username, message: message.value.trim()} , (err, res) => {
                 if (err) {console.log(err); sessionStorage.clear(); Session.clear();}
                 else {
                   message.value = ''; //Clear message element after insert
