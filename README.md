@@ -3,4 +3,4 @@ Othello is a single-page web application based on the game reversi/othello using
 
 The application is hosted at: http://othello.meteorapp.com
 
-[Othello](./Screenshot-Desktop.png)
+![Othello](./Screenshot-Desktop.png)
